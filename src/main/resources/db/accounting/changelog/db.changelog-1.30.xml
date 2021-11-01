@@ -1,0 +1,43 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="37" author="vzotov">
+        <createTable tableName="MCC_DETAILS">
+            <column name="CODE" type="VARCHAR(4)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="NAME" type="VARCHAR(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GROUP_ID" type="BIGINT(20)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="38" author="vzotov">
+        <createTable tableName="MCC_GROUP">
+            <column name="ID" type="BIGINT(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="UID" type="VARCHAR(64)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="39" author="vzotov">
+        <addForeignKeyConstraint baseTableName="MCC_DETAILS" baseColumnNames="GROUP_ID"
+                                 constraintName="FK_MCC_GROUP"
+                                 referencedTableName="MCC_GROUP"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="40" author="vzotov">
+        <sqlFile path="mcc-codes.sql" relativeToChangelogFile="true" encoding="UTF-8"/>
+    </changeSet>
+
+</databaseChangeLog>

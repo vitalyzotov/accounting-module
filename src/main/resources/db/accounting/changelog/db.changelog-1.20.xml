@@ -1,0 +1,22 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="24" author="vzotov">
+        <addColumn tableName="ACCOUNT_">
+            <column name="CURRENCY" type="VARCHAR(3)" remarks="Валюта счета">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="25" author="vzotov">
+        <addColumn tableName="ACCOUNT_">
+            <column name="BANK_ID" type="VARCHAR(9)" remarks="БИК">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

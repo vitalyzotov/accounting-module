@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "accounting.liquibase.change-log",
+      "type": "java.lang.String",
+      "description": "Description for accounting.liquibase.change-log."
+    },
+    {
+      "name": "accounting.liquibase.enabled",
+      "type": "java.lang.String",
+      "description": "Description for accounting.liquibase.enabled."
+    }
+  ] }

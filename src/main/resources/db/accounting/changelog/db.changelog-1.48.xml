@@ -1,0 +1,26 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="56" author="vzotov">
+        <addColumn tableName="HOLD_">
+            <column name="HOLD_ID" type="VARCHAR(255)" remarks="Идентификатор" afterColumn="ID">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="57" author="vzotov">
+        <sql>update HOLD_ set HOLD_ID=UUID()</sql>
+    </changeSet>
+
+    <changeSet id="58" author="vzotov">
+        <addNotNullConstraint tableName="HOLD_" columnName="HOLD_ID" columnDataType="VARCHAR(255)"/>
+    </changeSet>
+
+    <changeSet id="59" author="vzotov">
+        <addUniqueConstraint tableName="HOLD_" columnNames="HOLD_ID"/>
+    </changeSet>
+
+</databaseChangeLog>

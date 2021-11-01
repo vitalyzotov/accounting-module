@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.1"
+                 xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
+
+    <entity name="Person" class="ru.vzotov.banking.domain.model.Person" access="FIELD">
+        <table name="PERSON_"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="firstName">
+                <column name="FIRST_NAME" nullable="false" length="255"/>
+            </basic>
+            <basic name="lastName">
+                <column name="LAST_NAME" nullable="false" length="255"/>
+            </basic>
+            <basic name="displayName">
+                <column name="DISPLAY_NAME" nullable="false" length="255"/>
+            </basic>
+            <embedded name="personId">
+                <attribute-override name="value">
+                    <column name="PERSON_UID" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
+
+    <entity name="MccGroup" class="ru.vzotov.banking.domain.model.MccGroup" access="FIELD">
+        <table name="MCC_GROUP"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="name">
+                <column name="NAME" nullable="false"/>
+            </basic>
+            <embedded name="groupId">
+                <attribute-override name="value">
+                    <column name="UID" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
+
+
+    <entity name="MccDetails" class="ru.vzotov.banking.domain.model.MccDetails" access="FIELD">
+        <table name="MCC_DETAILS"/>
+        <attributes>
+            <embedded-id name="mcc">
+                <attribute-override name="value">
+                    <column name="CODE" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded-id>
+
+            <basic name="name">
+                <column name="NAME" nullable="false"/>
+            </basic>
+
+            <many-to-one name="group" optional="true">
+                <join-column name="GROUP_ID" nullable="true"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+
+    <entity name="Budget" class="ru.vzotov.accounting.domain.model.Budget" access="FIELD">
+        <table name="BUDGET"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="name">
+                <column name="NAME" nullable="false"/>
+            </basic>
+            <basic name="locale">
+                <column name="LOCALE_" nullable="false"/>
+            </basic>
+            <basic name="currency">
+                <column name="CURRENCY" nullable="false"/>
+            </basic>
+
+            <one-to-many name="rules" orphan-removal="true">
+                <join-column name="BUDGET_ID" nullable="false"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+
+            <embedded name="budgetId"/>
+        </attributes>
+    </entity>
+
+    <entity name="BudgetRule" class="ru.vzotov.accounting.domain.model.BudgetRule" access="FIELD">
+        <table name="BUDGET_RULE"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="name">
+                <column name="NAME" nullable="false"/>
+            </basic>
+            <basic name="type">
+                <column name="RULE_TYPE" nullable="false"/>
+            </basic>
+            <basic name="recurrence">
+                <column name="RECURRENCE" nullable="false"/>
+            </basic>
+            <basic name="enabled">
+                <column name="RULE_ENABLED" nullable="false"/>
+            </basic>
+            <embedded name="ruleId">
+                <attribute-override name="value">
+                    <column name="RULE_UID"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="categoryId">
+                <attribute-override name="id">
+                    <column name="CATEGORY_ID"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="sourceAccount">
+                <attribute-override name="number">
+                    <column name="SOURCE_ACCOUNT" nullable="true"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="targetAccount">
+                <attribute-override name="number">
+                    <column name="TARGET_ACCOUNT" nullable="true"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="calculation"/>
+            <embedded name="value"/>
+        </attributes>
+    </entity>
+
+    <entity name="BudgetPlan" class="ru.vzotov.accounting.domain.model.BudgetPlan" access="FIELD">
+        <table name="BUDGET_PLAN"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="direction">
+                <column name="BP_DIRECTION"/>
+            </basic>
+            <basic name="date">
+                <column name="BP_DATE"/>
+            </basic>
+
+            <many-to-one name="rule" optional="false">
+                <join-column name="RULE_ID" nullable="false"/>
+            </many-to-one>
+
+            <embedded name="itemId">
+                <attribute-override name="value">
+                    <column name="BP_UID"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="source">
+                <attribute-override name="number">
+                    <column name="SOURCE_ACCOUNT" nullable="true"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="target">
+                <attribute-override name="number">
+                    <column name="TARGET_ACCOUNT" nullable="true"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="category">
+                <attribute-override name="id">
+                    <column name="CATEGORY_ID" nullable="true"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="value"/>
+        </attributes>
+    </entity>
+
+    <entity name="SpecialDay" class="ru.vzotov.calendar.domain.model.SpecialDay" access="FIELD">
+        <table name="SPECIAL_DAY"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="location">
+                <column name="LOCATION" nullable="false"/>
+            </basic>
+            <basic name="day">
+                <column name="DAY" nullable="false"/>
+            </basic>
+            <basic name="name">
+                <column name="NAME" nullable="false"/>
+            </basic>
+            <basic name="type">
+                <column name="DAY_TYPE" nullable="false"/>
+            </basic>
+        </attributes>
+    </entity>
+
+    <entity name="Bank" class="ru.vzotov.banking.domain.model.Bank" access="FIELD">
+        <table name="BANK_"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="name">
+                <column name="NAME" nullable="false"/>
+            </basic>
+            <basic name="shortName">
+                <column name="NAME_SHORT" nullable="false"/>
+            </basic>
+            <basic name="longName">
+                <column name="NAME_LONG" nullable="false"/>
+            </basic>
+            <embedded name="bankId"/>
+        </attributes>
+    </entity>
+
+    <entity name="Card" class="ru.vzotov.banking.domain.model.Card" access="FIELD">
+        <table name="CARD_"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="validThru">
+                <column name="VALID_THRU"/>
+            </basic>
+            <one-to-many name="accounts" orphan-removal="true">
+                <join-column name="CARD_ID" nullable="false"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+            <embedded name="cardNumber"/>
+            <embedded name="issuer"/>
+        </attributes>
+    </entity>
+
+    <entity class="ru.vzotov.banking.domain.model.AccountBinding" access="FIELD">
+        <table name="CARD_ACCOUNT"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="from">
+                <column name="DATE_FROM"/>
+            </basic>
+            <basic name="to">
+                <column name="DATE_TO"/>
+            </basic>
+            <embedded name="accountNumber"/>
+        </attributes>
+    </entity>
+
+    <entity name="Account" class="ru.vzotov.banking.domain.model.Account" access="FIELD">
+        <table name="ACCOUNT_"/>
+
+        <attributes>
+            <embedded-id name="accountNumber"/>
+            <basic name="name">
+                <column name="NAME" nullable="true"/>
+            </basic>
+            <basic name="currency">
+                <column name="CURRENCY" nullable="true"/>
+            </basic>
+            <embedded name="aliases"/>
+            <embedded name="bankId"/>
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="ACCOUNT_OWNER"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
+
+    <entity name="BudgetCategory" class="ru.vzotov.banking.domain.model.BudgetCategory" access="FIELD">
+        <table name="BUDGET_CATEGORY_"/>
+        <attributes>
+            <embedded-id name="id"/>
+            <basic name="name">
+                <column name="NAME" nullable="false"/>
+            </basic>
+            <basic name="color">
+                <column name="COLOR" nullable="true"/>
+                <convert converter="ru.vzotov.accounting.infrastructure.persistence.jpa.util.ColorAttributeConverter"/>
+            </basic>
+            <basic name="icon">
+                <column name="ICON" nullable="true"/>
+            </basic>
+        </attributes>
+    </entity>
+
+    <entity name="Operation" class="ru.vzotov.banking.domain.model.Operation" access="FIELD">
+        <table name="OPERATION_"/>
+        <attributes>
+            <embedded-id name="operationId"/>
+            <basic name="date">
+                <column name="DATE"/>
+            </basic>
+            <basic name="authorizationDate" optional="true">
+                <column name="AUTHORIZATION_DATE" nullable="true"/>
+            </basic>
+            <basic name="type">
+                <column name="OP_TYPE"/>
+            </basic>
+            <basic name="description">
+                <column name="DESCRIPTION"/>
+            </basic>
+            <basic name="comment">
+                <column name="COMMENT"/>
+            </basic>
+            <many-to-one name="category" optional="true">
+                <join-column name="CATEGORY_ID"/>
+            </many-to-one>
+            <many-to-one name="account" optional="false">
+                <join-column name="ACCOUNT_ID"/>
+            </many-to-one>
+            <embedded name="amount"/>
+            <embedded name="transactionReference"/>
+        </attributes>
+    </entity>
+
+    <entity class="ru.vzotov.banking.domain.model.HoldOperation" access="FIELD">
+        <table name="HOLD_"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="date">
+                <column name="DATE"/>
+            </basic>
+            <basic name="type">
+                <column name="OP_TYPE"/>
+            </basic>
+            <basic name="description">
+                <column name="DESCRIPTION"/>
+            </basic>
+            <basic name="comment">
+                <column name="COMMENT"/>
+            </basic>
+            <many-to-one name="account" optional="false">
+                <join-column name="ACCOUNT_ID"/>
+            </many-to-one>
+            <many-to-one name="category" optional="true">
+                <join-column name="CATEGORY_ID"/>
+            </many-to-one>
+            <embedded name="amount"/>
+            <embedded name="holdId"/>
+        </attributes>
+    </entity>
+
+    <entity name="Transaction" class="ru.vzotov.banking.domain.model.Transaction" access="FIELD">
+        <table name="TX_"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <embedded name="primaryOperation">
+                <attribute-override name="id">
+                    <column name="PRIMARY_OP" nullable="false"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="secondaryOperation">
+                <attribute-override name="id">
+                    <column name="SECONDARY_OP" nullable="false"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
+
+    <entity name="Remain" class="ru.vzotov.accounting.domain.model.Remain" access="FIELD">
+        <table name="REMAIN_"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+
+            <basic name="date">
+                <column name="DATE"/>
+            </basic>
+
+            <embedded name="account"/>
+            <embedded name="value"/>
+
+            <embedded name="remainId">
+                <attribute-override name="value">
+                    <column name="REMAIN_ID" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded>
+
+        </attributes>
+    </entity>
+
+    <entity class="ru.vzotov.banking.domain.model.CardOperation" access="FIELD">
+        <table name="CARD_OPERATION_"/>
+        <attributes>
+            <embedded-id name="operationId"/>
+            <basic name="authDate" optional="false">
+                <column name="AUTHORIZATION_DATE" nullable="false"/>
+            </basic>
+            <basic name="purchaseDate" optional="false">
+                <column name="PURCHASE_DATE" nullable="false"/>
+            </basic>
+            <basic name="extraInfo" optional="true">
+                <column name="EXTRA_INFO" nullable="true"/>
+            </basic>
+            <embedded name="cardNumber"/>
+            <embedded name="terminal"/>
+            <embedded name="amount"/>
+            <embedded name="mcc"/>
+        </attributes>
+    </entity>
+
+    <embeddable class="ru.vzotov.banking.domain.model.BankId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="BANK_ID"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.CardNumber" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="CARD_NUMBER"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.PosTerminal" access="FIELD">
+        <attributes>
+            <basic name="country">
+                <column name="POS_COUNTRY"/>
+            </basic>
+            <embedded name="terminalId"/>
+            <embedded name="city"/>
+            <embedded name="street"/>
+            <embedded name="merchant"/>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.PosTerminalId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="POS_ID"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.City" access="FIELD">
+        <attributes>
+            <basic name="name">
+                <column name="POS_CITY"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.Street" access="FIELD">
+        <attributes>
+            <basic name="name">
+                <column name="POS_STREET"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.Merchant" access="FIELD">
+        <attributes>
+            <basic name="name">
+                <column name="POS_MERCHANT"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.TransactionReference" access="FIELD">
+        <attributes>
+            <basic name="reference">
+                <column name="TRANSACTION_REF"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.AccountNumber" access="FIELD">
+        <attributes>
+            <basic name="number">
+                <column name="ACCOUNT_NUMBER"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.OperationId" access="FIELD">
+        <attributes>
+            <basic name="id">
+                <column name="ID"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.accounting.domain.model.RemainId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="REMAIN_ID"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.domain.model.Money" access="FIELD">
+        <attributes>
+            <basic name="amount">
+                <column name="AMOUNT"/>
+            </basic>
+            <basic name="currency">
+                <column name="CURRENCY"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.MccCode" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="MCC"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.BudgetCategoryId" access="FIELD">
+        <attributes>
+            <basic name="id">
+                <column name="ID" nullable="false"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.accounting.domain.model.Calculation" access="FIELD">
+        <attributes>
+            <basic name="expression">
+                <column name="CALC_EXPRESSION"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.accounting.domain.model.BudgetId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="BUDGET_UID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.accounting.domain.model.BudgetRuleId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="RULE_UID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.accounting.domain.model.BudgetPlanId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="BP_UID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.MccGroupId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="MCC_GROUP_UID"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.AccountAliases" access="FIELD">
+        <attributes>
+            <element-collection name="value" fetch="EAGER">
+                <column name="ALIAS"/>
+                <collection-table name="ACCOUNT_ALIAS">
+                    <join-column name="ACCOUNT_NUMBER"/>
+                </collection-table>
+            </element-collection>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.PersonId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="PERSON_UID" />
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.banking.domain.model.HoldId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="HOLD_ID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.ColorAttributeConverter"
+               auto-apply="false"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.LocalDateAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.YearMonthAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.OperationTypeAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.DayTypeAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.CountryAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.RecurrenceAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.BudgetRuleTypeAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.BudgetDirectionAttributeConverter"
+               auto-apply="true"/>
+
+</entity-mappings>

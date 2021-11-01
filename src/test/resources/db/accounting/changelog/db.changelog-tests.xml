@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <include file="db.changelog-master.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="persons" author="vzotov">
+        <sql>
+            INSERT INTO PERSON_ (PERSON_UID, FIRST_NAME, LAST_NAME, DISPLAY_NAME) VALUES ('vzotov', 'Vitaly', 'Zotov', 'Dad');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test1" author="vzotov">
+        <sql>
+            INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER)
+            VALUES ('40817810108290123456', 'Зарплатный счет', 'vzotov');
+
+            INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER)
+            VALUES ('40817810418370123456', 'Счет карты ГПБ', 'vzotov');
+
+            INSERT INTO ACCOUNT_ALIAS (ACCOUNT_NUMBER, ALIAS) VALUES
+            ('40817810418370123456','17416127'),
+            ('40817810418370123456','17416128');
+
+            INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER, CURRENCY, BANK_ID)
+            VALUES ('40817810000016123456', 'Тинькофф', 'vzotov', 'RUR', '044525974');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test2" author="vzotov">
+        <sql>
+            INSERT INTO BUDGET_CATEGORY_ (ID, NAME, COLOR,ICON)
+            VALUES (781381038049753674, 'Прочие расходы', '#FF000000', 'MyIcon');
+            INSERT INTO BUDGET_CATEGORY_ (ID, NAME, COLOR,ICON)
+            VALUES (1000, 'Для переименования', NULL, NULL);
+        </sql>
+    </changeSet>
+
+    <changeSet id="test3" author="vzotov">
+        <sql>
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('test-operation-1', '2017-07-10', 781381038049753674, 1000, 'RUR', '-', '40817810108290123456',
+            'тестовая операция', NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('will-be-removed', '2017-07-10', 781381038049753674, 1020, 'RUR', '-', '40817810108290123456',
+            'тестовая операция для удаления', NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('long-description', '2017-07-10', 781381038049753674, 1020, 'RUR', '-', '40817810108290123456',
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus blandit tellus, et posuere turpis pulvinar quis. Mauris sodales semper orci vel malesuada. Sed at iaculis felis. Nulla vitae nisl dapibus, egestas nulla porta, consequat dolor. Duis ac tellus in diam elementum sagittis. Cras bibendum mauris et aliquet ultricies. Nullam vitae lacus sed magna ornare pellentesque quis et ipsum. Maecenas condimentum sit amet urna quis gravida. Fusce rhoncus convallis rhoncus. Cras ac lacinia tellus cras amet.'
+            , NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('tx-operation-1', '2018-08-01', NULL, 3000, 'RUR', '-', '40817810108290123456', 'перевод на ГПБ',
+            NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('tx-operation-2', '2018-08-02', NULL, 3000, 'RUR', '+', '40817810418370123456', 'поступление
+            средств', NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('tx-operation-3', '2019-08-01', NULL, 5000, 'RUR', '-', '40817810108290123456', 'перевод на ГПБ',
+            NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('tx-operation-4', '2019-08-10', NULL, 5000, 'RUR', '+', '40817810418370123456', 'поступление
+            средств', NULL);
+        </sql>
+    </changeSet>
+
+    <changeSet id="test4" author="vzotov">
+        <sql>
+            INSERT INTO CARD_OPERATION_ (ID, CARD_NUMBER, POS_ID, POS_COUNTRY, POS_CITY, POS_STREET, POS_MERCHANT,
+            AUTHORIZATION_DATE, PURCHASE_DATE, AMOUNT, CURRENCY, MCC)
+            VALUES ('test-operation-1', '555957++++++1234', '10705017','RUS','MOSCOW','1 YA T','ROSTELECOM',
+            '2018-07-10', '2018-07-07', 50000, 'RUR', '4812');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test5" author="vzotov">
+        <sql>
+            INSERT INTO TX_ (PRIMARY_OP, SECONDARY_OP)
+            VALUES ('tx-operation-3', 'tx-operation-4');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test6" author="vzotov">
+        <sql>
+            INSERT INTO REMAIN_ (REMAIN_ID, DATE, ACCOUNT_NUMBER, AMOUNT, CURRENCY)
+            VALUES ('40817810418370123456_20190802', '2019-08-02', '40817810418370123456', 30000, 'RUR');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test7" author="vzotov">
+        <sql>
+            INSERT INTO HOLD_ (HOLD_ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('5c249510-2c7f-11eb-b9c4-6631261b2cd8', '2020-02-27', NULL, 116600, 'RUR', '-', '40817810108290123456', '20603703 RU IP FEJZULLAEVA O.B.>Sar 20.02.27 20.02.27 1166.00 RUR 555957++++++1234 (Android Pay-9313)', NULL);
+
+            INSERT INTO HOLD_ (HOLD_ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('1183cfd8-2c84-11eb-b9c4-6631261b2cd8','2020-02-29', NULL, 58000, 'RUR', '-', '40817810108290123456', '11276718 RU MAGNIT MM ANTROPOS.>Sar 20.02.28 20.02.28 580.00 RUR 555957++++++1234', NULL);
+        </sql>
+    </changeSet>
+
+    <changeSet id="test8" author="vzotov">
+        <sql>
+            INSERT INTO BANK_ (BANK_ID,NAME,NAME_SHORT,NAME_LONG)
+            VALUES ('044525593','Альфа-банк','АО "АЛЬФА-БАНК"','АКЦИОНЕРНОЕ ОБЩЕСТВО "АЛЬФА-БАНК"');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test9" author="vzotov">
+        <sql>
+            INSERT INTO CARD_ (CARD_NUMBER, VALID_THRU, BANK_ID)
+            VALUES ('4154822022031234','2024-02-29','044525593');
+
+            INSERT INTO CARD_ACCOUNT(CARD_ID,ACCOUNT_NUMBER,DATE_FROM,DATE_TO)
+            VALUES((SELECT ID FROM CARD_ WHERE CARD_NUMBER='4154822022031234'), '40817810108290123456', '2020-01-02',
+            '2020-01-10');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test10" author="vzotov">
+        <sql>
+            INSERT INTO SPECIAL_DAY (DAY, LOCATION, NAME, DAY_TYPE)
+            VALUES
+            ('2020-01-01', 'RUS', 'Новогодние каникулы', 'H'),
+            ('2020-01-02', 'RUS', 'Новогодние каникулы', 'H'),
+            ('2020-01-03', 'RUS', 'Новогодние каникулы', 'H'),
+            ('2020-01-04', 'RUS', 'Новогодние каникулы', 'H'),
+            ('2020-01-05', 'RUS', 'Новогодние каникулы', 'H'),
+            ('2020-01-06', 'RUS', 'Новогодние каникулы', 'H'),
+            ('2020-01-07', 'RUS', 'Рождество Христово', 'H'),
+            ('2020-01-08', 'RUS', 'Новогодние каникулы', 'H'),
+            ('2020-02-23', 'RUS', 'День защитника Отечества', 'H'),
+            ('2020-02-24', 'RUS', 'Перенос с воскресенья 23 февраля на понедельник 24 февраля', 'N'),
+            ('2020-03-08', 'RUS', 'Международный женский день', 'H'),
+            ('2020-03-09', 'RUS', 'Перенос с воскресенья 8 марта на понедельник 9 марта', 'N'),
+            ('2020-05-01', 'RUS', 'Праздник Весны и Труда', 'H'),
+            ('2020-05-09', 'RUS', 'День Победы', 'H'),
+            ('2020-05-04', 'RUS', 'Перенос с субботы 4 января на понедельник 4 мая', 'N'),
+            ('2020-05-05', 'RUS', 'Перенос с воскресенья 5 января на вторник 5 мая', 'N'),
+            ('2020-05-11', 'RUS', 'Перенос с субботы 9 мая на понедельник 11 мая', 'N'),
+            ('2020-06-12', 'RUS', 'День России', 'H'),
+            ('2020-11-04', 'RUS', 'День народного единства', 'H');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test11" author="vzotov">
+        <sql>
+            INSERT INTO BUDGET (BUDGET_UID, NAME, LOCALE_, CURRENCY) VALUES ('test-budget-1', 'default1', 'US', 'RUR');
+            INSERT INTO BUDGET (BUDGET_UID, NAME, LOCALE_, CURRENCY) VALUES ('removed-budget-2', 'default2', 'US',
+            'RUR');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test12" author="vzotov">
+        <sql>
+            INSERT INTO BUDGET_RULE (RULE_UID, RULE_TYPE, CATEGORY_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, NAME, RECURRENCE, AMOUNT, CURRENCY, CALC_EXPRESSION, BUDGET_ID) VALUES
+            ('001', '+', NULL, NULL, '40817810108290123456', 'Заработная плата', 'M2020-01-01(1)[7]', 2800000, 'RUR', 'value.amount().doubleValue() * (calendar.workdaysBetween(prevMonth.atDay(16), prevMonth.atEndOfMonth()) /
+            calendar.workdaysBetween(prevMonth.atDay(1), prevMonth.atEndOfMonth()));', 1),
+            ('002', '+', NULL, NULL, '40817810108290123456', 'Аванс', 'M2020-01-01(1)[22]', 2800000, 'RUR', 'value.amount().doubleValue() * (calendar.workdaysBetween(month.atDay(1), month.atDay(16)) / calendar.workdaysBetween(month.atDay(1),
+            month.atEndOfMonth()));', 1),
+            ('003', '-', NULL, '40817810108290123456', NULL, 'Гипермаркет', 'W2020-01-01(1)[1]', 150000, 'RUR', NULL, 1),
+            ('004', '-', 781381038049753674, '40817810000016123456', NULL, 'Покупка чего-то важного', 'T(1)2020-03-05[1]', 200000, 'RUR', NULL, 1);
+
+            INSERT INTO BUDGET_RULE (RULE_UID, RULE_TYPE, CATEGORY_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, NAME, RECURRENCE, AMOUNT, CURRENCY, CALC_EXPRESSION, BUDGET_ID) VALUES
+            ('005', '-', NULL, NULL, NULL, 'Гипермаркет', 'W2020-01-01(1)[1]', 150000, 'RUR', NULL, 2);
+        </sql>
+    </changeSet>
+
+    <changeSet id="test13" author="vzotov">
+        <sql>
+            INSERT INTO BUDGET_PLAN (CATEGORY_ID, BP_DATE, BP_DIRECTION, BP_UID, RULE_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, AMOUNT, CURRENCY) VALUES
+            (NULL, '2020-02-20', '-', 'BBI-000-000-001', 3, '40817810108290123456', NULL, 150000, 'RUR'),
+            (NULL, '2020-03-20', '-', 'BBI-DEL-000-001', 3, '40817810108290123456', NULL, 150000, 'RUR');
+        </sql>
+    </changeSet>
+</databaseChangeLog>
