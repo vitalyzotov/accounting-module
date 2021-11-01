@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import ru.vzotov.accounting.config.DatasourceConfig;
 import ru.vzotov.accounting.domain.model.AccountRepository;
 import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
 import ru.vzotov.accounting.domain.model.OperationRepository;
@@ -30,8 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @RunWith(SpringRunner.class)
-@Import(JpaConfig.class)
-@SpringBootTest
+@DataJpaTest
+@Import({DatasourceConfig.class, JpaConfig.class})
 @Transactional
 public class OperationRepositoryJpaTest {
     private static final Logger log = LoggerFactory.getLogger(OperationRepositoryJpaTest.class);
