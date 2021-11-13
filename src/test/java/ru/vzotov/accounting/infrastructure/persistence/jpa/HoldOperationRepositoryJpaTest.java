@@ -1,5 +1,6 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import ru.vzotov.accounting.config.DatasourceConfig;
 import ru.vzotov.accounting.domain.model.HoldOperationRepository;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({DatasourceConfig.class, JpaConfig.class})
 @Transactional
 public class HoldOperationRepositoryJpaTest {
