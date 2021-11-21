@@ -11,4 +11,8 @@ public interface DealRepository {
     void store(Deal deal);
 
     void delete(Deal deal);
+
+    LocalDate findMinDealDate();
+
+    LocalDate findMaxDealDate();
 }

@@ -69,6 +69,15 @@
             INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
             VALUES ('tx-operation-4', '2019-08-10', NULL, 5000, 'RUR', '+', '40817810418370123456', 'поступление
             средств', NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('deal-operation-1', '2021-11-21', NULL, 3000, 'RUR', '-', '40817810108290123456', 'покупка в магазине', NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('deal-operation-2', '2021-11-21', NULL, 4000, 'RUR', '-', '40817810108290123456', 'покупка в магазине 2', NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('deal-operation-3', '2021-11-21', NULL, 5000, 'RUR', '-', '40817810108290123456', 'покупка в магазине 3', NULL);
         </sql>
     </changeSet>
 
@@ -184,6 +193,7 @@
         <sql>
             INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-1', '2017-07-10', -1000, 'RUR');
             INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-for-remove', '2017-07-11', -2000, 'RUR');
+            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-for-modification', '2021-11-21', -4000, 'RUR');
         </sql>
     </changeSet>
 
@@ -191,6 +201,7 @@
         <sql>
             INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID) VALUES (1, 'test-operation-1');
             INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID) VALUES (2, 'long-description');
+            INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID) VALUES (3, 'deal-operation-2');
         </sql>
     </changeSet>
 
@@ -198,6 +209,7 @@
         <sql>
             INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (1, '20180616135500_65624_8710000100313204_110992_2128735201_1');
             INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (2, '20171229165300_7734000_8710000100691108_1554_2182018037_1');
+            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (3, '20180723142000_7150_9281000100225396_2736_802663012_1');
         </sql>
     </changeSet>
 </databaseChangeLog>

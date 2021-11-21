@@ -91,4 +91,12 @@ public class DealRepositoryJpaTest {
     public void delete() {
         dealRepository.delete(dealRepository.find(new DealId("deal-for-remove")));
     }
+
+    @Test
+    public void findMinMaxDates() {
+        LocalDate min = dealRepository.findMinDealDate();
+        LocalDate max = dealRepository.findMaxDealDate();
+        assertThat(min).isNotNull().isEqualTo(LocalDate.of(2017, 07, 10));
+        assertThat(max).isNotNull().isAfter(min);
+    }
 }

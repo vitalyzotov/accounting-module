@@ -44,4 +44,22 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
         em.remove(deal);
         em.flush();
     }
+
+    @Override
+    public LocalDate findMinDealDate() {
+        try {
+            return em.createQuery("select min(date) from Deal", LocalDate.class).getSingleResult();
+        }catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public LocalDate findMaxDealDate() {
+        try {
+            return em.createQuery("select max(date) from Deal", LocalDate.class).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
 }
