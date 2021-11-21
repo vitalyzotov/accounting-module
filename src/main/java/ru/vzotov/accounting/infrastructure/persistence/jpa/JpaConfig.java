@@ -7,6 +7,7 @@ import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
 import ru.vzotov.accounting.domain.model.BudgetRepository;
 import ru.vzotov.accounting.domain.model.CardOperationRepository;
 import ru.vzotov.accounting.domain.model.CardRepository;
+import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.accounting.domain.model.HoldOperationRepository;
 import ru.vzotov.accounting.domain.model.MccDetailsRepository;
 import ru.vzotov.accounting.domain.model.MccGroupRepository;
@@ -33,6 +34,13 @@ public class JpaConfig {
 
     public JpaConfig(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DealRepository dealRepository(
+            @Qualifier("accounting-emf") EntityManager em) {
+        return new DealRepositoryJpa(em);
     }
 
     @Bean

@@ -179,4 +179,25 @@
             (NULL, '2020-03-20', '-', 'BBI-DEL-000-001', 3, '40817810108290123456', NULL, 150000, 'RUR');
         </sql>
     </changeSet>
+
+    <changeSet id="test14" author="vzotov">
+        <sql>
+            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-1', '2017-07-10', -1000, 'RUR');
+            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-for-remove', '2017-07-11', -2000, 'RUR');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test15" author="vzotov">
+        <sql>
+            INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID) VALUES (1, 'test-operation-1');
+            INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID) VALUES (2, 'long-description');
+        </sql>
+    </changeSet>
+
+    <changeSet id="test16" author="vzotov">
+        <sql>
+            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (1, '20180616135500_65624_8710000100313204_110992_2128735201_1');
+            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (2, '20171229165300_7734000_8710000100691108_1554_2182018037_1');
+        </sql>
+    </changeSet>
 </databaseChangeLog>

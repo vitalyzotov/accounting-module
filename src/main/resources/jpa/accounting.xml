@@ -4,6 +4,58 @@
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
 
+    <entity name="Deal" class="ru.vzotov.accounting.domain.model.Deal" access="FIELD">
+        <table name="DEAL_"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+
+            <basic name="date">
+                <column name="DATE"/>
+            </basic>
+
+            <basic name="description" optional="true">
+                <column name="DESCRIPTION" nullable="true"/>
+            </basic>
+
+            <basic name="comment" optional="true">
+                <column name="COMMENT" nullable="true"/>
+            </basic>
+
+            <many-to-one name="category" optional="true">
+                <join-column name="CATEGORY_ID" nullable="true"/>
+            </many-to-one>
+
+            <element-collection name="receipts" fetch="EAGER">
+                <attribute-override name="value">
+                    <column name="RECEIPT_ID"/>
+                </attribute-override>
+                <collection-table name="DEAL_RECEIPTS">
+                    <join-column name="DEAL_ID" nullable="false"/>
+                </collection-table>
+            </element-collection>
+
+            <element-collection name="operations" fetch="EAGER">
+                <attribute-override name="id">
+                    <column name="OPERATION_ID"/>
+                </attribute-override>
+                <collection-table name="DEAL_OPERATIONS">
+                    <join-column name="DEAL_ID" nullable="false"/>
+                </collection-table>
+            </element-collection>
+
+            <embedded name="dealId">
+                <attribute-override name="value">
+                    <column name="DEAL_UID" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded>
+
+            <embedded name="amount"/>
+        </attributes>
+    </entity>
+
     <entity name="Person" class="ru.vzotov.banking.domain.model.Person" access="FIELD">
         <table name="PERSON_"/>
         <attributes>
@@ -604,6 +656,22 @@
         <attributes>
             <basic name="value">
                 <column name="HOLD_ID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.accounting.domain.model.DealId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="DEAL_ID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.CheckId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="ID" nullable="false" unique="true"/>
             </basic>
         </attributes>
     </embeddable>
