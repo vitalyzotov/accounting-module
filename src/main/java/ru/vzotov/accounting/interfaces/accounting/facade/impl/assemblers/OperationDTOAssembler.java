@@ -9,7 +9,7 @@ public class OperationDTOAssembler {
 
     public static AccountOperationDTO toDTO(Operation model) {
         return model == null ? null : new AccountOperationDTO(
-                model.account().accountNumber().number(),
+                model.account().number(),
                 model.date(),
                 model.authorizationDate(),
                 model.transactionReference() == null ? null : model.transactionReference().reference(),
@@ -19,14 +19,14 @@ public class OperationDTOAssembler {
                 model.amount().currency().getCurrencyCode(),
                 model.description(),
                 model.comment(),
-                model.category() == null ? null : model.category().id().id()
+                model.category() == null ? null : model.category().id()
         );
     }
 
     public static HoldOperationDTO toDTO(HoldOperation hold) {
         return hold == null ? null : new HoldOperationDTO(
                 hold.holdId().value(),
-                hold.account().accountNumber().number(),
+                hold.account().number(),
                 hold.date(),
                 String.valueOf(hold.type().symbol()),
                 hold.amount().amount().doubleValue(),

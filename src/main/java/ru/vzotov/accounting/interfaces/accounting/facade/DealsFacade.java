@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface DealsFacade {
     DealDTO createDeal(LocalDate date, long amount, String currency, String description, String comment,
-                       Long categoryId, Collection<String> receipts, Collection<String> operations) throws CategoryNotFoundException;
+                       Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases) throws CategoryNotFoundException;
 
     DealDTO modifyDeal(String dealId, LocalDate date, long amount, String currency, String description, String comment,
-                       Long categoryId, Collection<String> receipts, Collection<String> operations) throws DealNotFoundException, CategoryNotFoundException;
+                       Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases) throws DealNotFoundException, CategoryNotFoundException;
 
     DealDTO deleteDeal(String dealId) throws DealNotFoundException;
 

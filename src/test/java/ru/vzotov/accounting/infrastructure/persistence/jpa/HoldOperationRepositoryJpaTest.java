@@ -40,7 +40,7 @@ public class HoldOperationRepositoryJpaTest {
 
     @Test
     public void testConstruct() {
-        Account account = new Account(new AccountNumber("40817810108290123456"), "Зарплатный счет", PersonId.nextId());
+        AccountNumber account = new AccountNumber("40817810108290123456");
         HoldOperation hold = new HoldOperation(
                 HoldId.nextId(),
                 account,

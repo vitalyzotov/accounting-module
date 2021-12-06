@@ -48,7 +48,7 @@ public class OperationRepositoryJpa extends JpaRepository implements OperationRe
 
     @Override
     public List<Operation> findByAccountAndDate(AccountNumber accountNumber, LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("from Operation where account.accountNumber.number = :accountNumber and date >= :dateFrom and date <= :dateTo", Operation.class)
+        return em.createQuery("from Operation where account.number = :accountNumber and date >= :dateFrom and date <= :dateTo", Operation.class)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
                 .setParameter("accountNumber", accountNumber.number())
@@ -73,5 +73,11 @@ public class OperationRepositoryJpa extends JpaRepository implements OperationRe
     public void delete(Operation operation) {
         em.remove(operation);
         em.flush();
+    }
+
+    @Override
+    public List<Operation> findWithoutDeals() {
+        return em.createQuery("select distinct op from Operation op, Deal deals where op.operationId not member of deals.operations", Operation.class)
+                .getResultList();
     }
 }

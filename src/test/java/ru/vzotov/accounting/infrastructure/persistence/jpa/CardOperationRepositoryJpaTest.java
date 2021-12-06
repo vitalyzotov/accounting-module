@@ -89,7 +89,7 @@ public class CardOperationRepositoryJpaTest {
                 LocalDate.of(2018, 7, 10),
                 Money.rubles(10),
                 OperationType.WITHDRAW,
-                accountRepository.find(new AccountNumber("40817810108290123456")),
+                new AccountNumber("40817810108290123456"),
                 "Тестовая операция"
         );
         operationRepository.store(operation);
@@ -112,7 +112,7 @@ public class CardOperationRepositoryJpaTest {
                 LocalDate.of(2018, 7, 10),
                 Money.rubles(10),
                 OperationType.WITHDRAW,
-                accountRepository.find(new AccountNumber("40817810108290123456")),
+                new AccountNumber("40817810108290123456"),
                 "Тестовая операция"
         );
         operationRepository.store(operation);

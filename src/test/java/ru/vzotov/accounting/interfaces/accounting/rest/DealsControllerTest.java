@@ -82,7 +82,9 @@ public class DealsControllerTest {
                         new MoneyDTO(-3000, "RUR"), DEAL_DESCRIPTION, "comment of deal",
                         781381038049753674L,
                         Collections.singletonList("20180717152900_365000_8712000101115142_19645_3757443940_1"),
-                        Collections.singletonList("deal-operation-1"))),
+                        Collections.singletonList("deal-operation-1"),
+                        Collections.singletonList("purchase-3000-1")
+                )),
                 DealDTO.class
         );
         assertThat(exchange.getBody()).hasFieldOrPropertyWithValue("description", DEAL_DESCRIPTION);
@@ -90,27 +92,21 @@ public class DealsControllerTest {
 
     @Test
     public void modifyDeal() {
-        ResponseEntity<DealDTO> exchange = this.restTemplate.exchange(
+        ResponseEntity<Void> exchange = this.restTemplate.exchange(
                 "/accounting/deals/deal-for-modification",
                 HttpMethod.PUT, new HttpEntity<>(new DealDTO(
                         "deal-for-modification", LocalDate.of(2021, 11, 21),
                         new MoneyDTO(-5000, "RUR"), "modified description", "modified comment",
                         781381038049753674L,
                         Collections.singletonList("20180724145300_10650_9281000100225396_2908_4063563774_1"),
-                        Collections.singletonList("deal-operation-3"))),
-                DealDTO.class
+                        Collections.singletonList("deal-operation-3"),
+                        Collections.singletonList("purchase-5000-1")
+                )),
+                Void.class
         );
 
         assertThat(exchange.getStatusCode())
                 .isEqualTo(HttpStatus.OK);
-
-        final DealDTO result = exchange.getBody();
-        assertThat(result)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("description", "modified description")
-                .hasFieldOrPropertyWithValue("comment", "modified comment")
-                .hasFieldOrPropertyWithValue("category", 781381038049753674L);
-
-        assertThat(result.getOperations()).contains("deal-operation-3");
+        assertThat(exchange.getBody()).isNull();
     }
 }

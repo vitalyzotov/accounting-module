@@ -24,10 +24,6 @@
                 <column name="COMMENT" nullable="true"/>
             </basic>
 
-            <many-to-one name="category" optional="true">
-                <join-column name="CATEGORY_ID" nullable="true"/>
-            </many-to-one>
-
             <element-collection name="receipts" fetch="EAGER">
                 <attribute-override name="value">
                     <column name="RECEIPT_ID"/>
@@ -45,6 +41,22 @@
                     <join-column name="DEAL_ID" nullable="false"/>
                 </collection-table>
             </element-collection>
+
+            <element-collection name="purchases" fetch="EAGER">
+                <order-column name="PURCHASE_ORDER"/>
+                <attribute-override name="value">
+                    <column name="PURCHASE_ID"/>
+                </attribute-override>
+                <collection-table name="DEAL_PURCHASES">
+                    <join-column name="DEAL_ID" nullable="false"/>
+                </collection-table>
+            </element-collection>
+
+            <embedded name="category">
+                <attribute-override name="id">
+                    <column name="CATEGORY_ID" nullable="true"/>
+                </attribute-override>
+            </embedded>
 
             <embedded name="dealId">
                 <attribute-override name="value">
@@ -369,12 +381,16 @@
             <basic name="comment">
                 <column name="COMMENT"/>
             </basic>
-            <many-to-one name="category" optional="true">
-                <join-column name="CATEGORY_ID"/>
-            </many-to-one>
-            <many-to-one name="account" optional="false">
-                <join-column name="ACCOUNT_ID"/>
-            </many-to-one>
+            <embedded name="category">
+                <attribute-override name="id">
+                    <column name="CATEGORY_ID" nullable="true"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="account">
+                <attribute-override name="number">
+                    <column name="ACCOUNT_ID"/>
+                </attribute-override>
+            </embedded>
             <embedded name="amount"/>
             <embedded name="transactionReference"/>
         </attributes>
@@ -399,12 +415,16 @@
             <basic name="comment">
                 <column name="COMMENT"/>
             </basic>
-            <many-to-one name="account" optional="false">
-                <join-column name="ACCOUNT_ID"/>
-            </many-to-one>
-            <many-to-one name="category" optional="true">
-                <join-column name="CATEGORY_ID"/>
-            </many-to-one>
+            <embedded name="account">
+                <attribute-override name="number">
+                    <column name="ACCOUNT_ID"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="category">
+                <attribute-override name="id">
+                    <column name="CATEGORY_ID" nullable="true"/>
+                </attribute-override>
+            </embedded>
             <embedded name="amount"/>
             <embedded name="holdId"/>
         </attributes>
@@ -672,6 +692,14 @@
         <attributes>
             <basic name="value">
                 <column name="ID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.purchase.domain.model.PurchaseId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="PURCHASE_ID"/>
             </basic>
         </attributes>
     </embeddable>

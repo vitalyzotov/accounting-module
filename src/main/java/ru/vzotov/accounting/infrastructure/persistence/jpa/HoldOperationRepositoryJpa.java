@@ -33,7 +33,7 @@ public class HoldOperationRepositoryJpa extends JpaRepository implements HoldOpe
     public HoldOperation find(AccountNumber account, LocalDate date, Money amount, OperationType type, String description) {
         try {
             return em.createQuery("from HoldOperation" +
-                            " where account.accountNumber.number = :accountNumber" +
+                            " where account.number = :accountNumber" +
                             " and date=:date" +
                             " and amount.amount=:amount" +
                             " and amount.currency=:currency" +
@@ -53,7 +53,7 @@ public class HoldOperationRepositoryJpa extends JpaRepository implements HoldOpe
 
     @Override
     public List<HoldOperation> findByAccountAndDate(AccountNumber accountNumber, LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("from HoldOperation where account.accountNumber.number = :accountNumber and date >= :dateFrom and date <= :dateTo", HoldOperation.class)
+        return em.createQuery("from HoldOperation where account.number = :accountNumber and date >= :dateFrom and date <= :dateTo", HoldOperation.class)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
                 .setParameter("accountNumber", accountNumber.number())

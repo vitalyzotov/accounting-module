@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.domain.model;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public interface AccountReportRepository<I extends AccountReportOperation> {
@@ -10,4 +12,6 @@ public interface AccountReportRepository<I extends AccountReportOperation> {
     List<AccountReportId> findUnprocessed();
 
     void markProcessed(AccountReportId reportId);
+
+    AccountReportId save(String name, InputStream content) throws IOException;
 }

@@ -1,11 +1,5 @@
 package ru.vzotov.accounting.application.impl;
 
-import ru.vzotov.accounting.application.AccountNotFoundException;
-import ru.vzotov.accounting.application.AccountingService;
-import ru.vzotov.accounting.domain.model.AccountRepository;
-import ru.vzotov.accounting.domain.model.CardOperationRepository;
-import ru.vzotov.accounting.domain.model.HoldOperationRepository;
-import ru.vzotov.accounting.domain.model.OperationRepository;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.vzotov.accounting.application.AccountNotFoundException;
+import ru.vzotov.accounting.application.AccountingService;
+import ru.vzotov.accounting.domain.model.AccountRepository;
+import ru.vzotov.accounting.domain.model.CardOperationRepository;
+import ru.vzotov.accounting.domain.model.HoldOperationRepository;
+import ru.vzotov.banking.domain.model.OperationCreatedEvent;
+import ru.vzotov.accounting.domain.model.OperationRepository;
 import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.CardNumber;
@@ -89,13 +90,14 @@ public class AccountingServiceImpl implements AccountingService {
                 date,
                 amount,
                 type,
-                account,
+                accountNumber,
                 description
         );
 
         op.assignTransaction(transactionReference);
 
         operationRepository.store(op);
+        eventPublisher.publishEvent(new OperationCreatedEvent(op.operationId()));
 
         return op.operationId();
     }
@@ -167,7 +169,7 @@ public class AccountingServiceImpl implements AccountingService {
         LocalDate to = dates.stream().max(LocalDate::compareTo).orElse(operation.date());
         log.debug("Search holds from {} to {}", from, to);
 
-        List<HoldOperation> holds = holdOperationRepository.findByAccountAndDate(operation.account().accountNumber(), from, to);
+        List<HoldOperation> holds = holdOperationRepository.findByAccountAndDate(operation.account(), from, to);
         log.debug("There are {} holds found", holds.size());
 
         for (HoldOperation hold : holds) {
@@ -200,7 +202,7 @@ public class AccountingServiceImpl implements AccountingService {
 
         op = holdOperationRepository.find(accountNumber, date, amount, type, description);
         if (op == null) {
-            op = new HoldOperation(HoldId.nextId(), account, date, amount, type, description, null, null);
+            op = new HoldOperation(HoldId.nextId(), accountNumber, date, amount, type, description, null, null);
             holdOperationRepository.store(op);
         }
 

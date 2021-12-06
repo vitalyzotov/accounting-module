@@ -56,15 +56,15 @@ public class DealsController {
     @PostMapping
     public DealDTO createDeal(@RequestBody DealDTO deal) throws CategoryNotFoundException {
         return dealsFacade.createDeal(deal.getDate(), deal.getAmount().getAmount(), deal.getAmount().getCurrency(),
-                deal.getDescription(), deal.getComment(), deal.getCategory(), deal.getReceipts(), deal.getOperations());
+                deal.getDescription(), deal.getComment(), deal.getCategory(), deal.getReceipts(), deal.getOperations(), deal.getPurchases());
     }
 
     @PutMapping("{dealId}")
-    public DealDTO modifyDeal(@PathVariable String dealId, @RequestBody DealDTO deal
+    public void modifyDeal(@PathVariable String dealId, @RequestBody DealDTO deal
     ) throws DealNotFoundException, CategoryNotFoundException {
         deal.setDealId(dealId);
-        return dealsFacade.modifyDeal(deal.getDealId(), deal.getDate(),
+        dealsFacade.modifyDeal(deal.getDealId(), deal.getDate(),
                 deal.getAmount().getAmount(), deal.getAmount().getCurrency(),
-                deal.getDescription(), deal.getComment(), deal.getCategory(), deal.getReceipts(), deal.getOperations());
+                deal.getDescription(), deal.getComment(), deal.getCategory(), deal.getReceipts(), deal.getOperations(), deal.getPurchases());
     }
 }

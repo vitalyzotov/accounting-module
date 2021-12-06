@@ -225,13 +225,14 @@ public class AccountingFacadeImpl implements AccountingFacade {
         final Money money = new Money(amount, Currency.getInstance(currency));
         final TransactionReference txRef = new TransactionReference(transactionReference);
 
-        final BudgetCategory category = categoryId == null ? null : budgetCategoryRepository.find(new BudgetCategoryId(categoryId));
+        final BudgetCategoryId id = new BudgetCategoryId(categoryId);
+        final BudgetCategory category = categoryId == null ? null : budgetCategoryRepository.find(id);
         if (categoryId != null && category == null) {
             throw new CategoryNotFoundException();
         }
 
         final OperationId operationId = new OperationId(date, type, accountNumber, money, txRef);
-        final Operation operation = new Operation(operationId, txRef, authorizationDate, date, money, type, account, description, category, comment);
+        final Operation operation = new Operation(operationId, txRef, authorizationDate, date, money, type, accountNumber, description, id, comment);
         operationRepository.store(operation);
 
         return OperationDTOAssembler.toDTO(operation);
@@ -256,12 +257,13 @@ public class AccountingFacadeImpl implements AccountingFacade {
             throw new OperationNotFoundException();
         }
 
-        BudgetCategory category = budgetCategoryRepository.find(new BudgetCategoryId(categoryId));
+        final BudgetCategoryId id = new BudgetCategoryId(categoryId);
+        BudgetCategory category = budgetCategoryRepository.find(id);
         if (category == null) {
             throw new CategoryNotFoundException();
         }
 
-        operation.assignCategory(category);
+        operation.assignCategory(id);
 
         operationRepository.store(operation);
         return OperationDTOAssembler.toDTO(operation);

@@ -19,6 +19,7 @@ import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.cashreceipt.domain.model.CheckId;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -80,9 +81,10 @@ public class DealRepositoryJpaTest {
         Deal deal = new Deal(
                 DealId.nextId(), LocalDate.of(2021, 11, 21), Money.kopecks(123456),
                 "description", "comment",
-                budgetCategoryRepository.find(new BudgetCategoryId(781381038049753674L)),
+                new BudgetCategoryId(781381038049753674L),
                 Collections.singleton(new CheckId(CHECK_ID_2)),
-                Collections.singleton(new OperationId("long-description"))
+                Collections.singleton(new OperationId("long-description")),
+                Collections.singletonList(new PurchaseId("purchase-1"))
         );
         dealRepository.store(deal);
     }

@@ -21,11 +21,13 @@ public class DealDTO {
 
     private List<String> operations;
 
+    private List<String> purchases;
+
     public DealDTO() {
     }
 
     public DealDTO(String dealId, LocalDate date, MoneyDTO amount, String description, String comment,
-                   Long category, List<String> receipts, List<String> operations) {
+                   Long category, List<String> receipts, List<String> operations, List<String> purchases) {
         this.dealId = dealId;
         this.date = date;
         this.amount = amount;
@@ -34,6 +36,7 @@ public class DealDTO {
         this.category = category;
         this.receipts = receipts;
         this.operations = operations;
+        this.purchases = purchases;
     }
 
     public String getDealId() {
@@ -98,5 +101,13 @@ public class DealDTO {
 
     public void setOperations(List<String> operations) {
         this.operations = operations;
+    }
+
+    public List<String> getPurchases() {
+        return purchases;
+    }
+
+    public void setPurchases(List<String> purchases) {
+        this.purchases = purchases;
     }
 }

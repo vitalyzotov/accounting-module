@@ -16,6 +16,7 @@ import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.cashreceipt.domain.model.CheckId;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -37,17 +38,19 @@ public class DealsFacadeImpl implements DealsFacade {
     @Override
     @Transactional(value = "accounting-tx")
     public DealDTO createDeal(LocalDate date, long amount, String currency, String description, String comment,
-                              Long categoryId, Collection<String> receipts, Collection<String> operations
+                              Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases
     ) throws CategoryNotFoundException {
+        final BudgetCategoryId budgetCategoryId = new BudgetCategoryId(categoryId);
         final BudgetCategory category = categoryId == null ? null :
-                budgetCategoryRepository.find(new BudgetCategoryId(categoryId));
+                budgetCategoryRepository.find(budgetCategoryId);
         if (categoryId != null && category == null) throw new CategoryNotFoundException();
 
         Deal deal = new Deal(DealId.nextId(), date,
                 Money.ofRaw(amount, Currency.getInstance(currency)),
-                description, comment, category,
+                description, comment, budgetCategoryId,
                 receipts.stream().map(CheckId::new).collect(Collectors.toSet()),
-                operations.stream().map(OperationId::new).collect(Collectors.toSet())
+                operations.stream().map(OperationId::new).collect(Collectors.toSet()),
+                purchases.stream().map(PurchaseId::new).collect(Collectors.toList())
         );
 
         dealRepository.store(deal);
@@ -58,22 +61,24 @@ public class DealsFacadeImpl implements DealsFacade {
     @Transactional(value = "accounting-tx")
     public DealDTO modifyDeal(String dealId, LocalDate date, long amount, String currency,
                               String description, String comment, Long categoryId,
-                              Collection<String> receipts, Collection<String> operations
+                              Collection<String> receipts, Collection<String> operations, Collection<String> purchases
     ) throws DealNotFoundException, CategoryNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
 
+        final BudgetCategoryId budgetCategoryId = new BudgetCategoryId(categoryId);
         final BudgetCategory category = categoryId == null ? null :
-                budgetCategoryRepository.find(new BudgetCategoryId(categoryId));
+                budgetCategoryRepository.find(budgetCategoryId);
         if (categoryId != null && category == null) throw new CategoryNotFoundException();
 
         deal.setDate(date);
         deal.setAmount(Money.ofRaw(amount, Currency.getInstance(currency)));
         deal.setDescription(description);
         deal.setComment(comment);
-        deal.assignCategory(category);
+        deal.assignCategory(budgetCategoryId);
         deal.setReceipts(receipts.stream().map(CheckId::new).collect(Collectors.toSet()));
         deal.setOperations(operations.stream().map(OperationId::new).collect(Collectors.toSet()));
+        deal.setPurchases(purchases.stream().map(PurchaseId::new).collect(Collectors.toList()));
 
         dealRepository.store(deal);
         return DealDTOAssembler.toDTO(deal);

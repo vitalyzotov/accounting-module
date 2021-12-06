@@ -57,10 +57,10 @@ public class OperationRepositoryJpaTest {
         assertThat(operation).isNotNull();
         assertThat(operation.operationId()).isNotNull().isEqualTo(operationId);
         assertThat(operation.date()).isEqualTo(LocalDate.of(2017, 7, 10));
-        assertThat(operation.category()).isEqualTo(new BudgetCategory(new BudgetCategoryId(781381038049753674L), "Другое название категории"));
+        assertThat(operation.category()).isEqualTo(new BudgetCategoryId(781381038049753674L));
         assertThat(operation.amount()).isEqualTo(Money.rubles(10d));
         assertThat(operation.type()).isEqualTo(OperationType.WITHDRAW);
-        assertThat(operation.account()).isEqualTo(new Account(new AccountNumber("40817810108290123456"), PersonId.nextId()));
+        assertThat(operation.account()).isEqualTo(new AccountNumber("40817810108290123456"));
     }
 
     @Test
@@ -120,9 +120,9 @@ public class OperationRepositoryJpaTest {
                 LocalDate.of(2018, 7, 10),
                 Money.rubles(10),
                 OperationType.WITHDRAW,
-                accountRepository.find(new AccountNumber("40817810108290123456")),
+                new AccountNumber("40817810108290123456"),
                 new String(new char[512]).replace('\0', 'T'), // 512 chars length description
-                categoryRepository.find("Прочие расходы")
+                new BudgetCategoryId(781381038049753674L)
         );
         repository.store(operation);
     }
@@ -130,8 +130,7 @@ public class OperationRepositoryJpaTest {
     @Test
     public void assignCategory() {
         Operation operation = repository.find(new OperationId("tx-operation-1"));
-        BudgetCategory category = categoryRepository.find(new BudgetCategoryId(781381038049753674L));
-        operation.assignCategory(category);
+        operation.assignCategory(new BudgetCategoryId(781381038049753674L));
         repository.store(operation);
     }
 
@@ -141,6 +140,12 @@ public class OperationRepositoryJpaTest {
             BudgetCategory category = categoryRepository.find(new BudgetCategoryId(781381038049753674L));
             categoryRepository.delete(category);
         }).isInstanceOf(PersistenceException.class);
+    }
+
+    @Test
+    public void findWithoutDeals() {
+        final List<Operation> operations = repository.findWithoutDeals();
+        assertThat(operations).isNotEmpty();
     }
 
 }

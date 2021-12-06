@@ -40,4 +40,5 @@ public interface OperationRepository {
 
     void delete(Operation operation);
 
+    List<Operation> findWithoutDeals();
 }
