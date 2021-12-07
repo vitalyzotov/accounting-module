@@ -3,6 +3,7 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
+import ru.vzotov.banking.domain.model.OperationId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -18,8 +19,8 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     @Override
     public Deal find(DealId dealId) {
         try {
-            return em.createQuery("from Deal where dealId.value = :dealId", Deal.class)
-                    .setParameter("dealId", dealId.value())
+            return em.createQuery("from Deal where dealId = :dealId", Deal.class)
+                    .setParameter("dealId", dealId)
                     .getSingleResult();
         } catch (NoResultException ex) {
             return null;
@@ -32,6 +33,17 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
                 .getResultList();
+    }
+
+    @Override
+    public Deal findByOperation(OperationId operation) {
+        try {
+            return em.createQuery("from Deal where :operationId member of operations", Deal.class)
+                    .setParameter("operationId", operation)
+                    .getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override

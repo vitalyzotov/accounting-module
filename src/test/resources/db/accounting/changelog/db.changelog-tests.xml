@@ -78,6 +78,9 @@
 
             INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
             VALUES ('deal-operation-3', '2021-11-21', NULL, 5000, 'RUR', '-', '40817810108290123456', 'покупка в магазине 3', NULL);
+
+            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
+            VALUES ('deal-operation-4', '2021-11-21', NULL, 6000, 'RUR', '-', '40817810108290123456', 'покупка в магазине 4', NULL);
         </sql>
     </changeSet>
 

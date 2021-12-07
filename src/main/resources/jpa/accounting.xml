@@ -4,6 +4,14 @@
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
 
+    <named-native-query name="operations-without-deals" result-set-mapping="OperationMapping" result-class="ru.vzotov.banking.domain.model.Operation">
+        <query>SELECT op.* FROM OPERATION_ op WHERE NOT EXISTS (SELECT 1 FROM DEAL_OPERATIONS dop WHERE dop.OPERATION_ID=op.ID)</query>
+    </named-native-query>
+
+    <sql-result-set-mapping name="OperationMapping">
+        <entity-result entity-class="ru.vzotov.banking.domain.model.Operation"/>
+    </sql-result-set-mapping>
+
     <entity name="Deal" class="ru.vzotov.accounting.domain.model.Deal" access="FIELD">
         <table name="DEAL_"/>
         <attributes>

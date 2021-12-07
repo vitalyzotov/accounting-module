@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.accounting.config.DatasourceConfig;
-import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
@@ -41,9 +40,6 @@ public class DealRepositoryJpaTest {
     @Autowired
     private DealRepository dealRepository;
 
-    @Autowired
-    private BudgetCategoryRepository budgetCategoryRepository;
-
     @Test
     public void find() {
         Deal deal = dealRepository.find(new DealId("deal-1"));
@@ -53,6 +49,21 @@ public class DealRepositoryJpaTest {
         ;
         assertThat(deal.operations()).contains(new OperationId("test-operation-1"));
         assertThat(deal.receipts()).contains(new CheckId(CHECK_ID_1));
+    }
+
+    @Test
+    public void findByOperation() {
+        final OperationId operation = new OperationId("test-operation-1");
+        Deal deal = dealRepository.findByOperation(operation);
+        assertThat(deal).isNotNull();
+        assertThat(deal.operations()).contains(operation);
+    }
+
+    @Test
+    public void findNullByOperation() {
+        final OperationId operation = new OperationId("non-existing-operation-1");
+        Deal deal = dealRepository.findByOperation(operation);
+        assertThat(deal).isNull();
     }
 
     @Test
@@ -83,7 +94,7 @@ public class DealRepositoryJpaTest {
                 "description", "comment",
                 new BudgetCategoryId(781381038049753674L),
                 Collections.singleton(new CheckId(CHECK_ID_2)),
-                Collections.singleton(new OperationId("long-description")),
+                Collections.singleton(new OperationId("deal-operation-4")),
                 Collections.singletonList(new PurchaseId("purchase-1"))
         );
         dealRepository.store(deal);

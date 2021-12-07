@@ -77,7 +77,7 @@ public class OperationRepositoryJpa extends JpaRepository implements OperationRe
 
     @Override
     public List<Operation> findWithoutDeals() {
-        return em.createQuery("select distinct op from Operation op, Deal deals where op.operationId not member of deals.operations", Operation.class)
+        return em.createNamedQuery("operations-without-deals", Operation.class)
                 .getResultList();
     }
 }

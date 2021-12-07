@@ -22,4 +22,9 @@
         <addPrimaryKey tableName="DEAL_PURCHASES" columnNames="DEAL_ID, PURCHASE_ORDER"/>
     </changeSet>
 
+    <changeSet id="67" author="vzotov">
+        <addUniqueConstraint tableName="DEAL_OPERATIONS" columnNames="OPERATION_ID"/>
+        <addUniqueConstraint tableName="DEAL_RECEIPTS" columnNames="RECEIPT_ID"/>
+        <addUniqueConstraint tableName="DEAL_PURCHASES" columnNames="PURCHASE_ID"/>
+    </changeSet>
 </databaseChangeLog>

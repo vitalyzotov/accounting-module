@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.domain.model;
 
+import ru.vzotov.banking.domain.model.OperationId;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -7,6 +9,8 @@ public interface DealRepository {
     Deal find(DealId dealId);
 
     List<Deal> findByDate(LocalDate fromDate, LocalDate toDate);
+
+    Deal findByOperation(OperationId operation);
 
     void store(Deal deal);
 

@@ -1,5 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
+import org.springframework.context.ApplicationEventPublisher;
 import ru.vzotov.accounting.application.AccountingService;
 import ru.vzotov.accounting.domain.model.AccountRepository;
 import ru.vzotov.accounting.domain.model.BankRepository;
@@ -46,10 +47,12 @@ import ru.vzotov.banking.domain.model.CardNumber;
 import ru.vzotov.banking.domain.model.HoldId;
 import ru.vzotov.banking.domain.model.HoldOperation;
 import ru.vzotov.banking.domain.model.Operation;
+import ru.vzotov.banking.domain.model.OperationCreatedEvent;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.OperationType;
 import ru.vzotov.banking.domain.model.PersonId;
 import ru.vzotov.banking.domain.model.Transaction;
+import ru.vzotov.banking.domain.model.TransactionCreatedEvent;
 import ru.vzotov.banking.domain.model.TransactionReference;
 import ru.vzotov.domain.model.Money;
 
@@ -90,6 +93,9 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
@@ -234,6 +240,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
         final OperationId operationId = new OperationId(date, type, accountNumber, money, txRef);
         final Operation operation = new Operation(operationId, txRef, authorizationDate, date, money, type, accountNumber, description, id, comment);
         operationRepository.store(operation);
+        eventPublisher.publishEvent(new OperationCreatedEvent(operationId));
 
         return OperationDTOAssembler.toDTO(operation);
     }
@@ -418,6 +425,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
         Transaction transaction = new Transaction(primaryId, secondaryId);
         transactionRepository.store(transaction);
+        eventPublisher.publishEvent(new TransactionCreatedEvent(primaryId, secondaryId));
 
         return TransactionDTOAssembler.toDTO(transaction);
     }
