@@ -1,0 +1,147 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+        <createTable tableName="ACCOUNT_">
+            <column name="ACCOUNT_NUMBER" type="VARCHAR(20)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+        <createTable tableName="BUDGET_CATEGORY_">
+            <column name="ID" type="BIGINT(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+        <createTable tableName="OPERATION_">
+            <column name="ID" type="VARCHAR(64)" remarks="ИД операции">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="DATE" type="DATE" remarks="Дата операции">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CATEGORY_ID" type="BIGINT(20)" remarks="Категория операции">
+                <constraints nullable="true" foreignKeyName="FK_OPERATION_CATEGORY" references="`BUDGET_CATEGORY_`(ID)"/>
+            </column>
+            <column name="AMOUNT" type="BIGINT(20)" remarks="Сумма операции">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CURRENCY" type="VARCHAR(3)" remarks="Валюта операции">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OP_TYPE" type="VARCHAR(1)" remarks="Тип операции">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACCOUNT_ID" type="VARCHAR(20)" remarks="Счет">
+                <constraints nullable="false" foreignKeyName="FK_OPERATION_ACCOUNT" references="`ACCOUNT_`(ACCOUNT_NUMBER)"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)" remarks="Описание">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMMENT" type="VARCHAR(255)" remarks="Комментарий">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+        <addColumn tableName="OPERATION_">
+            <column name="TRANSACTION_REF" type="VARCHAR(20)" remarks="Референс проводки">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="5" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+        <addColumn tableName="OPERATION_">
+            <column name="AUTHORIZATION_DATE" type="DATE" remarks="Дата авторизации">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="6" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+        <createTable tableName="CARD_OPERATION_">
+            <column name="ID" type="VARCHAR(64)" remarks="ИД операции">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CARD_NUMBER" type="VARCHAR(20)" remarks="Номер карты">
+                <constraints nullable="false"/>
+            </column>
+            <column name="POS_ID" type="VARCHAR(8)" remarks="ИД POS терминала">
+                <constraints nullable="false"/>
+            </column>
+            <column name="POS_COUNTRY" type="VARCHAR(3)" remarks="Страна">
+                <constraints nullable="false"/>
+            </column>
+            <column name="POS_CITY" type="VARCHAR(50)" remarks="Город">
+                <constraints nullable="true"/>
+            </column>
+            <column name="POS_STREET" type="VARCHAR(50)" remarks="Улица">
+                <constraints nullable="true"/>
+            </column>
+            <column name="POS_MERCHANT" type="VARCHAR(50)" remarks="Торговая организация">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AUTHORIZATION_DATE" type="DATE" remarks="Дата авторизации">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PURCHASE_DATE" type="DATE" remarks="Дата авторизации">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AMOUNT" type="BIGINT(20)" remarks="Сумма операции">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CURRENCY" type="VARCHAR(3)" remarks="Валюта операции">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXTRA_INFO" type="VARCHAR(50)" remarks="Доп. информация">
+                <constraints nullable="true"/>
+            </column>
+            <column name="MCC" type="VARCHAR(4)" remarks="Код MCC">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+        <addForeignKeyConstraint baseTableName="CARD_OPERATION_" baseColumnNames="ID" constraintName="FK_CARD_OPERATION"
+                                 referencedTableName="OPERATION_"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="8" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="CARD_OPERATION_" foreignKeyName="FK_CARD_OPERATION"/>
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="CARD_OPERATION_" constraintName="FK_CARD_OPERATION"/>
+    </changeSet>
+
+    <changeSet id="9" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+        <modifyDataType columnName="ID"
+                        newDataType="VARCHAR(128)"
+                        tableName="CARD_OPERATION_"/>
+        <addNotNullConstraint tableName="CARD_OPERATION_" columnName="ID" columnDataType="VARCHAR(128)"/>
+
+        <modifyDataType columnName="ID"
+                        newDataType="VARCHAR(128)"
+                        tableName="OPERATION_"/>
+        <addNotNullConstraint tableName="OPERATION_" columnName="ID" columnDataType="VARCHAR(128)"/>
+
+        <addForeignKeyConstraint baseTableName="CARD_OPERATION_" baseColumnNames="ID" constraintName="FK_CARD_OPERATION"
+                                 referencedTableName="OPERATION_"
+                                 referencedColumnNames="ID" onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

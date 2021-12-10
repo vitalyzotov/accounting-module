@@ -1,0 +1,80 @@
+{
+  "status": 2,
+  "id": "600253b763fb7d69f69be2e4",
+  "kind": "kkt",
+  "createdAt": "2021-01-16T05:47:44+03:00",
+  "statusDescription": {},
+  "qr": "t=20201218T1707&s=128.59&fn=9282440300687283&i=6100&fp=4239562501&n=1",
+  "operation":    {
+    "date": "2020-12-17T20:07",
+    "type": 1,
+    "sum": 12859
+  },
+  "process": [   {
+    "time": "2021-01-16T02:47:19+00:00",
+    "result": 2
+  }],
+  "query":    {
+    "operationType": 1,
+    "sum": 12859,
+    "documentId": 6100,
+    "fsId": "9282440300687283",
+    "fiscalSign": "4239562501",
+    "date": "2020-12-18T17:07"
+  },
+  "ticket": {"document": {"receipt":    {
+    "dateTime": 1608379620,
+    "cashTotalSum": 0,
+    "code": 3,
+    "creditSum": 0,
+    "ecashTotalSum": 12859,
+    "fiscalDocumentFormatVer": 2,
+    "fiscalDocumentNumber": 6100,
+    "fiscalDriveNumber": "9282440300687283",
+    "fiscalSign": 4239562501,
+    "fnsUrl": "www.nalog.ru",
+    "items":       [
+      {
+        "name": "Батончик Особый нарез 300г п/уп(Сара",
+        "nds": 2,
+        "ndsSum": 134,
+        "paymentType": 4,
+        "price": 1479,
+        "quantity": 1,
+        "sum": 1479
+      },
+      {
+        "name": "ДОБРЫЙ Сок яблочный осветлённый 1л(М",
+        "nds": 2,
+        "ndsSum": 1035,
+        "paymentType": 4,
+        "price": 5690,
+        "quantity": 2,
+        "sum": 11380
+      }
+    ],
+    "kktRegId": "0000438344039321",
+    "nds10": 1169,
+    "operationType": 1,
+    "operator": "Товаровед магазина Парпалыгин",
+    "prepaidSum": 0,
+    "provisionSum": 0,
+    "requestNumber": 16,
+    "retailPlace": "Магазин  Магнит  Агратин",
+    "retailPlaceAddress": "410052, Саратовская обл, Саратов г, Лунная ул, дом № 43",
+    "shiftNumber": 190,
+    "totalSum": 12859,
+    "user": "Акционерное общество \"Тандер\"",
+    "userInn": "2310031475"
+  }}},
+  "organization":    {
+    "name": "Акционерное общество \"Тандер\"",
+    "inn": "2310031475",
+    "logo": "/static/logo/23/2310031475.png"
+  },
+  "seller":    {
+    "name": "Акционерное общество \"Тандер\"",
+    "inn": "2310031475",
+    "logo": "/static/logo/23/2310031475.png"
+  }
+}

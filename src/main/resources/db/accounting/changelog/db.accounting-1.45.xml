@@ -1,0 +1,42 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="55" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.45.xml">
+        <createTable tableName="BUDGET_PLAN">
+            <column name="ID" type="BIGINT(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="BP_UID" type="VARCHAR(255)" remarks="Идентификатор">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="BP_DIRECTION" type="VARCHAR(1)" remarks="Тип">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BP_DATE" type="DATE" remarks="Дата">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RULE_ID" type="BIGINT(20)" remarks="Правило">
+                <constraints nullable="false" foreignKeyName="FK_BP_RULE" references="`BUDGET_RULE`(ID)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="SOURCE_ACCOUNT" type="VARCHAR(20)" remarks="Счет-источник">
+                <constraints nullable="true" foreignKeyName="FK_BP_SRC_ACCOUNT" references="`ACCOUNT_`(ACCOUNT_NUMBER)"/>
+            </column>
+            <column name="TARGET_ACCOUNT" type="VARCHAR(20)" remarks="Счет-получатель">
+                <constraints nullable="true" foreignKeyName="FK_BP_DST_ACCOUNT" references="`ACCOUNT_`(ACCOUNT_NUMBER)"/>
+            </column>
+            <column name="CATEGORY_ID" type="BIGINT(20)" remarks="Категория">
+                <constraints nullable="true" foreignKeyName="FK_BP_CATEGORY" references="BUDGET_CATEGORY_(ID)"/>
+            </column>
+            <column name="AMOUNT" type="BIGINT(20)" remarks="Сумма">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CURRENCY" type="VARCHAR(3)" remarks="Валюта">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

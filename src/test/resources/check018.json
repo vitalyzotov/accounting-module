@@ -1,0 +1,40 @@
+{
+  "document": {
+    "receipt": {
+      "taxationType": 1,
+      "fiscalSign": 1542885055,
+      "items": [
+        {
+          "nds18": 191650,
+          "name": "Видеокарта PCI-E Palit GeForce GTX 1050 Ti MONSTER 4096MB 128bit GDDR5 [NE5105T018G1-1070S] DVI HDMI DP (Гарантия - 36 мес)",
+          "price": 1149900,
+          "quantity": 1,
+          "sum": 1149900
+        },
+        {
+          "nds18": 0,
+          "name": "Доставка товара клиенту (Гарантия - 0 мес)",
+          "price": 0,
+          "quantity": 1,
+          "sum": 0
+        }
+      ],
+      "ecashTotalSum": 1149900,
+      "requestNumber": 2,
+      "fiscalDocumentNumber": 954,
+      "nds18": 191650,
+      "totalSum": 1149900,
+      "kktRegId": "0002695299035542    ",
+      "shiftNumber": 185,
+      "cashTotalSum": 0,
+      "retailAddress": "410008, Саратов, г, Моторная, ул, д. 6",
+      "userInn": "2540167061",
+      "operationType": 1,
+      "dateTime": "2019-04-10T16:57:00",
+      "receiptCode": 3,
+      "fiscalDriveNumber": "8712000101095662",
+      "operator": "КАССИР ГАЙДАМАК Ю.О.",
+      "rawData": "//8AHKUDARCZhxIAAQEJVmIAA7r0za3PUQADugACAhgDABQCEQQQADg3MTIwMDAxMDEwOTU2NjINBBQAMDAwMjY5NTI5OTAzNTU0MiAgICD6AwwAMjU0MDE2NzA2MSAgEAQEALoDAAD0AwQAXCCuXDUEBgAxBFv2jr8OBAQAuQAAABIEBAACAAAAHgQBAAH8AwMAzIsRuQQBAAL9AxUAioCRkYiQIIOAiYSAjICKIJ4uII4uJAQMAHd3dy5uYWxvZy5ydSMEqwAGBHsAgqikpa6qoODioCBQQ0ktRSBQYWxpdCBHZUZvcmNlIEdUWCAxMDUwIFRpIE1PTlNURVIgNDA5Nk1CIDEyOGJpdCBHRERSNSBbTkU1MTA1VDAxOEcxLTEwNzBTXSBEVkkgSERNSSBEUCAog6DgoK3iqO8gLSAzNiCspeEpNwQDAMyLEf8DBAAGQEIPEwQDAMyLEa8EAQABsAQDAKLsAr4EAQAEvAQBAAEjBFQABgQqAISu4eKgoqqgIOKuoqDgoCCqq6ilreLjICiDoOCgreKo7yAtIDAgrKXhKTcEAQAA/wMEAAZAQg8TBAEAAK8EAQABsAQBAAC+BAEABLwEAQAEHwQBAAGzBAwANjQ1MzIwMjc5NDcyTgQDAKLsAgcEAQAAOQQDAMyLEb8EAQAAwAQBAADBBAEAAPEDJgA0MTAwMDgsIJGg4KDirqIsIKMsIIyu4q7graDvLCDjqywgpC4gNqMECACKoqDg4qjgoIEGGocw5OCm"
+    }
+  }
+}

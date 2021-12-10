@@ -6,6 +6,7 @@
          https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
     <include file="db.changelog-master.xml" relativeToChangelogFile="true"/>
+    <include file="../../cashreceipt/changelog/db.changelog-tests.xml" relativeToChangelogFile="true"/>
 
     <changeSet id="persons" author="vzotov">
         <sql>
@@ -27,6 +28,9 @@
 
             INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER, CURRENCY, BANK_ID)
             VALUES ('40817810000016123456', 'Тинькофф', 'vzotov', 'RUR', '044525974');
+
+            INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER, CURRENCY, BANK_ID)
+            VALUES ('40817810000016123457', 'Тинькофф2', 'vzotov', 'RUR', '044525974');
         </sql>
     </changeSet>
 
@@ -164,8 +168,8 @@
     <changeSet id="test11" author="vzotov">
         <sql>
             INSERT INTO BUDGET (BUDGET_UID, NAME, LOCALE_, CURRENCY) VALUES ('test-budget-1', 'default1', 'US', 'RUR');
-            INSERT INTO BUDGET (BUDGET_UID, NAME, LOCALE_, CURRENCY) VALUES ('removed-budget-2', 'default2', 'US',
-            'RUR');
+            INSERT INTO BUDGET (BUDGET_UID, NAME, LOCALE_, CURRENCY) VALUES ('removed-budget-2', 'default2', 'US', 'RUR');
+            INSERT INTO BUDGET (BUDGET_UID, NAME, LOCALE_, CURRENCY) VALUES ('test-budget-2', 'default3', 'US', 'RUR');
         </sql>
     </changeSet>
 
@@ -181,6 +185,14 @@
 
             INSERT INTO BUDGET_RULE (RULE_UID, RULE_TYPE, CATEGORY_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, NAME, RECURRENCE, AMOUNT, CURRENCY, CALC_EXPRESSION, BUDGET_ID) VALUES
             ('005', '-', NULL, NULL, NULL, 'Гипермаркет', 'W2020-01-01(1)[1]', 150000, 'RUR', NULL, 2);
+
+            INSERT INTO BUDGET_RULE (RULE_UID, RULE_TYPE, CATEGORY_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, NAME, RECURRENCE, AMOUNT, CURRENCY, CALC_EXPRESSION, BUDGET_ID) VALUES
+            ('011', '+', NULL, NULL, '40817810108290123456', 'Заработная плата', 'M2020-01-01(1)[7]', 2800000, 'RUR', 'value.amount().doubleValue() * (calendar.workdaysBetween(prevMonth.atDay(16), prevMonth.atEndOfMonth()) /
+            calendar.workdaysBetween(prevMonth.atDay(1), prevMonth.atEndOfMonth()));', 3),
+            ('012', '+', NULL, NULL, '40817810108290123456', 'Аванс', 'M2020-01-01(1)[22]', 2800000, 'RUR', 'value.amount().doubleValue() * (calendar.workdaysBetween(month.atDay(1), month.atDay(16)) / calendar.workdaysBetween(month.atDay(1),
+            month.atEndOfMonth()));', 3),
+            ('013', '-', NULL, '40817810108290123456', NULL, 'Гипермаркет', 'W2020-01-01(1)[1]', 150000, 'RUR', NULL, 3),
+            ('014', '-', 781381038049753674, '40817810000016123456', NULL, 'Покупка чего-то важного', 'T(1)2020-03-05[1]', 200000, 'RUR', NULL, 3);
         </sql>
     </changeSet>
 
@@ -188,7 +200,10 @@
         <sql>
             INSERT INTO BUDGET_PLAN (CATEGORY_ID, BP_DATE, BP_DIRECTION, BP_UID, RULE_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, AMOUNT, CURRENCY) VALUES
             (NULL, '2020-02-20', '-', 'BBI-000-000-001', 3, '40817810108290123456', NULL, 150000, 'RUR'),
-            (NULL, '2020-03-20', '-', 'BBI-DEL-000-001', 3, '40817810108290123456', NULL, 150000, 'RUR');
+            (NULL, '2020-03-20', '-', 'BBI-DEL-000-001', 3, '40817810108290123456', NULL, 150000, 'RUR'),
+            (NULL, '2020-02-20', '-', 'BBI-000-000-011', 8, '40817810108290123456', NULL, 150000, 'RUR'),
+            (NULL, '2020-03-20', '-', 'BBI-DEL-000-011', 8, '40817810108290123456', NULL, 150000, 'RUR')
+            ;
         </sql>
     </changeSet>
 
@@ -196,6 +211,7 @@
         <sql>
             INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-1', '2017-07-10', -1000, 'RUR');
             INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-for-remove', '2017-07-11', -2000, 'RUR');
+            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-for-remove-2', '2017-07-11', -2000, 'RUR');
             INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-for-modification', '2021-11-21', -4000, 'RUR');
         </sql>
     </changeSet>

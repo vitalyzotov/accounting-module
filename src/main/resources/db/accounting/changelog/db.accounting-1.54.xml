@@ -1,0 +1,59 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="65" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.54.xml">
+        <createTable tableName="DEAL_PURCHASES">
+            <column name="DEAL_ID" type="BIGINT(20)">
+                <constraints nullable="false" foreignKeyName="FK_DEAL_PURCHASES_DEAL" references="DEAL_(ID)"/>
+            </column>
+            <column name="PURCHASE_ID" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PURCHASE_ORDER" type="INTEGER(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="66" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.54.xml">
+        <addUniqueConstraint constraintName="UNQ_DEAL_PURCHASES" tableName="DEAL_PURCHASES" columnNames="DEAL_ID, PURCHASE_ID"/>
+        <addPrimaryKey tableName="DEAL_PURCHASES" columnNames="DEAL_ID, PURCHASE_ORDER"/>
+    </changeSet>
+
+    <changeSet id="67" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.54.xml">
+        <addUniqueConstraint tableName="DEAL_OPERATIONS" columnNames="OPERATION_ID"/>
+        <addUniqueConstraint tableName="DEAL_RECEIPTS" columnNames="RECEIPT_ID"/>
+        <addUniqueConstraint tableName="DEAL_PURCHASES" columnNames="PURCHASE_ID"/>
+    </changeSet>
+
+    <changeSet id="e1bdfea0-2e82-4796-9826-1f1b4e5994f9" author="vzotov" logicalFilePath="path-independent">
+        <addColumn tableName="CHECK_ITEM">
+            <column name="PRICE_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN PRICE IS NULL THEN NULL ELSE 'RUR' END"/>
+            <column name="SUM_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN SUM IS NULL THEN NULL ELSE 'RUR' END"/>
+        </addColumn>
+
+        <addColumn tableName="CHECK_">
+            <column name="MARKUP_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN MARKUP IS NULL THEN NULL ELSE 'RUR' END"/>
+            <column name="MARKUP_S_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN MARKUP_SUM IS NULL THEN NULL ELSE 'RUR' END"/>
+            <column name="DSCNT_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN DISCOUNT IS NULL THEN NULL ELSE 'RUR' END"/>
+            <column name="DSCNT_S_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN DISCOUNT_SUM IS NULL THEN NULL ELSE 'RUR' END"/>
+            <column name="SUM_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN TOTAL_SUM IS NULL THEN NULL ELSE 'RUR' END"/>
+            <column name="CASH_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN CASH IS NULL THEN NULL ELSE 'RUR' END"/>
+            <column name="ECASH_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN ECASH IS NULL THEN NULL ELSE 'RUR' END"/>
+        </addColumn>
+
+        <addColumn tableName="QR_CODE">
+            <column name="SUM_CURRENCY" type="VARCHAR(3)" defaultValue="RUR">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="ef3aa22c-c947-4240-85a8-293d2952db05" author="vzotov" logicalFilePath="path-independent">
+        <addColumn tableName="PURCHASE_">
+            <column name="PRICE_CUR" type="VARCHAR(3)" valueComputed="CASE WHEN PRICE IS NULL THEN NULL ELSE 'RUR' END"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,51 @@
+{
+  "document": {
+    "receipt": {
+      "fiscalDriveNumber": "8710000101073492",
+      "fiscalDocumentNumber": 168990,
+      "buyerAddress": "",
+      "userInn": "6453073167",
+      "taxationType": 1,
+      "kktRegId": "0000915582054058",
+      "operationType": 1,
+      "rawData": "AwC/AREEEAA4NzEwMDAwMTAxMDczNDkyDQQUADAwMDA5MTU1ODIwNTQwNTggICAg+gMMADY0NTMwNzMxNjcgIBAEBAAelAIA9AMEAJzfKFs1BAYAMQR9gX9oDgQEALwCAAASBAQAQAAAAB4EAQAB/AMDAETYASMEOQAGBBwAgq6koCCsqK2l4CCBruCmrqyoIDAsNzUgqyoqKjcEAgBWF/8DAwAD6AMTBAIAVhdOBAIAjwMjBEcABgQqAJGoo6DgpeLrIFdpbnN0b24gWHN0eWxlIEJsdWUgjJCWIDEwMC0xMTUg4DcEAgDkLP8DAwADoA8TBAIAkLNOBAIAZBsjBEgABgQqAJGoo6DgpeLrIFdpbnN0b24gWHN0eWxlIEJsdWUgjJCWIDEwMC0xMTUg4DcEAgDlLP8DAwADcBcTBAMAXg0BTgQCABcpBwQBAAA5BAMARNgB/QMmAI+uq6WmoKWioCCSoKyg4KAggKulquGgraTgrqKtoCAvMjU4MzM4HwQBAAEYBDQAjoGZhZGSgo4gkSCOg5CAjYiXhY2NjokgjpKChZKRkoKFjY2OkZKcniAigo6Lg4CSjpCDIk4EAgAKSA==",
+      "user": "ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ \"ВОЛГАТОРГ\"",
+      "retailPlaceAddress": "",
+      "nds18": 18442,
+      "totalSum": 120900,
+      "fiscalSign": 2105638760,
+      "items": [
+        {
+          "quantity": 1,
+          "price": 5974,
+          "sum": 5974,
+          "name": "Вода минер Боржоми 0,75 л***",
+          "nds18": 911
+        },
+        {
+          "quantity": 4,
+          "price": 11492,
+          "sum": 45968,
+          "name": "Сигареты Winston Xstyle Blue МРЦ 100-115 р",
+          "nds18": 7012
+        },
+        {
+          "quantity": 6,
+          "price": 11493,
+          "sum": 68958,
+          "name": "Сигареты Winston Xstyle Blue МРЦ 100-115 р",
+          "nds18": 10519
+        }
+      ],
+      "addressToCheckFiscalSign": "",
+      "senderAddress": "",
+      "shiftNumber": 700,
+      "ecashTotalSum": 120900,
+      "receiptCode": 3,
+      "dateTime": "2018-06-19T10:49:00",
+      "requestNumber": 64,
+      "operator": "Полежаева Тамара Александровна /258338",
+      "cashTotalSum": 0
+    }
+  }
+}

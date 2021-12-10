@@ -1,0 +1,44 @@
+{
+  "document": {
+    "receipt": {
+      "dateTime": "2018-08-08T13:00:00",
+      "fiscalDocumentNumber": 1860,
+      "fnsSite": "www.nalog.ru",
+      "messageFiscalSign": -8258440554337008000,
+      "buyerAddress": "",
+      "fiscalDriveNumber": "9281000100198348",
+      "taxationType": 8,
+      "creditSum": 0,
+      "cashTotalSum": 0,
+      "fiscalDocumentFormatVer": 2,
+      "ecashTotalSum": 19100,
+      "prepaidSum": 0,
+      "internetSign": 0,
+      "items": [
+        {
+          "quantity": 1,
+          "price": 19100,
+          "nds": 6,
+          "paymentType": 1,
+          "productType": 1,
+          "sum": 19100,
+          "name": "Свободная продажа",
+          "unit": "услуга"
+        }
+      ],
+      "provisionSum": 0,
+      "fiscalSign": 3090202163,
+      "receiptCode": 3,
+      "user": "ИП Варфоломеев Олег Анатольевич",
+      "shiftNumber": 27,
+      "operator": "Варфоломеев Олег Анатольевич",
+      "totalSum": 19100,
+      "ndsNo": 19100,
+      "rawData": "//+CAaUDARAJkoEAAQAZg0gAB0QL1lcHdAAG7gACAWIDAF4BEQQQADkyODEwMDAxMDAxOTgzNDgNBBQAMDAwMjQxOTc3NjA0MjU1NSAgICD6AwwANjQ1MjkxODM4MzMxEAQEAEQHAAD0AwQAUOlqWzUEBgAxBLgwvjMOBAQAGwAAABIEBABWAAAAHgQBAAH8AwIAnErxAycAoy4gkaDgoOKuoiwg46suIIGuq+zooO8gkaCkrqKg7ywgpC4gMjM5/QMcAIKg4OSuq66spaWiII6rpaMggK2g4q6r7KWiqOcHBAEAABgEHwCIjyCCoODkrquurKWloiCOq6WjIICtoOKuq+yloqjnHwQBAAgjBEEAvgQBAAG8BAEAAQYEEQCRoq6hrqStoO8gr+CupKCmoK0EBgDj4avjo6A3BAIAnEr/AwMAA+gDrwQBAAYTBAIAnEokBAwAd3d3Lm5hbG9nLnJ1OQQCAJxKUQQCAJxKuQQBAAK/BAEAAMAEAQAAwQQBAACBBhAoEiBkjQ==",
+      "kktRegId": "0002419776042555",
+      "requestNumber": 86,
+      "userInn": "645291838331",
+      "operationType": 1
+    }
+  }
+}

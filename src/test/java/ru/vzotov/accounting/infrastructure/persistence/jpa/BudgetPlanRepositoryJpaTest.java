@@ -42,8 +42,8 @@ public class BudgetPlanRepositoryJpaTest {
 
     @Test
     public void testStore() {
-        Budget budget = budgetRepository.find(new BudgetId("test-budget-1"));
-        BudgetRule rule = budget.rules().stream().filter(r -> r.ruleId().value().equals("003")).findAny().orElse(null);
+        Budget budget = budgetRepository.find(new BudgetId("test-budget-2"));
+        BudgetRule rule = budget.rules().stream().filter(r -> r.ruleId().value().equals("013")).findAny().orElse(null);
         BudgetPlan item = new BudgetPlan(
                 BudgetPlanId.nextId(),
                 rule,
@@ -59,7 +59,7 @@ public class BudgetPlanRepositoryJpaTest {
 
     @Test
     public void testFind() {
-        BudgetPlan item = budgetPlanRepository.find(new BudgetPlanId("BBI-000-000-001"));
+        BudgetPlan item = budgetPlanRepository.find(new BudgetPlanId("BBI-000-000-011"));
         assertThat(item).isNotNull();
         assertThat(item.rule()).hasFieldOrPropertyWithValue("name", "Гипермаркет");
     }
@@ -71,7 +71,7 @@ public class BudgetPlanRepositoryJpaTest {
 
     @Test
     public void testDelete() {
-        final BudgetPlanId itemId = new BudgetPlanId("BBI-DEL-000-001");
+        final BudgetPlanId itemId = new BudgetPlanId("BBI-DEL-000-011");
         assertThat(budgetPlanRepository.delete(itemId)).isTrue();
         assertThat(budgetPlanRepository.find(itemId)).isNull();
     }

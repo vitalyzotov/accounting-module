@@ -75,7 +75,9 @@ public class AccountRepositoryJpaTest {
     @Test
     public void findAccountByBankAndCurrency() {
         assertThat(accountRepository.find(BankId.TINKOFF, Currency.getInstance("RUR")))
-                .isNotEmpty();
+                .isNotEmpty()
+                .map(Account::accountNumber)
+                .contains(new AccountNumber("40817810000016123457"));
     }
 
     @Test

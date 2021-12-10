@@ -1,0 +1,31 @@
+{
+  "document": {
+    "receipt": {
+      "items": [{
+        "nds0": 0,
+        "quantity": 3,
+        "price": 8000,
+        "sum": 24000,
+        "name": "A04.30.011У Фотофиксация изображения ультразвукового исследовани"
+      }
+      ],
+      "nds0": 24000,
+      "receiptCode": 3,
+      "operator": "Клевчук Ольга Александровна",
+      "fiscalSign": 1483334086,
+      "kktRegId": "0000511216063598    ",
+      "fiscalDocumentNumber": 7636,
+      "ecashTotalSum": 24000,
+      "shiftNumber": 67,
+      "rawData": "//8AHKUDARAJkoQAAQA3RwEAHdS+q7/xsAAaBgACASwDACgBEQQQADkyODQwMDAxMDAzNzQ3MDENBBQAMDAwMDUxMTIxNjA2MzU5OCAgICD6AwwANjQ1MjEwMDI5OCAgEAQEANQdAAD0AwQACEI5XjUEBgAxBFhp4cYOBAQAQwAAABIEBAAaAAAAHgQBAAH8AwIAwF0jBGoABgRAAEEwNC4zMC4wMTGTIJSu4q7kqKrhoOao7yCop66h4KCmpa2o7yDjq+zi4KCnouOqrqKuo64gqOHhq6WkrqKgrag3BAIAQB//AwIAAAMTBAIAwF2vBAEABbAEAQAAvAQBAAS+BAEABAcEAQAAOQQCAMBdvwQBAADABAEAAMEEAQAA/QMbAIqrpaLn46ogjqvso6AggKulquGgraTgrqKtoB8EAQABuQQBAAJQBAIAwF0=",
+      "cashTotalSum": 0,
+      "taxationType": 1,
+      "requestNumber": 26,
+      "userInn": "6452100298",
+      "dateTime": "2020-02-04T10:06:00",
+      "fiscalDriveNumber": "9284000100374701",
+      "totalSum": 24000,
+      "operationType": 1
+    }
+  }
+}

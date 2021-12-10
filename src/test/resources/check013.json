@@ -1,0 +1,39 @@
+{
+  "document": {
+    "receipt": {
+      "fiscalSign": 4066555283,
+      "operationType": 1,
+      "protocolVersion": 2,
+      "prepaymentSum": 0,
+      "items": [
+        {
+          "sum": 440000,
+          "quantity": 1,
+          "calculationSubjectSign": 4,
+          "calculationTypeSign": 4,
+          "name": "Оплата картой",
+          "ndsRate": 6,
+          "price": 440000,
+          "ndsSum": 440000
+        }
+      ],
+      "taxationType": 1,
+      "ndsNo": 440000,
+      "cashTotalSum": 0,
+      "requestNumber": 28,
+      "operator": "СТ.КАССИР 1",
+      "user": "АО Клиника доктора Парамонова",
+      "kktRegId": "0001718903022479    ",
+      "postpaymentSum": 0,
+      "shiftNumber": 108,
+      "receiptCode": 3,
+      "fiscalDriveNumber": "8710000100081727",
+      "totalSum": 440000,
+      "fiscalDocumentNumber": 13438,
+      "counterSubmissionSum": 0,
+      "dateTime": "2018-08-14T10:04:00",
+      "userInn": "6452913261",
+      "ecashTotalSum": 440000
+    }
+  }
+}

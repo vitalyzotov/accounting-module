@@ -1,0 +1,39 @@
+{
+  "document": {
+    "receipt": {
+      "retailPlaceAddress": "410052, г. Саратов, 3-ая Дачная, 3-й этаж ТРЦ  ТАУ Галерея",
+      "addressToCheckFiscalSign": "www.nalog.ru",
+      "cashTotalSum": 0,
+      "fiscalDocumentNumber": 2056,
+      "operator": "Кассир Макарова П.А.",
+      "ecashTotalSum": 15000,
+      "modifiers": [],
+      "fiscalDriveNumber": "9288000100080294",
+      "kktRegId": "0000485300049451",
+      "stornoItems": [],
+      "totalSum": 15000,
+      "fiscalSign": 2024263777,
+      "rawData": "//8AHKUDARCZkogAAQAIApQACAjyk16LogAHhgACAYsDAIcBEQQQADkyODgwMDAxMDAwODAyOTQNBBQAMDAwMDQ4NTMwMDA0OTQ1MSAgICD6AwwANzcwNTM1MzcwNiAgEAQEAAgIAAD0AwQAcCJOWzUEBgAxBHin0GEOBAQAHwAAABIEBACCAAAAHgQBAAH8AwIAmDojBFQABgQoAI+lr+GoIK2gr6jirqogMCw4qy4gICAgICAgICAgICAgICAgICAgICA3BAIAmDr/AwMAA+gDEwQCAJg6rwQBAAGwBAIA8Ai+BAEABLwEAQAB/QMUAIqg4eGo4CCMoKqg4K6ioCCPLoAuBwQBAAA5BAIAmDpOBAIA8AgYBBkAjo8gkYiNhYyAII+AkIogMzMgkaDgoOKuovEDOwA0MTAwNTIsIKMuIJGg4KDirqIsIDMtoO8ghKDnraDvLCAzLakg7eKgpiCSkJYgIJKAkyCDoKul4KXvIB8EAQABvwQBAADABAEAAMEEAQAAJAQMAHd3dy5uYWxvZy5ydaMEDACSruCjrqLrqSCnoKu5BAEAAoEGycR5Zn43",
+      "user": "ОП СИНЕМА ПАРК 33 Саратов",
+      "shiftNumber": 31,
+      "retailPlace": "Торговый зал",
+      "receiptCode": 3,
+      "dateTime": "2018-07-17T17:08:00",
+      "userInn": "7705353706",
+      "taxationType": 1,
+      "requestNumber": 130,
+      "items": [
+        {
+          "quantity": 1,
+          "name": "Пепси напиток 0,8л.",
+          "sum": 15000,
+          "nds18": 2288,
+          "price": 15000,
+          "modifiers": []
+        }
+      ],
+      "nds18": 2288,
+      "operationType": 1
+    }
+  }
+}

@@ -8,8 +8,16 @@
         <query>SELECT op.* FROM OPERATION_ op WHERE NOT EXISTS (SELECT 1 FROM DEAL_OPERATIONS dop WHERE dop.OPERATION_ID=op.ID)</query>
     </named-native-query>
 
+    <named-native-query name="receipts-without-deals" result-set-mapping="CheckQRCodeMapping" result-class="ru.vzotov.cashreceipt.domain.model.CheckQRCode">
+        <query>SELECT qr_.* FROM QR_CODE qr_ WHERE qr_.CHECK_ID NOT IN (SELECT dr.RECEIPT_ID FROM DEAL_RECEIPTS dr)</query>
+    </named-native-query>
+
     <sql-result-set-mapping name="OperationMapping">
         <entity-result entity-class="ru.vzotov.banking.domain.model.Operation"/>
+    </sql-result-set-mapping>
+
+    <sql-result-set-mapping name="CheckQRCodeMapping">
+        <entity-result entity-class="ru.vzotov.cashreceipt.domain.model.CheckQRCode"/>
     </sql-result-set-mapping>
 
     <entity name="Deal" class="ru.vzotov.accounting.domain.model.Deal" access="FIELD">
@@ -502,6 +510,370 @@
         </attributes>
     </entity>
 
+    <entity class="ru.vzotov.purchase.domain.model.Purchase" access="FIELD">
+        <table name="PURCHASE_"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+
+            <basic name="name">
+                <column name="NAME" nullable="false"/>
+            </basic>
+
+            <basic name="dateTime">
+                <column name="DATE_TIME" nullable="false"/>
+            </basic>
+
+            <basic name="quantity">
+                <column name="QUANTITY"/>
+            </basic>
+
+            <many-to-one name="category" optional="true">
+                <join-column name="CATEGORY_ID"/>
+            </many-to-one>
+
+            <embedded name="checkId">
+                <attribute-override name="value">
+                    <column name="CHECK_ID" nullable="true"/>
+                </attribute-override>
+            </embedded>
+
+            <embedded name="purchaseId">
+                <attribute-override name="value">
+                    <column name="PURCHASE_ID" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded>
+
+            <embedded name="price">
+                <attribute-override name="amount">
+                    <column name="PRICE" nullable="false"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="PRICE_CUR" nullable="false"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
+
+    <entity name="Check" class="ru.vzotov.cashreceipt.domain.model.Check" access="FIELD">
+        <table name="CHECK_"/>
+
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="dateTime">
+                <column name="DATE_TIME" nullable="false"/>
+            </basic>
+            <basic name="operationType">
+                <column name="OPERATION_TYPE"/>
+            </basic>
+            <basic name="requestNumber">
+                <column name="REQUEST_NUMBER"/>
+            </basic>
+
+            <embedded name="fiscalInfo"/>
+            <embedded name="marketing"/>
+            <embedded name="shiftInfo"/>
+            <embedded name="retailPlace"/>
+            <embedded name="products"/>
+            <embedded name="paymentInfo"/>
+            <embedded name="checkId">
+                <attribute-override name="value">
+                    <column name="CHECK_ID" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
+
+    <entity class="ru.vzotov.cashreceipt.domain.model.Item" access="FIELD">
+        <table name="CHECK_ITEM"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="name">
+                <column name="NAME"/>
+            </basic>
+            <basic name="quantity">
+                <column name="QUANTITY"/>
+            </basic>
+            <basic name="index" optional="false">
+                <column name="IDX" nullable="false"/>
+            </basic>
+
+            <many-to-one name="category" optional="true">
+                <join-column name="CATEGORY_ID"/>
+            </many-to-one>
+
+            <embedded name="price">
+                <attribute-override name="amount">
+                    <column name="PRICE"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="PRICE_CUR"/>
+                </attribute-override>
+            </embedded>
+
+            <embedded name="sum">
+                <attribute-override name="amount">
+                    <column name="SUM"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="SUM_CUR"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
+
+    <entity class="ru.vzotov.cashreceipt.domain.model.PurchaseCategory" access="FIELD">
+        <table name="PURCHASE_CATEGORY"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="name">
+                <column name="NAME" unique="true"/>
+            </basic>
+            <embedded name="categoryId"/>
+            <embedded name="parentId">
+                <attribute-override name="value">
+                    <column name="PARENT_ID"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
+
+    <entity class="ru.vzotov.cashreceipt.domain.model.CheckQRCode" access="FIELD">
+        <table name="QR_CODE"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="state">
+                <column name="STATE" nullable="false"/>
+            </basic>
+            <basic name="loadingTryCount">
+                <column name="LOADING_COUNT" nullable="false"/>
+            </basic>
+            <basic name="loadedAt">
+                <column name="LOADED_AT" nullable="true"/>
+            </basic>
+
+            <embedded name="code"/>
+            <embedded name="checkId">
+                <attribute-override name="value">
+                    <column name="CHECK_ID" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.QRCodeData" access="FIELD">
+        <attributes>
+            <basic name="dateTime">
+                <column name="CHECK_DATETIME" nullable="false"/>
+            </basic>
+            <basic name="fiscalDriveNumber">
+                <column name="FISCAL_DRIVE" nullable="false"/>
+            </basic>
+            <basic name="fiscalDocumentNumber">
+                <column name="FISCAL_DOC" nullable="false"/>
+            </basic>
+            <basic name="operationType">
+                <column name="OPERATION_TYPE" nullable="false"/>
+            </basic>
+            <embedded name="fiscalSign"/>
+            <embedded name="totalSum">
+                <attribute-override name="amount">
+                    <column name="TOTAL_SUM" nullable="false"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="SUM_CURRENCY" nullable="false"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.Products" access="FIELD">
+        <attributes>
+            <one-to-many name="items" orphan-removal="true">
+                <order-by>IDX ASC</order-by>
+                <join-column name="CHECK_ID" nullable="false"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+
+            <embedded name="totalSum">
+                <attribute-override name="amount">
+                    <column name="TOTAL_SUM"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="SUM_CUR"/>
+                </attribute-override>
+            </embedded>
+
+            <!-- todo: map it -->
+            <transient name="stornoItems"/>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.PaymentInfo" access="FIELD">
+        <attributes>
+            <embedded name="cash">
+                <attribute-override name="amount">
+                    <column name="CASH"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="CASH_CUR"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="eCash">
+                <attribute-override name="amount">
+                    <column name="ECASH"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="ECASH_CUR"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.RetailPlace" access="FIELD">
+        <attributes>
+            <basic name="taxationType">
+                <column name="TAXATION_TYPE"/>
+            </basic>
+            <basic name="user">
+                <column name="USER"/>
+            </basic>
+            <embedded name="address"/>
+            <embedded name="userInn"/>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.Address" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="ADDRESS"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.fiscal.Inn" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="USER_INN"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.ShiftInfo" access="FIELD">
+        <attributes>
+            <basic name="operator">
+                <column name="OPERATOR"/>
+            </basic>
+            <basic name="shiftNumber">
+                <column name="SHIFT_NUM"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.Marketing" access="FIELD">
+        <attributes>
+            <embedded name="discount">
+                <attribute-override name="amount">
+                    <column name="DISCOUNT"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="DSCNT_CUR"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="discountSum">
+                <attribute-override name="amount">
+                    <column name="DISCOUNT_SUM"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="DSCNT_S_CUR"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="markup">
+                <attribute-override name="amount">
+                    <column name="MARKUP"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="MARKUP_CUR"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="markupSum">
+                <attribute-override name="amount">
+                    <column name="MARKUP_SUM"/>
+                </attribute-override>
+                <attribute-override name="currency">
+                    <column name="MARKUP_S_CUR"/>
+                </attribute-override>
+            </embedded>
+
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.FiscalInfo" access="FIELD">
+        <attributes>
+            <basic name="kktNumber">
+                <column name="KKT_NUM"/>
+            </basic>
+            <basic name="kktRegId">
+                <column name="KKT_REG_ID"/>
+            </basic>
+            <basic name="fiscalDocumentNumber">
+                <column name="FISCAL_DOC_NUM"/>
+            </basic>
+            <basic name="fiscalDriveNumber">
+                <column name="FISCAL_DRIVE_NUM"/>
+            </basic>
+            <embedded name="fiscalSign"/>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.fiscal.FiscalSign" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="FISCAL_SIGN" nullable="false"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.CheckId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="CHECK_ID"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.purchase.domain.model.PurchaseId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="PURCHASE_ID"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="CATEGORY_ID"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
     <embeddable class="ru.vzotov.banking.domain.model.BankId" access="FIELD">
         <attributes>
             <basic name="value">
@@ -696,22 +1068,6 @@
         </attributes>
     </embeddable>
 
-    <embeddable class="ru.vzotov.cashreceipt.domain.model.CheckId" access="FIELD">
-        <attributes>
-            <basic name="value">
-                <column name="ID" nullable="false" unique="true"/>
-            </basic>
-        </attributes>
-    </embeddable>
-
-    <embeddable class="ru.vzotov.purchase.domain.model.PurchaseId" access="FIELD">
-        <attributes>
-            <basic name="value">
-                <column name="PURCHASE_ID"/>
-            </basic>
-        </attributes>
-    </embeddable>
-
     <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.ColorAttributeConverter"
                auto-apply="false"/>
     <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.LocalDateAttributeConverter"
@@ -729,6 +1085,14 @@
     <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.BudgetRuleTypeAttributeConverter"
                auto-apply="true"/>
     <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.BudgetDirectionAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.ReceiptOperationTypeAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.ReceiptStateAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.QRCodeDateTimeAttributeConverter"
+               auto-apply="true"/>
+    <converter class="ru.vzotov.accounting.infrastructure.persistence.jpa.util.OffsetDateTimeAttributeConverter"
                auto-apply="true"/>
 
 </entity-mappings>

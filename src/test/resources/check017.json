@@ -1,0 +1,63 @@
+{
+  "document": {
+    "receipt": {
+      "operator": "Кассир Медведева С.В.",
+      "items": [
+        {
+          "modifiers": [],
+          "nds18": 7627,
+          "name": "Стандартный сладкий попкорн",
+          "quantity": 2,
+          "price": 25000,
+          "sum": 50000
+        },
+        {
+          "modifiers": [],
+          "nds18": 3814,
+          "name": "Стандартный соленый попкорн",
+          "quantity": 1,
+          "price": 25000,
+          "sum": 25000
+        },
+        {
+          "modifiers": [],
+          "nds18": 6864,
+          "name": "Пепси напиток 0,8л.",
+          "quantity": 3,
+          "price": 15000,
+          "sum": 45000
+        },
+        {
+          "modifiers": [],
+          "nds18": 2288,
+          "name": "Очки взрослые 3D",
+          "quantity": 3,
+          "price": 5000,
+          "sum": 15000
+        }
+      ],
+      "stornoItems": [],
+      "fiscalDocumentNumber": 944,
+      "requestNumber": 38,
+      "user": "ОП СИНЕМА ПАРК 33 Саратов",
+      "dateTime": "2018-07-17T16:55:00",
+      "addressToCheckFiscalSign": "www.nalog.ru",
+      "retailPlace": "Торговый зал",
+      "cashTotalSum": 0,
+      "ecashTotalSum": 135000,
+      "modifiers": [],
+      "totalSum": 135000,
+      "fiscalDriveNumber": "9288000100080483",
+      "retailPlaceAddress": "410052, г. Саратов, 3-ая Дачная, 3-й этаж ТРЦ  ТАУ Галерея",
+      "receiptCode": 3,
+      "userInn": "7705353706",
+      "taxationType": 1,
+      "kktRegId": "0000485285018880",
+      "rawData": "//8AHKUDARCZkogAAQAIBIMAA7DNZMSuowADigACApYDAJICEQQQADkyODgwMDAxMDAwODA0ODMNBBQAMDAwMDQ4NTI4NTAxODg4MCAgICD6AwwANzcwNTM1MzcwNiAgEAQEALADAAD0AwQAZB9OWzUEBgAxBIzFn6oOBAQAEQAAABIEBAAmAAAAHgQBAAH8AwMAWA8CIwRUAAYEKACR4qCtpKDg4q3rqSDhq6CkqqipIK+ur6qu4K0gICAgICAgICAgICAgNwQCAKhh/wMDAAPQBxMEAgBQw68EAQABsAQCAMsdvgQBAAS8BAEAASMEVAAGBCgAkeKgraSg4OKt66kg4a6rpa3rqSCvrq+qruCtICAgICAgICAgICAgIDcEAgCoYf8DAwAD6AMTBAIAqGGvBAEAAbAEAgDmDr4EAQAEvAQBAAEjBFQABgQoAI+lr+GoIK2gr6jirqogMCw4qy4gICAgICAgICAgICAgICAgICAgICA3BAIAmDr/AwMAA7gLEwQCAMivrwQBAAGwBAIA0Bq+BAEABLwEAQABIwRUAAYEKACO56qoIKKn4K7hq+ulIDNEICAgICAgICAgICAgICAgICAgICAgICAgNwQCAIgT/wMDAAO4CxMEAgCYOq8EAQABsAQCAPAIvgQBAAS8BAEAAf0DFQCKoOHhqOAgjKWkoqWkpaKgIJEugi4HBAEAADkEAwBYDwJOBAIAcVAYBBkAjo8gkYiNhYyAII+AkIogMzMgkaDgoOKuovEDOwA0MTAwNTIsIKMuIJGg4KDirqIsIDMtoO8ghKDnraDvLCAzLakg7eKgpiCSkJYgIJKAkyCDoKul4KXvIB8EAQABvwQBAADABAEAAMEEAQAAJAQMAHd3dy5uYWxvZy5ydaMEDACSruCjrqLrqSCnoKu5BAEAAoEG1kZw2Bur",
+      "nds18": 20593,
+      "operationType": 1,
+      "shiftNumber": 17,
+      "fiscalSign": 2361761706
+    }
+  }
+}

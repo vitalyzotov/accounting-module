@@ -1,0 +1,25 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="43" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.34.xml">
+        <createTable tableName="ACCOUNT_ALIAS">
+            <column name="ACCOUNT_NUMBER" type="VARCHAR(20)">
+                <constraints nullable="false" foreignKeyName="FK_ACCOUNT_ALIAS" references="ACCOUNT_(ACCOUNT_NUMBER)"/>
+            </column>
+            <column name="ALIAS" type="VARCHAR(128)" remarks="Идентификатор во внешних системах"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="44" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.34.xml">
+        <sql>
+            INSERT INTO ACCOUNT_ALIAS (ACCOUNT_NUMBER, ALIAS) SELECT ACCOUNT_NUMBER, ALIAS FROM ACCOUNT_ WHERE ALIAS IS NOT NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="45" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.34.xml">
+        <dropColumn tableName="ACCOUNT_" columnName="ALIAS"/>
+    </changeSet>
+
+</databaseChangeLog>

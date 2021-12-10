@@ -1,0 +1,65 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="60" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+        <createTable tableName="DEAL_">
+            <column name="ID" type="BIGINT(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="DEAL_UID" type="VARCHAR(255)" remarks="Идентификатор сделки">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="DATE" type="DATE" remarks="Дата сделки">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AMOUNT" type="BIGINT(20)" remarks="Сумма сделки">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CURRENCY" type="VARCHAR(3)" remarks="Валюта сделки">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(512)" remarks="Описание сделки">
+                <constraints nullable="true"/>
+            </column>
+            <column name="COMMENT" type="VARCHAR(255)" remarks="Комментарий сделки">
+                <constraints nullable="true"/>
+            </column>
+            <column name="CATEGORY_ID" type="BIGINT(20)" remarks="Категория сделки">
+                <constraints nullable="true" foreignKeyName="FK_DEAL_CATEGORY" references="`BUDGET_CATEGORY_`(ID)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="61" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+        <createTable tableName="DEAL_OPERATIONS">
+            <column name="DEAL_ID" type="BIGINT(20)">
+                <constraints nullable="false" foreignKeyName="FK_DEAL_OPERATIONS_DEAL" references="DEAL_(ID)"/>
+            </column>
+            <column name="OPERATION_ID" type="VARCHAR(128)">
+                <constraints nullable="false" foreignKeyName="FK_DEAL_OPERATIONS_OPERATION" references="OPERATION_(ID)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="62" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+        <addUniqueConstraint constraintName="UNQ_DEAL_OPERATIONS" tableName="DEAL_OPERATIONS" columnNames="DEAL_ID, OPERATION_ID"/>
+    </changeSet>
+
+    <changeSet id="63" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+        <createTable tableName="DEAL_RECEIPTS">
+            <column name="DEAL_ID" type="BIGINT(20)">
+                <constraints nullable="false" foreignKeyName="FK_DEAL_RECEIPTS_DEAL" references="DEAL_(ID)"/>
+            </column>
+            <column name="RECEIPT_ID" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="64" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+        <addUniqueConstraint constraintName="UNQ_DEAL_RECEIPTS" tableName="DEAL_RECEIPTS" columnNames="DEAL_ID, RECEIPT_ID"/>
+    </changeSet>
+
+</databaseChangeLog>

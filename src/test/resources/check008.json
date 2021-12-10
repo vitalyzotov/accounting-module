@@ -1,0 +1,59 @@
+{
+  "document": {
+    "receipt": {
+      "shiftNumber": 279,
+      "postpaymentSum": 0,
+      "fiscalSign": 4257308416,
+      "dateTime": "2018-06-03T13:32:00",
+      "items": [
+        {
+          "sum": 62900,
+          "name": "Шорты BSH003254 тканная темно-синий M/182",
+          "price": 62900,
+          "ndsRate": 1,
+          "quantity": 1,
+          "ndsSum": 9595
+        },
+        {
+          "sum": 44900,
+          "name": "Фуфайка BKT001593 трикотаж серый меланж S/182",
+          "price": 44900,
+          "ndsRate": 1,
+          "quantity": 1,
+          "ndsSum": 6849
+        },
+        {
+          "sum": 53900,
+          "name": "Фуфайка BKT001129 трикотаж черный S/182",
+          "price": 53900,
+          "ndsRate": 1,
+          "quantity": 1,
+          "ndsSum": 8222
+        },
+        {
+          "sum": 35900,
+          "name": "Майка BTN001317 трикотаж черный M/182",
+          "price": 35900,
+          "ndsRate": 1,
+          "quantity": 1,
+          "ndsSum": 5476
+        }
+      ],
+      "taxationType": 1,
+      "ecashTotalSum": 197600,
+      "receiptCode": 3,
+      "nds18": 30142,
+      "requestNumber": 65,
+      "operator": "Еремина Нина Геннадьевна",
+      "cashTotalSum": 0,
+      "fiscalDocumentNumber": 19554,
+      "fiscalDriveNumber": "8712000100040899",
+      "totalSum": 197600,
+      "operationType": 1,
+      "kktRegId": "0000964989059679    ",
+      "counterSubmissionSum": 0,
+      "userInn": "6166019871",
+      "prepaymentSum": 0
+    }
+  }
+}

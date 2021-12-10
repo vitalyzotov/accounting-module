@@ -1,0 +1,58 @@
+{
+  "status": 2,
+  "id": "5fb08d6c3258ec348b2346f6",
+  "kind": "kkt",
+  "createdAt": "2020-11-15T05:34:12+03:00",
+  "statusDescription": {},
+  "qr": "t=20201031T1551&s=7500.00&fn=9287440300704933&i=627&fp=1534701846&n=1",
+  "operation":    {
+    "date": "2020-10-31T15:51:00+03:00",
+    "type": 1,
+    "sum": 750000
+  },
+  "seller": {"inn": "645403852947"},
+  "process": [   {
+    "time": "2020-11-15T02:07:42+00:00",
+    "result": 2
+  }],
+  "query":    {
+    "operationType": 1,
+    "sum": 750000,
+    "documentId": 627,
+    "fsId": "9287440300704933",
+    "fiscalSign": "1534701846",
+    "date": "2020-10-31T15:51"
+  },
+  "ticket": {"document": {"receipt":    {
+    "dateTime": 1604148660,
+    "cashTotalSum": 750000,
+    "code": 3,
+    "creditSum": 0,
+    "ecashTotalSum": 0,
+    "fiscalDocumentFormatVer": 2,
+    "fiscalDocumentNumber": 627,
+    "fiscalDriveNumber": "9287440300704933",
+    "fiscalSign": 1534701846,
+    "items": [      {
+      "name": "Позиция по свободной цене",
+      "nds": 6,
+      "ndsSum": 0,
+      "paymentType": 4,
+      "price": 750000,
+      "productType": 1,
+      "quantity": 1,
+      "sum": 750000
+    }],
+    "kktRegId": "0004375273046421",
+    "ndsNo": 750000,
+    "operationType": 1,
+    "operator": "Администратор",
+    "prepaidSum": 0,
+    "provisionSum": 0,
+    "requestNumber": 5,
+    "shiftNumber": 160,
+    "totalSum": 750000,
+    "userInn": "645403852947"
+  }}},
+  "organization": {"inn": "645403852947"}
+}

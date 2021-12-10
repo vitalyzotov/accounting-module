@@ -1,0 +1,56 @@
+{
+  "document": {
+    "receipt": {
+      "kktRegId": "0001557168010745",
+      "operationType": 1,
+      "cashTotalSum": 0,
+      "user": "Аптека ООО \"Изумруд\"",
+      "modifiers": [],
+      "ndsNo": 208450,
+      "stornoItems": [],
+      "dateTime": "2018-06-29T18:35:00",
+      "fiscalDriveNumber": "8711000101958668",
+      "requestNumber": 136,
+      "rawData": "//8AHKUDARCZhxEAAQGVhmgAcHnRQ9SwYABmnQACAgoDAAYCEQQQADg3MTEwMDAxMDE5NTg2NjgNBBQAMDAwMTU1NzE2ODAxMDc0NSAgICD6AwwANjMxNDAzNTM3MiAgEAQEAHlwAAD0AwQA1Hs2WzUEBgAxBJFbOLAOBAQAxwAAABIEBACIAAAAHgQBAAH8AwMAEC4D/QMRAITjoeCuoqitoCCNoOKgq+zvIwRLAAYEKACRpaulquLgoCDioKGrIK8griCvq6WtruetIDEwIKyjIOOvIKqureIgNwQDAHRmAv8DAwAD6AO8BAEAAb4EAQAEEwQDAHRmAiMEQwAGBCIAgait4iCP4KXi4qggiq7i4q6tIOHipeAgNeUxMCDhrCB4MTcEAgBcDf8DAwAD0Ae8BAEAAb4EAQAEEwQCALgaIwRJAAYEKACK4KWsIKSl4uGqqKkgIJCurKArjKDoqqAg4a6rrealp6DpqOKt66kgNwQCAGhv/wMDAAPoA7wEAQABvgQBAAQTBAIAaG8jBEkABgQoAJGv4KWpIIHtoagthO3ioCCAqqKgIKSl4uGqqKkgMiCiIDEgKOEgMSA3BAIArj3/AwMAA+gDvAQBAAG+BAEABBMEAgCuPVEEAwBCLgMYBBQAgK/ipaqgII6OjiAiiKfjrODjpCIfBAEACCQEDAB3d3cubmFsb2cucnUHBAEAADkEAwAQLgO/BAEAAMAEAQAAwQQBAACBBsPUSU7TfQ==",
+      "receiptCode": 3,
+      "totalSum": 208400,
+      "userInn": "6314035372",
+      "shiftNumber": 199,
+      "items": [
+        {
+          "name": "Таблетки уп конт",
+          "sum": 157300,
+          "price": 157300,
+          "modifiers": [],
+          "quantity": 1
+        },
+        {
+          "name": "Бинт Претти Коттон стер 5х10 см x1",
+          "sum": 6840,
+          "price": 3420,
+          "modifiers": [],
+          "quantity": 2
+        },
+        {
+          "name": "Крем детский  Рома+Машка солнцезащитный",
+          "sum": 28520,
+          "price": 28520,
+          "modifiers": [],
+          "quantity": 1
+        },
+        {
+          "name": "Спрей Бэби-Дэта Аква детский 2 в 1 (с 1",
+          "sum": 15790,
+          "price": 15790,
+          "modifiers": [],
+          "quantity": 1
+        }
+      ],
+      "ecashTotalSum": 208400,
+      "operator": "Дубровина Наталья",
+      "taxationType": 8,
+      "fiscalDocumentNumber": 28793,
+      "fiscalSign": 2438674608
+    }
+  }
+}

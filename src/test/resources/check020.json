@@ -1,0 +1,73 @@
+{
+  "document": {
+    "receipt": {
+      "fnsUrl": "www.nalog.ru",
+      "fiscalDriveNumber": "9286000100174088",
+      "nds18": 12800,
+      "cashTotalSum": 0,
+      "taxationType": 1,
+      "dateTime": "2019-07-25T17:27:00",
+      "postpaymentSum": 0,
+      "requestNumber": 289,
+      "kktRegId": "0000735871006153    ",
+      "fiscalDocumentNumber": 41758,
+      "userInn": "7710044140",
+      "counterSubmissionSum": 0,
+      "operator": "Збаранская И.",
+      "ecashTotalSum": 80600,
+      "items": [
+        {
+          "ndsRate": 1,
+          "calculationTypeSign": 4,
+          "quantity": 12,
+          "sum": 60000,
+          "calculationSubjectSign": 1,
+          "name": "ЧИЗБУРГЕР",
+          "price": 5000
+        },
+        {
+          "ndsRate": 1,
+          "calculationTypeSign": 4,
+          "quantity": 2,
+          "sum": 11800,
+          "calculationSubjectSign": 1,
+          "name": "КАРТОФЕЛЬ-ФРИ СТД.",
+          "price": 5900
+        },
+        {
+          "ndsRate": 1,
+          "calculationTypeSign": 4,
+          "quantity": 2,
+          "sum": 5000,
+          "calculationSubjectSign": 1,
+          "name": "СОУС СЫРНЫЙ",
+          "price": 2500
+        },
+        {
+          "ndsRate": 2,
+          "calculationTypeSign": 4,
+          "quantity": 2,
+          "sum": 3800,
+          "calculationSubjectSign": 1,
+          "name": "ВАФЕЛЬНЫЙ РОЖОК",
+          "price": 1900
+        }
+      ],
+      "protocolVersion": 2,
+      "userProperty": {
+        "key": "#90@1/2/3/4",
+        "value": "#2520602@2010/3010/2364/4050"
+      },
+      "nds10": 345,
+      "receiptCode": 3,
+      "prepaymentSum": 0,
+      "shiftNumber": 378,
+      "rawData": "AwAVAhEEEAA5Mjg2MDAwMTAwMTc0MDg4DQQUADAwMDA3MzU4NzEwMDYxNTMgICAg+gMMADc3MTAwNDQxNDAgIBAEBAAeowAA9AMEAGTmOV01BAYAMQShyVCUDgQEAHoBAAASBAQAIQEAAB4EAQAB/AMDANg6AbkEAQACGAQdACAgICAgICAgICAgICCOjo4gIoyAioSOjYCLhJEi/QMNAIehoOCgreGqoO8giC4fBAEAAaMECgCKoOHhoCD8IDAyPAQSAD0EBwCHoKqgpyD8PgQDADA5MCMELgAGBAkAl4iHgZOQg4WQvgQBAAS8BAEAATcEAgCIE/8DAgAADBMEAgBg6q8EAQABIwQ3AAYEEgCKgJCSjpSFi5wtlJCIIJGShC6+BAEABLwEAQABNwQCAAwX/wMCAAACEwQCABgurwQBAAEjBDAABgQLAJGOk5EgkZuQjZuJvgQBAAS8BAEAATcEAgDECf8DAgAAAhMEAgCIE68EAQABIwQ0AAYEDwCCgJSFi5yNm4kgkI6Gjoq+BAEABLwEAQABNwQCAGwH/wMCAAACEwQCANgOrwQBAAI8BC8APQQLACM5MEAxLzIvMy80PgQcACMyNTIwNjAyQDIwMTAvMzAxMC8yMzY0LzQwNTAkBAwAd3d3Lm5hbG9nLnJ1OQQDANg6Ab8EAQAAwQQBAADABAEAAAcEAQAATgQCAAAyTwQCAFkB",
+      "fiscalSign": 2714325140,
+      "totalSum": 80600,
+      "user": "             ООО МАКДОНАЛДС",
+      "operationType": 1,
+      "retailPlace": "Касса № 02"
+    }
+  }
+}

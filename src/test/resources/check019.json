@@ -1,0 +1,32 @@
+{
+  "document": {
+    "receipt": {
+      "kktRegId": "0000092654002209    ",
+      "dateTime": "2019-03-26T11:53:00",
+      "ecashTotalSum": 71250,
+      "operator": "Администратор",
+      "receiptCode": 3,
+      "fiscalDocumentNumber": 24968,
+      "operationType": 1,
+      "sellerAddress": "noreply@platformaofd.ru",
+      "fiscalSign": 2838415985,
+      "totalSum": 71250,
+      "rawData": "//8AHKUDARAJhxAAAQEZQDMAYYipNDIY+QBhMQACAUYDAEIBEQQQADg3MTAwMDAxMDExOTQwMzMNBBQAMDAwMDA5MjY1NDAwMjIwOSAgICD6AwwANjQ1MzA4OTcyMCAgEAQEAIhhAAD0AwQAnBKaXDUEBgAxBKkuynEOBAQAMwEAABIEBABXAAAAHgQBAAH8AwMAUhYBIwRkAAYENwBLrq3h46vs4qDmqO8gouCg56Agouvh6KWpIKqg4qWjruCoqCwgp6Dhq+Ompa2trqOuIKLgoOegNwQDAFIWAf8DAwAD6AMTBAMAUhYBrwQBAAawBAEAALwEAQABvgQBAAQHBAEAADkEAwBSFgG/BAEAAMAEAQAAwQQBAAD9Aw0AgKSsqK2o4eLgoOKu4B8EAQABXQQXAG5vcmVwbHlAcGxhdGZvcm1hb2ZkLnJ1JAQMAHd3dy5uYWxvZy5ydbkEAQACUQQDAFIWAYEGreqV3zvV",
+      "cashTotalSum": 0,
+      "fiscalDriveNumber": "8710000101194033",
+      "shiftNumber": 307,
+      "taxationType": 1,
+      "items": [{
+        "price": 71250,
+        "ndsNo": 0,
+        "name": "Kонсультация врача высшей категории, заслуженного врача",
+        "sum": 71250,
+        "quantity": 1
+      }
+      ],
+      "ndsNo": 71250,
+      "requestNumber": 87,
+      "userInn": "6453089720"
+    }
+  }
+}

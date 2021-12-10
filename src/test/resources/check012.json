@@ -1,0 +1,200 @@
+{
+  "document": {
+    "receipt": {
+      "creditSum": 0,
+      "items": [
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Тантум Верде спрей 30мл",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 28900,
+          "sum": 28900
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Лендацин пор. д/ин фл.1г №10",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 13,
+          "price": 16767,
+          "sum": 217971
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Зиртек таб. 10мг №20",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 40688,
+          "sum": 40688
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Дексаметазон амп. 4мг/мл 1мл №25",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 3570,
+          "sum": 3570
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Но-шпа амп. 40мг 2мл № 5",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 8806,
+          "sum": 8806
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Супрастин таб. 25мг №20 уп. конт. яч. пач. карт.",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 11296,
+          "sum": 11296
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Анальгин амп. 50% 2мл №10",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 3400,
+          "sum": 3400
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Парацетамол таб. 500мг №10",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 391,
+          "sum": 391
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Маалокс таб. №20",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 24990,
+          "sum": 24990
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Лизобакт таб. д/расс. №30",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 26945,
+          "sum": 26945
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Лидокаина г/хл амп.  2% 2мл №10",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 4224,
+          "sum": 4224
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Вода для инъекций амп. 2мл №10",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 2040,
+          "sum": 2040
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Салфетка для инъекций спиртовая №800",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 20,
+          "price": 85,
+          "sum": 1700
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Спазган таб. 500мг №20",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 10370,
+          "sum": 10370
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Ибуклин таб. п/об. 400мг+325мг №10",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 13430,
+          "sum": 13430
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Термометр OMRON Eco Temp Basic (MC-246-RU)",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 1,
+          "price": 30090,
+          "sum": 30090
+        },
+        {
+          "nds": 6,
+          "paymentType": 4,
+          "name": "Шприц 5мл с иглой (3-х комп.)",
+          "productType": 1,
+          "ndsSum": 0,
+          "quantity": 20,
+          "price": 510,
+          "sum": 10200
+        }
+      ],
+      "messageFiscalSign": -9149443541387923000,
+      "prepaidSum": 0,
+      "fiscalDocumentNumber": 19111,
+      "operator": "КАССИР 01",
+      "dateTime": "2018-08-20T13:16:00",
+      "totalSum": 439011,
+      "ecashTotalSum": 439011,
+      "cashTotalSum": 0,
+      "ndsNo": 439011,
+      "requestNumber": 70,
+      "provisionSum": 0,
+      "fiscalDriveNumber": "9281000100087880",
+      "receiptCode": 3,
+      "userInn": "6450090372",
+      "taxationType": 8,
+      "kktRegId": "0001774264039787",
+      "rawData": "AwCkBREEEAA5MjgxMDAwMTAwMDg3ODgwDQQUADAwMDE3NzQyNjQwMzk3ODcgICAg+gMMADY0NTAwOTAzNzIgIBAEBACnSgAA9AMEABC/els1BAYAMQTjkOZpDgQEAHcAAAASBAQARgAAAB4EAQAB/AMDAOOyBiMEQQAGBBcAkqCt4uOsIIKl4KSlIOGv4KWpIDMwrKs3BAIA5HD/AwIAAAETBAIA5HCvBAEABrAEAQAAvAQBAAG+BAEABCMERwAGBBwAi6WtpKDmqK0gr67gLiCkL6itIOSrLjGjIPwxMDcEAgB/Qf8DAgAADRMEAwBzUwOvBAEABrAEAQAAvAQBAAG+BAEABCMEPgAGBBQAh6jg4qWqIOKgoS4gMTCsoyD8MjA3BAIA8J7/AwIAAAETBAIA8J6vBAEABrAEAQAAvAQBAAG+BAEABCMESgAGBCAAhKWq4aCspeKgp66tIKCsry4gNKyjL6yrIDGsqyD8MjU3BAIA8g3/AwIAAAETBAIA8g2vBAEABrAEAQAAvAQBAAG+BAEABCMEQgAGBBgAja4t6K+gIKCsry4gNDCsoyAyrKsg/CA1NwQCAGYi/wMCAAABEwQCAGYirwQBAAawBAEAALwEAQABvgQBAAQjBFoABgQwAJHjr+Cg4eKorSDioKEuIDI1rKMg/DIwIOOvLiCqrq3iLiDv5y4gr6DnLiCqoODiLjcEAgAgLP8DAgAAARMEAgAgLK8EAQAGsAQBAAC8BAEAAb4EAQAEIwRDAAYEGQCAraCr7KOorSCgrK8uIDUwJSAyrKsg/DEwNwQCAEgN/wMCAAABEwQCAEgNrwQBAAawBAEAALwEAQABvgQBAAQjBEQABgQaAI+g4KDmpeKgrK6rIOKgoS4gNTAwrKMg/DEwNwQCAIcB/wMCAAABEwQCAIcBrwQBAAawBAEAALwEAQABvgQBAAQjBDoABgQQAIygoKuuquEg4qChLiD8MjA3BAIAnmH/AwIAAAETBAIAnmGvBAEABrAEAQAAvAQBAAG+BAEABCMEQwAGBBkAi6inrqGgquIg4qChLiCkL+Cg4eEuIPwzMDcEAgBBaf8DAgAAARMEAgBBaa8EAQAGsAQBAAC8BAEAAb4EAQAEIwRJAAYEHwCLqKSuqqCoraAgoy/lqyCgrK8uICAyJSAyrKsg/DEwNwQCAIAQ/wMCAAABEwQCAIAQrwQBAAawBAEAALwEAQABvgQBAAQjBEgABgQeAIKupKAgpKvvIKit6qWq5qipIKCsry4gMqyrIPwxMDcEAgD4B/8DAgAAARMEAgD4B68EAQAGsAQBAAC8BAEAAb4EAQAEIwRNAAYEJACRoKvkpeKqoCCkq+8gqK3qparmqKkg4a+o4OKuoqDvIPw4MDA3BAEAVf8DAgAAFBMEAgCkBq8EAQAGsAQBAAC8BAEAAb4EAQAEIwRAAAYEFgCRr6Cno6CtIOKgoS4gNTAwrKMg/DIwNwQCAIIo/wMCAAABEwQCAIIorwQBAAawBAEAALwEAQABvgQBAAQjBEwABgQiAIih46qrqK0g4qChLiCvL66hLiA0MDCsoyszMjWsoyD8MTA3BAIAdjT/AwIAAAETBAIAdjSvBAEABrAEAQAAvAQBAAG+BAEABCMEVAAGBCoAkqXgrK6speLgIE9NUk9OIEVjbyBUZW1wIEJhc2ljIChNQy0yNDYtUlUpNwQCAIp1/wMCAAABEwQCAIp1rwQBAAawBAEAALwEAQABvgQBAAQjBEcABgQdAJiv4KjmIDWsqyDhIKijq66pICgzLeUgqq6sry4pNwQCAP4B/wMCAAAUEwQCANgnrwQBAAawBAEAALwEAQABvgQBAAQHBAEAADkEAwDjsga/BAEAAMAEAQAAwQQBAAD9AwkAioCRkYiQIDAxHwQBAAi5BAEAAlEEAwDjsgY=",
+      "operationType": 1,
+      "fiscalDocumentFormatVer": 2,
+      "shiftNumber": 119,
+      "fiscalSign": 3817924201
+    }
+  }
+}

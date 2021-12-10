@@ -1,0 +1,106 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="17" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <addColumn tableName="CHECK_">
+            <column name="CHECK_ID" type="VARCHAR(100)" remarks="Доменный идентификатор чека">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="18" author="vzotov" dbms="mysql,mariadb,!h2" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <update tableName="CHECK_">
+            <column name="CHECK_ID"
+                    type="VARCHAR(100)"
+                    valueComputed="CONCAT(
+DATE_FORMAT(DATE_TIME,'%Y%m%d%H%i%s'),'_',
+TOTAL_SUM,'_',
+FISCAL_DRIVE_NUM,'_',
+FISCAL_DOC_NUM,'_',
+FISCAL_SIGN,'_',
+OPERATION_TYPE
+)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="19" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <addNotNullConstraint tableName="CHECK_" columnName="CHECK_ID" columnDataType="VARCHAR(100)"/>
+    </changeSet>
+
+    <changeSet id="20" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <addUniqueConstraint tableName="CHECK_" columnNames="CHECK_ID" constraintName="UNQ_CHECK__CHECK_ID"/>
+    </changeSet>
+
+    <changeSet id="21" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <addColumn tableName="QR_CODE">
+            <column name="CHECK_ID" type="VARCHAR(100)" remarks="Доменный идентификатор чека">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="22" author="vzotov" dbms="mysql,mariadb,!h2" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <update tableName="QR_CODE">
+            <column name="CHECK_ID"
+                    type="VARCHAR(100)"
+                    valueComputed="CONCAT(
+DATE_FORMAT(CHECK_DATETIME,'%Y%m%d%H%i%s'),'_',
+TOTAL_SUM,'_',
+FISCAL_DRIVE,'_',
+FISCAL_DOC,'_',
+FISCAL_SIGN,'_',
+OPERATION_TYPE
+)"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="23" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <addNotNullConstraint tableName="QR_CODE" columnName="CHECK_ID" columnDataType="VARCHAR(100)"/>
+    </changeSet>
+
+    <changeSet id="24" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <addUniqueConstraint tableName="QR_CODE" columnNames="CHECK_ID" constraintName="UNQ_QR_CODE_CHECK_ID"/>
+    </changeSet>
+
+    <changeSet id="25" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <createTable tableName="PURCHASE_">
+            <column name="ID" type="BIGINT(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="PURCHASE_ID" type="VARCHAR(64)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="DATE_TIME" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)"/>
+            <column name="PRICE" type="BIGINT(20)"/>
+            <column name="QUANTITY" type="DECIMAL(19,3)"/>
+            <column name="CHECK_ID" type="VARCHAR(100)">
+                <constraints nullable="true" foreignKeyName="FK_PURCHASE_CHECK" references="`CHECK_`(CHECK_ID)"/>
+            </column>
+            <column name="CATEGORY_ID" type="BIGINT(20)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="OPERATION_ID" type="VARCHAR(128)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="26" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <createIndex tableName="PURCHASE_" indexName="IXFK_PURCHASE_CHECK">
+            <column name="CHECK_ID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="27" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+        <createIndex tableName="PURCHASE_" indexName="IXFK_PURCHASE_OP">
+            <column name="OPERATION_ID"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

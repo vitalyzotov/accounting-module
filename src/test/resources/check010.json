@@ -1,0 +1,65 @@
+{
+  "document": {
+    "receipt": {
+      "operationType": 1,
+      "userInn": "7710044140",
+      "requestNumber": 571,
+      "ndsCalculated18": 15254,
+      "cashTotalSum": 0,
+      "ndsCalculated10": 991,
+      "kktRegId": "0000735869010258    ",
+      "operator": "Мозгова Д.",
+      "items": [
+        {
+          "price": 5000,
+          "name": "ЧИЗБУРГЕР",
+          "ndsCalculated18": 9153,
+          "quantity": 12,
+          "sum": 60000
+        },
+        {
+          "price": 24000,
+          "name": "БИГ ТЕЙСТИ",
+          "ndsCalculated18": 3661,
+          "quantity": 1,
+          "sum": 24000
+        },
+        {
+          "price": 5000,
+          "name": "КАРТОФЕЛЬ-ФРИ СТД.",
+          "ndsCalculated18": 1525,
+          "quantity": 2,
+          "sum": 10000
+        },
+        {
+          "price": 2000,
+          "name": "СОУС СЫРНЫЙ",
+          "ndsCalculated18": 915,
+          "quantity": 3,
+          "sum": 6000
+        },
+        {
+          "price": 10900,
+          "name": "КОКТ.КЛУБНИЧНЫЙ БОЛ.",
+          "ndsCalculated10": 991,
+          "quantity": 1,
+          "sum": 10900
+        }
+      ],
+      "shiftNumber": 9,
+      "totalSum": 110900,
+      "user": "         ООО МАКДОНАЛДС",
+      "receiptCode": 3,
+      "dateTime": "2018-06-29T00:21:00",
+      "fiscalDriveNumber": "9286000100174236",
+      "ecashTotalSum": 110900,
+      "userProperty": {
+        "value": "#2520602@2010/2004/3010/2364/5050",
+        "key": "#0@1/2/3/4/5"
+      },
+      "fiscalSign": 3461764748,
+      "taxationType": 1,
+      "fiscalDocumentNumber": 6079
+    }
+  }
+}

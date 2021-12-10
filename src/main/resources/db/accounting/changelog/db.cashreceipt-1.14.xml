@@ -1,0 +1,14 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="34" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.14.xml">
+        <dropPrimaryKey tableName="CHECK_OPERATIONS"/>
+    </changeSet>
+
+    <changeSet id="35" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.14.xml">
+        <addPrimaryKey tableName="CHECK_OPERATIONS" columnNames="OPERATION_ID, CHECK_ID"/>
+    </changeSet>
+
+</databaseChangeLog>

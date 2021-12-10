@@ -1,0 +1,92 @@
+{"document": {"receipt": {
+  "kktRegId": "0001109150007803",
+  "nds18": 75,
+  "taxationType": 1,
+  "retailPlaceAddress": "410062, Саратовская обл, Саратов г, Моторная ул, дом № 6",
+  "fiscalDocumentNumber": 110992,
+  "operator": "Селиверстов",
+  "dateTime": "2018-06-16T13:55:00",
+  "message": [],
+  "rawData": "AwDgAhEEEAA4NzEwMDAwMTAwMzEzMjA0DQQUADAwMDExMDkxNTAwMDc4MDMgICAg+gMMADIzMTAwMzE0NzUgIBAEBACQsQEA9AMEALQWJVs1BAYAMQR+4evhDgQEAEMBAAASBAQAqgAAAB4EAQAB/AMDAFgAASMERAAGBCQAj6CqpeIgIoygo62o4iIgpqWr4uupL6rgoOGt66kgKI+roOHiNwQCAOoB/wMCAAABEwQCAOoBrwQBAAGwBAEASyMEPQAGBBsAkq6soOLrIOGipaYuIOalraAgp6AgMaqjOiA2NwQCAMYg/wMDAAOyAxMEAgABH68EAQACsAQCANICIwREAAYEIwCMjouOl42OhSCIh46BiIuIhSCRrKXioK2gIDIwJSAwLDKqozcEAgBeEP8DAgAAARMEAgBeEK8EAQACsAQCAH0BIwREAAYEJACXk4SFkY2biSCKkICJIIGg4q6tIK2g4KWnra6pIKIv4SCtoOA3BAIAjgj/AwIAAAETBAIAjgivBAEAArAEAQDHIwRFAAYEJACR6+Agkayl4qCtqq6i66kgNDglKKIpKIjnoKuqrqLhqqipKTo3BAIA8Jv/AwIAA7oTBAIAAR2vBAEAArAEAgCjAiMERQAGBCQAloWHgJCcII+lq+ysIOEg4qWr7+Ig4i+jMCw3Naqjry+vIIzvNwQCAFht/wMCAAABEwQCAFhtrwQBAAKwBAIA8QkjBEMABgQiAFJJQ0ggjaWq4qDgIKKo6K2louupIDGrKIzjq+KurSk6MTI3BAIATB3/AwIAAAETBAIATB2vBAEAArAEAgCqAiMEPgAGBB0ASjcgka6qIOKurKDireupIDAsOTerKIKBhCk6MTI3BAIA3B7/AwIAAAETBAIA3B6vBAEAArAEAgDOAgcEAQAAOQQDAFgAAb8EAQAAwAQBAADBBAEAAP0DCwCRpauooqXg4eKuoh8EAQABTgQBAEtPBAIAIReBBoh41t4zFA==",
+  "ecashTotalSum": 65624,
+  "fiscalDriveNumber": "8710000100313204",
+  "shiftNumber": 323,
+  "senderAddress": "",
+  "userInn": "2310031475",
+  "modifiers": [],
+  "properties": [],
+  "items":    [
+    {
+      "sum": 490,
+      "quantity": 1,
+      "price": 490,
+      "modifiers": [],
+      "properties": [],
+      "name": "Пакет \"Магнит\" желтый/красный (Пласт"
+    },
+    {
+      "sum": 7937,
+      "quantity": 0.946,
+      "price": 8390,
+      "modifiers": [],
+      "properties": [],
+      "name": "Томаты свеж. цена за 1кг: 6"
+    },
+    {
+      "sum": 4190,
+      "quantity": 1,
+      "price": 4190,
+      "modifiers": [],
+      "properties": [],
+      "name": "МОЛОЧНОЕ ИЗОБИЛИЕ Сметана 20% 0,2кг"
+    },
+    {
+      "sum": 2190,
+      "quantity": 1,
+      "price": 2190,
+      "modifiers": [],
+      "properties": [],
+      "name": "ЧУДЕСНЫЙ КРАЙ Батон нарезной в/с нар"
+    },
+    {
+      "sum": 7425,
+      "quantity": 0.186,
+      "price": 39920,
+      "modifiers": [],
+      "properties": [],
+      "name": "Сыр Сметанковый 48%(в)(Ичалковский):"
+    },
+    {
+      "sum": 27992,
+      "quantity": 1,
+      "price": 27992,
+      "modifiers": [],
+      "properties": [],
+      "name": "ЦЕЗАРЬ Пельм с телят т/г0,75кгп/п Мя"
+    },
+    {
+      "sum": 7500,
+      "quantity": 1,
+      "price": 7500,
+      "modifiers": [],
+      "properties": [],
+      "name": "RICH Нектар вишневый 1л(Мултон):12"
+    },
+    {
+      "sum": 7900,
+      "quantity": 1,
+      "price": 7900,
+      "modifiers": [],
+      "properties": [],
+      "name": "J7 Сок томатный 0,97л(ВБД):12"
+    }
+  ],
+  "operationType": 1,
+  "cashTotalSum": 0,
+  "requestNumber": 170,
+  "stornoItems": [],
+  "fiscalSign": 2128735201,
+  "totalSum": 65624,
+  "nds10": 5921,
+  "receiptCode": 3
+}}}

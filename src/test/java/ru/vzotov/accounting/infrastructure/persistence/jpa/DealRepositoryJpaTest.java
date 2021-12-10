@@ -102,7 +102,7 @@ public class DealRepositoryJpaTest {
 
     @Test
     public void delete() {
-        dealRepository.delete(dealRepository.find(new DealId("deal-for-remove")));
+        dealRepository.delete(dealRepository.find(new DealId("deal-for-remove-2")));
     }
 
     @Test

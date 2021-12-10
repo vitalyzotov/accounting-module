@@ -44,9 +44,12 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>4.5.0</version>
                 <configuration>
                     <changeLogFile>db/accounting/changelog/db.changelog-master.xml</changeLogFile>
+                    <url>jdbc:mysql://localhost:3306/accounting?useUnicode=true&amp;characterEncoding=utf8</url>
+                    <username>accounting</username>
+                    <password>accounting</password>
                 </configuration>
             </plugin>
 
@@ -251,6 +254,13 @@
             <!-- required for PATCH testing in REST API -->
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>4.4.0</version>
             <scope>test</scope>
         </dependency>
 

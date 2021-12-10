@@ -1,0 +1,64 @@
+{
+  "document": {
+    "receipt": {
+      "operator": "Епихина Елена Александровна",
+      "totalSum": 77500,
+      "receiptCode": 3,
+      "authorityUri": "www.nalog.ru",
+      "fiscalDriveNumber": "9282000100024442",
+      "dateTime": "2018-07-17T15:55:00",
+      "taxationType": 1,
+      "nds18": 11820,
+      "shiftNumber": 60,
+      "fiscalSign": 1491157021,
+      "items": [
+        {
+          "sum": 30530,
+          "name": "Расческа д/волос подароч",
+          "price": 30530,
+          "quantity": 1
+        },
+        {
+          "sum": 180,
+          "name": "Пакет-майка ПНД 28+14х48",
+          "price": 180,
+          "quantity": 1
+        },
+        {
+          "sum": 15480,
+          "name": "ES-2-15/MI MINIONS шокола",
+          "price": 7740,
+          "quantity": 2
+        },
+        {
+          "sum": 7470,
+          "name": "RB16-2-04 Папка 2 кольца",
+          "price": 7470,
+          "quantity": 1
+        },
+        {
+          "sum": 7470,
+          "name": "RB16-2-01 Папка 2 кольца",
+          "price": 7470,
+          "quantity": 1
+        },
+        {
+          "sum": 16370,
+          "name": "200203518 Шлёпанцы размер",
+          "price": 16370,
+          "quantity": 1
+        }
+      ],
+      "userInn": "6452916946",
+      "ecashTotalSum": 77500,
+      "user": "ООО \"ИнМарт\"",
+      "operationType": 1,
+      "kktRegId": "0000254553040879",
+      "cashTotalSum": 0,
+      "fiscalDocumentNumber": 4696,
+      "retailPlaceAddress": "410005,г.Саратов,ул.Астраханская,д.103",
+      "requestNumber": 29,
+      "rawData": "pQMBEAmSggABAAJEQgASWPBvpZgBABI7AAIC0QMAzQIRBBAAOTI4MjAwMDEwMDAyNDQ0Mg0EFAAwMDAwMjU0NTUzMDQwODc5ICAgIPoDDAA2NDUyOTE2OTQ2ICAQBAQAWBIAAPQDBABUEU5bNQQGADEEWOFAHQ4EBAA8AAAAEgQEAB0AAAAeBAEAAfwDAwC8LgEjBEUABgQZACCQoOHnpeGqoCCkL6Kuq67hIK+upKDgruc3BAIAQnf/AwMAA+gDEwQCAEJ3rwQBAAGwBAIAMRK+BAEABLwEAQABIwRCAAYEGQAgj6CqpeItrKCpqqAgj42EIDI4KzE05TQ4NwQBALT/AwMAA+gDEwQBALSvBAEAAbAEAQAbvgQBAAS8BAEAASMERQAGBBkARVMtMi0xNS9NSSBNSU5JT05TIOiuqq6roDcEAgA8Hv8DAwAD0AcTBAIAeDyvBAEAAbAEAgA5Cb4EAQAEvAQBAAEjBEUABgQZAFJCMTYtMi0wNCCPoK+qoCAyIKquq+zmoCA3BAIALh3/AwMAA+gDEwQCAC4drwQBAAGwBAIAcwS+BAEABLwEAQABIwRFAAYEGQBSQjE2LTItMDEgj6CvqqAgMiCqrqvs5qAgNwQCAC4d/wMDAAPoAxMEAgAuHa8EAQABsAQCAHMEvgQBAAS8BAEAASMERQAGBBkAMjAwMjAzNTE4IJir8a+grebrIOCgp6yl4DcEAgDyP/8DAwAD6AMTBAIA8j+vBAEAAbAEAgDBCb4EAQAEvAQBAAH9AxsAha+o5aitoCCFq6WtoCCAq6Wq4aCtpOCuoq2gBwQBAAA5BAMAvC4BTgQCACwuGAQMAI6OjiAiiK2MoODiIvEDJgA0MTAwMDUsoy6RoOCg4q6iLOOrLoDh4uCg5aCt4aqg7yykLjEwMx8EAQABvwQBAADABAEAAMEEAQAAJAQMAHd3dy5uYWxvZy5ydaMEEACMoKOgp6itICKIjYyAkJIiuQQBAAI="
+    }
+  }
+}

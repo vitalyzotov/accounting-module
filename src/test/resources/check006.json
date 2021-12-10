@@ -1,0 +1,76 @@
+{
+  "document": {
+    "receipt": {
+      "receiptCode": 3,
+      "items": [
+        {
+          "quantity": 1,
+          "name": "Сок апельсиновый 300 мл",
+          "nds18": 3005,
+          "modifiers": [],
+          "price": 19700,
+          "sum": 19700
+        },
+        {
+          "quantity": 1,
+          "name": "Мистер Блин",
+          "nds18": 2700,
+          "modifiers": [],
+          "price": 17700,
+          "sum": 17700
+        },
+        {
+          "quantity": 1,
+          "name": "Роял Блин",
+          "nds18": 2883,
+          "modifiers": [],
+          "price": 18900,
+          "sum": 18900
+        },
+        {
+          "quantity": 1,
+          "name": "Помидор свежий",
+          "nds18": 381,
+          "modifiers": [],
+          "price": 2500,
+          "sum": 2500
+        },
+        {
+          "quantity": 2,
+          "name": "Слойка с ветчиной и сыром",
+          "nds18": 1190,
+          "modifiers": [],
+          "price": 3900,
+          "sum": 7800
+        },
+        {
+          "quantity": 2,
+          "name": "Слойка  с курицей и грибами",
+          "nds18": 1190,
+          "modifiers": [],
+          "price": 3900,
+          "sum": 7800
+        }
+      ],
+      "nds18": 11349,
+      "kktRegId": "0000419899006085",
+      "totalSum": 74400,
+      "fiscalSign": 2407945654,
+      "fiscalDocumentNumber": 5704,
+      "dateTime": "2018-06-23T13:57:00",
+      "taxationType": 8,
+      "cashTotalSum": 0,
+      "operationType": 1,
+      "ecashTotalSum": 74400,
+      "operator": "СИС. АДМИНИСТРАТОР",
+      "modifiers": [],
+      "requestNumber": 96,
+      "stornoItems": [],
+      "shiftNumber": 32,
+      "userInn": "6450615358",
+      "rawData": "//8AHKUDARAJkoEAAQAgdoIAFki8D8fcNwAAAwACAj4DADoCEQQQADkyODEwMDAxMDAyMDc2ODINBBQAMDAwMDQxOTg5OTAwNjA4NSAgICD6AwwANjQ1MDYxNTM1OCAgEAQEAEgWAAD0AwQArFEuWzUEBgAxBI+GVbYOBAQAIAAAABIEBABgAAAAHgQBAAH8AwMAoCIBIwRCAAYEFwCRrqogoK+lq+zhqK2uouupIDMwMCCsqzcEAgD0TP8DAgAAARMEAgD0TK8EAQABsAQCAL0LvAQBAAG+BAEABCMENgAGBAsAjKjh4qXgIIGrqK03BAIAJEX/AwIAAAETBAIAJEWvBAEAAbAEAgCMCrwEAQABvgQBAAQjBDQABgQJAJCu76sggauorTcEAgDUSf8DAgAAARMEAgDUSa8EAQABsAQCAEMLvAQBAAG+BAEABCMEOQAGBA4Aj66sqKSu4CDhoqWmqKk3BAIAxAn/AwIAAAETBAIAxAmvBAEAAbAEAgB9AbwEAQABvgQBAAQjBEQABgQZAJGrrqmqoCDhIKKl4ueora6pIKgg4evgrqw3BAIAPA//AwIAAAITBAIAeB6vBAEAAbAEAgCmBLwEAQABvgQBAAQjBEYABgQbAJGrrqmqoCAg4SCq4+Co5qWpIKggo+CooaCsqDcEAgA8D/8DAgAAAhMEAgB4Hq8EAQABsAQCAKYEvAQBAAG+BAEABAcEAQAAOQQDAKAiAb8EAQAAwAQBAADBBAEAAP0DEgCRiJEuIICEjIiNiJGSkICSjpAfBAEACLkEAQACTgQCAFUsgQbJa5y6yEU=",
+      "user": "",
+      "fiscalDriveNumber": "9281000100207682"
+    }
+  }
+}

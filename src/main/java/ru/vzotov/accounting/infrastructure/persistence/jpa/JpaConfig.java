@@ -22,6 +22,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
+import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
+import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
+import ru.vzotov.purchases.domain.model.PurchaseRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -139,6 +143,30 @@ public class JpaConfig {
     public HoldOperationRepository holdOperationRepository(
             @Qualifier("accounting-emf") EntityManager em) {
         return new HoldOperationRepositoryJpa(em);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public PurchaseRepository purchaseRepository(@Qualifier("accounting-emf") EntityManager em) {
+        return new PurchaseRepositoryJpa(em);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ReceiptRepository checkRepository(@Qualifier("accounting-emf") EntityManager em) {
+        return new ReceiptRepositoryJpa(em);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public QRCodeRepository checkQRCodeRepository(@Qualifier("accounting-emf") EntityManager em) {
+        return new QRCodeRepositoryJpa(em);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public PurchaseCategoryRepository purchaseCategoryRepository(@Qualifier("accounting-emf") EntityManager em) {
+        return new PurchaseCategoryRepositoryJpa(em);
     }
 
     @Bean("accounting-emf")
