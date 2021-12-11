@@ -21,70 +21,13 @@
         <logback.version>1.2.6</logback.version>
         <slf4j.version>1.7.32</slf4j.version>
         <!-- own modules -->
-        <ddd.version>1.1</ddd.version>
-        <banking.model.version>1.53-SNAPSHOT</banking.model.version>
-        <cashreceipt.model.version>1.52-SNAPSHOT</cashreceipt.model.version>
-        <purchases.model.version>1.0</purchases.model.version>
-        <money.model.version>1.4</money.model.version>
-        <accounting.model.version>1.2-SNAPSHOT</accounting.model.version>
+        <ddd.version>1.4</ddd.version>
+        <banking.model.version>1.53</banking.model.version>
+        <cashreceipt.model.version>1.52</cashreceipt.model.version>
+        <purchases.model.version>1.2</purchases.model.version>
+        <money.model.version>1.5</money.model.version>
+        <accounting.model.version>1.2</accounting.model.version>
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.5.0</version>
-                <configuration>
-                    <changeLogFile>db/accounting/changelog/db.changelog-master.xml</changeLogFile>
-                    <url>jdbc:mysql://localhost:3306/accounting?useUnicode=true&amp;characterEncoding=utf8</url>
-                    <username>accounting</username>
-                    <password>accounting</password>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                </configuration>
-            </plugin>
-
-            <!-- Git flow support -->
-            <plugin>
-                <groupId>com.amashchenko.maven.plugin</groupId>
-                <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.13.0</version>
-                <configuration>
-                    <gitFlowConfig>
-                        <productionBranch>main</productionBranch>
-                        <developmentBranch>main</developmentBranch>
-                    </gitFlowConfig>
-                </configuration>
-            </plugin>
-        </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 
     <dependencies>
         <!--
@@ -200,15 +143,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-
-        <!--
-        Swagger
-        -->
-        <!--        <dependency>-->
-        <!--            <groupId>io.springfox</groupId>-->
-        <!--            <artifactId>springfox-boot-starter</artifactId>-->
-        <!--            <version>3.0.0</version>-->
-        <!--        </dependency>-->
 
         <!--
         Unit Testing
@@ -328,19 +262,74 @@
         </dependencies>
     </dependencyManagement>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>4.5.0</version>
+                <configuration>
+                    <changeLogFile>db/accounting/changelog/db.changelog-master.xml</changeLogFile>
+                    <url>jdbc:mysql://localhost:3306/accounting?useUnicode=true&amp;characterEncoding=utf8</url>
+                    <username>accounting</username>
+                    <password>accounting</password>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                </configuration>
+            </plugin>
+
+            <!-- Git flow support -->
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <version>1.13.0</version>
+                <configuration>
+                    <gitFlowConfig>
+                        <productionBranch>main</productionBranch>
+                        <developmentBranch>main</developmentBranch>
+                    </gitFlowConfig>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <distributionManagement>
         <repository>
-            <id>github-vzotov</id>
-            <name>GitHub vitalyzotov Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/vitalyzotov/maven</url>
+            <id>vzotov-releases</id>
+            <url>https://maven.vzotov.ru/repository/maven-everyone</url>
         </repository>
     </distributionManagement>
 
     <repositories>
         <repository>
-            <id>github-vzotov</id>
-            <name>GitHub vitalyzotov Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/vitalyzotov/maven</url>
+            <id>vzotov-releases</id>
+            <url>https://maven.vzotov.ru/repository/maven-everyone</url>
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>daily</updatePolicy>
