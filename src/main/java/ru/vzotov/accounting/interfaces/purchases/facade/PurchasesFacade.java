@@ -23,5 +23,5 @@ public interface PurchasesFacade {
 
     PurchaseId createPurchase(PurchaseDTO purchase, DealId dealId);
 
-    List<PurchaseDTO> createPurchasesFromCheck(String checkId);
+    List<PurchaseDTO> createPurchasesFromReceipt(String receiptId);
 }

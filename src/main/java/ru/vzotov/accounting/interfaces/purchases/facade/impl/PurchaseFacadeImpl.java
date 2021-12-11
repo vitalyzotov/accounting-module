@@ -130,18 +130,23 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
-    public List<PurchaseDTO> createPurchasesFromCheck(String checkId) {
-        final CheckId cid = new CheckId(checkId);
-        final Check check = receiptRepository.find(cid);
+    public List<PurchaseDTO> createPurchasesFromReceipt(String receiptId) {
+        Validate.notNull(receiptId);
+        final CheckId rid = new CheckId(receiptId);
+        final Check receipt = receiptRepository.find(rid);
+        final Deal deal = dealRepository.findByReceipt(rid);
         final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
-        return check.products().items().stream()
+        final List<PurchaseDTO> result = receipt.products().items().stream()
                 .map(i -> {
                     final PurchaseId pid = PurchaseId.nextId();
-                    final Purchase p = new Purchase(pid, i.name(), check.dateTime(), i.price(), BigDecimal.valueOf(i.quantity()));
-                    p.assignCheck(cid);
+                    final Purchase p = new Purchase(pid, i.name(), receipt.dateTime(), i.price(), BigDecimal.valueOf(i.quantity()));
+                    p.assignCheck(rid);
                     purchaseRepository.store(p);
+                    deal.addPurchase(pid);
                     return assembler.toDTO(p);
                 })
                 .collect(Collectors.toList());
+        dealRepository.store(deal);
+        return result;
     }
 }

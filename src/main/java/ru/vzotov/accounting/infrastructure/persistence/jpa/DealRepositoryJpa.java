@@ -4,6 +4,7 @@ import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.banking.domain.model.OperationId;
+import ru.vzotov.cashreceipt.domain.model.CheckId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -40,6 +41,17 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
         try {
             return em.createQuery("from Deal where :operationId member of operations", Deal.class)
                     .setParameter("operationId", operation)
+                    .getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public Deal findByReceipt(CheckId receiptId) {
+        try {
+            return em.createQuery("from Deal where :receipt member of receipts", Deal.class)
+                    .setParameter("receipt", receiptId)
                     .getSingleResult();
         } catch (NoResultException ex) {
             return null;

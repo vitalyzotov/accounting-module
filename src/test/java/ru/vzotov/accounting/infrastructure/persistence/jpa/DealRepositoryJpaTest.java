@@ -67,6 +67,14 @@ public class DealRepositoryJpaTest {
     }
 
     @Test
+    public void findByReceipt() {
+        final CheckId receipt = new CheckId("20180616135500_65624_8710000100313204_110992_2128735201_1");
+        Deal deal = dealRepository.findByReceipt(receipt);
+        assertThat(deal).isNotNull();
+        assertThat(deal.receipts()).contains(receipt);
+    }
+
+    @Test
     public void findEmptyResult() {
         final List<Deal> emptyList = dealRepository.findByDate(
                 LocalDate.of(2017, 1, 1),

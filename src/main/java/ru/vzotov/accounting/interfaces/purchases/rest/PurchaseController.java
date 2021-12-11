@@ -54,7 +54,7 @@ public class PurchaseController {
         return purchasesFacade.findPurchases(from, to);
     }
 
-    @PostMapping(params = {"!checkId"})
+    @PostMapping(params = {"!receiptId"})
     public PurchaseStoreResponse newPurchase(@RequestBody PurchaseCreateRequest purchase) {
         final PurchaseDTO dto = toPurchaseDTO(purchase);
 
@@ -62,9 +62,9 @@ public class PurchaseController {
         return new PurchaseStoreResponse(pid.value());
     }
 
-    @PostMapping(params = {"checkId"})
-    public List<PurchaseDTO> purchasesFromCheck(@RequestParam String checkId) {
-        return purchasesFacade.createPurchasesFromCheck(checkId);
+    @PostMapping(params = {"receiptId"})
+    public List<PurchaseDTO> createPurchasesFromReceipt(@RequestParam String receiptId) {
+        return purchasesFacade.createPurchasesFromReceipt(receiptId);
     }
 
     @PutMapping("{purchaseId}")
