@@ -1,15 +1,21 @@
 package ru.vzotov.accounting.interfaces.purchases.facade.impl;
 
+import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vzotov.cashreceipt.domain.model.Check;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
-import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
-import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
-import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
+import ru.vzotov.accounting.domain.model.Deal;
+import ru.vzotov.accounting.domain.model.DealId;
+import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.accounting.interfaces.purchases.facade.PurchasesFacade;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
+import ru.vzotov.cashreceipt.domain.model.Check;
+import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
+import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
+import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
@@ -24,15 +30,21 @@ import java.util.stream.Collectors;
 @Service
 public class PurchaseFacadeImpl implements PurchasesFacade {
 
+    private static final Logger log = LoggerFactory.getLogger(PurchasesFacade.class);
+
+    private final DealRepository dealRepository;
+
     private final PurchaseRepository purchaseRepository;
 
     private final PurchaseCategoryRepository categoryRepository;
 
     private final ReceiptRepository receiptRepository;
 
-    public PurchaseFacadeImpl(PurchaseRepository purchaseRepository,
+    public PurchaseFacadeImpl(DealRepository dealRepository,
+                              PurchaseRepository purchaseRepository,
                               PurchaseCategoryRepository categoryRepository,
                               ReceiptRepository receiptRepository) {
+        this.dealRepository = dealRepository;
         this.purchaseRepository = purchaseRepository;
         this.categoryRepository = categoryRepository;
         this.receiptRepository = receiptRepository;
@@ -60,29 +72,43 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
-    public PurchaseId storePurchase(PurchaseDTO purchase) {
+    public void modifyPurchase(PurchaseDTO purchase) {
+        Validate.notNull(purchase);
+        Validate.notNull(purchase.getPurchaseId());
 
-        Purchase p;
+        Purchase p = purchaseRepository.find(new PurchaseId(purchase.getPurchaseId()));
+        Validate.notNull(p);
 
+        if (purchase.getName() != null) {
+            p.setName(purchase.getName());
+        }
+
+        if (purchase.getDateTime() != null) {
+            p.setDateTime(purchase.getDateTime());
+        }
+
+        if (purchase.getPrice() != null) {
+            Money price = Money.ofRaw(purchase.getPrice().getAmount(), Currency.getInstance(purchase.getPrice().getCurrency()));
+            p.setPrice(price);
+        }
+
+        if (purchase.getQuantity() != null) {
+            p.setQuantity(BigDecimal.valueOf(purchase.getQuantity()));
+        }
+    }
+
+    @Override
+    @Transactional(value = "accounting-tx")
+    public PurchaseId createPurchase(PurchaseDTO purchase, DealId dealId) {
+        Validate.notNull(purchase);
+        Validate.notNull(dealId);
+        log.info("New purchase {} will be created for deal {}", purchase.getPurchaseId(), dealId);
+        final Deal deal = dealRepository.find(dealId);
+        Validate.notNull(deal);
+
+        final Purchase p;
         if (purchase.getPurchaseId() != null) {
-            p = purchaseRepository.find(new PurchaseId(purchase.getPurchaseId()));
-
-            if (purchase.getName() != null) {
-                p.setName(purchase.getName());
-            }
-
-            if (purchase.getDateTime() != null) {
-                p.setDateTime(purchase.getDateTime());
-            }
-
-            if (purchase.getPrice() != null) {
-                Money price = Money.ofRaw(purchase.getPrice().getAmount(), Currency.getInstance(purchase.getPrice().getCurrency()));
-                p.setPrice(price);
-            }
-
-            if (purchase.getQuantity() != null) {
-                p.setQuantity(BigDecimal.valueOf(purchase.getQuantity()));
-            }
+            throw new IllegalArgumentException("It is not allowed to modify purchase here");
         } else {
             Money price = Money.ofRaw(purchase.getPrice().getAmount(), Currency.getInstance(purchase.getPrice().getCurrency()));
             p = new Purchase(PurchaseId.nextId(), purchase.getName(), purchase.getDateTime(), price, BigDecimal.valueOf(purchase.getQuantity()));
@@ -96,6 +122,8 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
         }
 
         purchaseRepository.store(p);
+        deal.addPurchase(p.purchaseId());
+        dealRepository.store(deal);
 
         return p.purchaseId();
     }

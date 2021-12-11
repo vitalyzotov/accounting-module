@@ -1,5 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
@@ -11,12 +12,15 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundExc
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.DealDTOAssembler;
+import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
+import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
 import ru.vzotov.banking.domain.model.BudgetCategory;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.cashreceipt.domain.model.CheckId;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.purchase.domain.model.PurchaseId;
+import ru.vzotov.purchases.domain.model.PurchaseRepository;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -28,10 +32,12 @@ import java.util.stream.Collectors;
 public class DealsFacadeImpl implements DealsFacade {
 
     private final DealRepository dealRepository;
+    private final PurchaseRepository purchaseRepository;
     private final BudgetCategoryRepository budgetCategoryRepository;
 
-    public DealsFacadeImpl(DealRepository dealRepository, BudgetCategoryRepository budgetCategoryRepository) {
+    public DealsFacadeImpl(DealRepository dealRepository, PurchaseRepository purchaseRepository, BudgetCategoryRepository budgetCategoryRepository) {
         this.dealRepository = dealRepository;
+        this.purchaseRepository = purchaseRepository;
         this.budgetCategoryRepository = budgetCategoryRepository;
     }
 
@@ -120,5 +126,31 @@ public class DealsFacadeImpl implements DealsFacade {
     @Transactional(value = "accounting-tx", readOnly = true)
     public LocalDate getMaxDealDate() {
         return dealRepository.findMaxDealDate();
+    }
+
+    @Override
+    @Transactional(value = "accounting-tx", readOnly = true)
+    public List<PurchaseDTO> listDealPurchases(String dealId) {
+        PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
+        Deal deal = dealRepository.find(new DealId(dealId));
+        return deal.purchases().stream()
+                .map(purchaseRepository::find)
+                .map(assembler::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(value = "accounting-tx")
+    public void movePurchase(PurchaseId purchaseId, DealId sourceId, DealId targetId) {
+        Validate.notNull(purchaseId);
+        Validate.notNull(sourceId);
+        Validate.notNull(targetId);
+        final Deal source = dealRepository.find(sourceId);
+        Validate.notNull(source);
+        final Deal target = dealRepository.find(targetId);
+        Validate.notNull(target);
+        source.movePurchase(purchaseId, target);
+        dealRepository.store(source);
+        dealRepository.store(target);
     }
 }

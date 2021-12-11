@@ -14,7 +14,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.interfaces.common.dto.MoneyDTO;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
-import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseStoreRequest;
+import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseCreateRequest;
+import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseModifyRequest;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseStoreResponse;
 
 import java.time.LocalDateTime;
@@ -47,7 +48,7 @@ public class PurchaseControllerTest {
 
     @Test
     public void newPurchase() {
-        PurchaseStoreRequest request = new PurchaseStoreRequest();
+        PurchaseCreateRequest request = new PurchaseCreateRequest("deal-2");
         request.setName("Позиция 3");
         request.setDateTime(LocalDateTime.of(2018, Month.JUNE, 16, 13, 55, 10));
         request.setPrice(new MoneyDTO(60000, "RUR"));
@@ -59,7 +60,7 @@ public class PurchaseControllerTest {
 
     @Test
     public void modifyPurchase() {
-        PurchaseStoreRequest request = new PurchaseStoreRequest();
+        PurchaseModifyRequest request = new PurchaseModifyRequest();
         request.setCheckId("20180616135500_65624_8710000100313204_110992_2128735201_1");
         request.setName("Позиция с другим названием");
         request.setCategoryId("id-12345678901234567890");

@@ -1,8 +1,11 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
+import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
+import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
+import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -20,6 +23,10 @@ public interface DealsFacade {
     List<DealDTO> listDeals(LocalDate from, LocalDate to);
 
     DealDTO getDeal(String dealId) throws DealNotFoundException;
+
+    List<PurchaseDTO> listDealPurchases(String dealId);
+
+    void movePurchase(PurchaseId purchaseId, DealId source, DealId target);
 
     LocalDate getMinDealDate();
     LocalDate getMaxDealDate();

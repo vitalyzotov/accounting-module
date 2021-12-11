@@ -1,9 +1,12 @@
 package ru.vzotov.accounting.interfaces.purchases.rest;
 
+import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.interfaces.purchases.facade.PurchasesFacade;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
+import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseCreateRequest;
+import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseDataRequest;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseDeleteResponse;
-import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseStoreRequest;
+import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseModifyRequest;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseStoreResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -52,10 +55,10 @@ public class PurchaseController {
     }
 
     @PostMapping(params = {"!checkId"})
-    public PurchaseStoreResponse newPurchase(@RequestBody PurchaseStoreRequest purchase) {
+    public PurchaseStoreResponse newPurchase(@RequestBody PurchaseCreateRequest purchase) {
         final PurchaseDTO dto = toPurchaseDTO(purchase);
 
-        final PurchaseId pid = purchasesFacade.storePurchase(dto);
+        final PurchaseId pid = purchasesFacade.createPurchase(dto, new DealId(purchase.getDealId()));
         return new PurchaseStoreResponse(pid.value());
     }
 
@@ -65,15 +68,14 @@ public class PurchaseController {
     }
 
     @PutMapping("{purchaseId}")
-    public PurchaseStoreResponse modifyPurchase(@PathVariable String purchaseId, @RequestBody PurchaseStoreRequest purchase) {
+    public PurchaseStoreResponse modifyPurchase(@PathVariable String purchaseId, @RequestBody PurchaseModifyRequest purchase) {
         final PurchaseDTO dto = toPurchaseDTO(purchase);
         dto.setPurchaseId(purchaseId);
-
-        final PurchaseId pid = purchasesFacade.storePurchase(dto);
-        return new PurchaseStoreResponse(pid.value());
+        purchasesFacade.modifyPurchase(dto);
+        return new PurchaseStoreResponse(purchaseId);
     }
 
-    PurchaseDTO toPurchaseDTO(@RequestBody PurchaseStoreRequest purchase) {
+    PurchaseDTO toPurchaseDTO(@RequestBody PurchaseDataRequest purchase) {
         final PurchaseDTO dto = new PurchaseDTO();
         dto.setCheckId(purchase.getCheckId());
         dto.setName(purchase.getName());

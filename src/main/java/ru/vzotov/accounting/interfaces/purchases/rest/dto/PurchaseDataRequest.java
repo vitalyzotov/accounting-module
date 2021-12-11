@@ -4,8 +4,7 @@ import ru.vzotov.accounting.interfaces.common.dto.MoneyDTO;
 
 import java.time.LocalDateTime;
 
-public class PurchaseStoreRequest {
-
+public abstract class PurchaseDataRequest {
     private String checkId;
 
     private String name;
@@ -17,11 +16,6 @@ public class PurchaseStoreRequest {
     private Double quantity;
 
     private String categoryId;
-
-    private String operationId;
-
-    public PurchaseStoreRequest() {
-    }
 
     public String getCheckId() {
         return checkId;
@@ -69,13 +63,5 @@ public class PurchaseStoreRequest {
 
     public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
-    }
-
-    public String getOperationId() {
-        return operationId;
-    }
-
-    public void setOperationId(String operationId) {
-        this.operationId = operationId;
     }
 }
