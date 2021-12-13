@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="50" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.39.xml">
+    <changeSet id="50" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.39.xml">
         <addNotNullConstraint tableName="ACCOUNT_" columnName="ACCOUNT_OWNER" columnDataType="VARCHAR(255)"/>
     </changeSet>
 

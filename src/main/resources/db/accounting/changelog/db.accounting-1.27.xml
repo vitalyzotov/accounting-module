@@ -3,20 +3,20 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="33" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.27.xml">
+    <changeSet id="33" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.27.xml">
         <dropForeignKeyConstraint baseTableName="BUDGET_RULE" constraintName="FK_BRULE_ACCOUNT"/>
         <renameColumn tableName="BUDGET_RULE" oldColumnName="ACCOUNT_NUMBER" newColumnName="SOURCE_ACCOUNT"
                       columnDataType="VARCHAR(20)" remarks="Счет источника"/>
     </changeSet>
 
-    <changeSet id="34" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.27.xml">
+    <changeSet id="34" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.27.xml">
         <addForeignKeyConstraint baseTableName="BUDGET_RULE" baseColumnNames="SOURCE_ACCOUNT"
                                  constraintName="FK_BRULE_SRC_ACCOUNT"
                                  referencedTableName="ACCOUNT_"
                                  referencedColumnNames="ACCOUNT_NUMBER"/>
     </changeSet>
 
-    <changeSet id="35" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.27.xml">
+    <changeSet id="35" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.27.xml">
         <addColumn tableName="BUDGET_RULE">
             <column name="TARGET_ACCOUNT" type="VARCHAR(20)" remarks="Счет назначения">
                 <constraints nullable="true"/>
@@ -24,7 +24,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="36" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.27.xml">
+    <changeSet id="36" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.27.xml">
         <addForeignKeyConstraint baseTableName="BUDGET_RULE" baseColumnNames="TARGET_ACCOUNT"
                                  constraintName="FK_BRULE_DST_ACCOUNT"
                                  referencedTableName="ACCOUNT_"

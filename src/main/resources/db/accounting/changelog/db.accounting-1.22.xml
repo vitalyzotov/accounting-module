@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="26" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.22.xml">
+    <changeSet id="26" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.22.xml">
         <createTable tableName="SPECIAL_DAY">
             <column name="ID" type="BIGINT(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -23,14 +23,14 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="26.1" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.22.xml">
+    <changeSet id="26.1" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.22.xml">
         <createIndex tableName="SPECIAL_DAY" indexName="IX_SPECIAL_DAY_LOCATION" unique="true">
             <column name="LOCATION"/>
             <column name="DAY"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="27" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.22.xml">
+    <changeSet id="27" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.22.xml">
         <createTable tableName="BUDGET">
             <column name="ID" type="BIGINT(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -50,7 +50,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="28" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.22.xml">
+    <changeSet id="28" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.22.xml">
         <createTable tableName="BUDGET_RULE">
             <column name="ID" type="BIGINT(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -83,19 +83,19 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="29" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.22.xml">
+    <changeSet id="29" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.22.xml">
         <createIndex tableName="BUDGET" indexName="IX_BUDGET_NAME">
             <column name="NAME"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="30" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.22.xml">
+    <changeSet id="30" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.22.xml">
         <createIndex tableName="BUDGET_RULE" indexName="IXFK_BRULE_BUDGET">
             <column name="BUDGET_ID"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="31" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.22.xml">
+    <changeSet id="31" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.22.xml">
         <addUniqueConstraint tableName="BUDGET_RULE" columnNames="NAME,BUDGET_ID" constraintName="UNQ_BRULE_NAME"/>
     </changeSet>
 

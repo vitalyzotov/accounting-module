@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="1" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+    <changeSet id="1" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.0.xml">
         <createTable tableName="ACCOUNT_">
             <column name="ACCOUNT_NUMBER" type="VARCHAR(20)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -12,7 +12,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+    <changeSet id="2" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.0.xml">
         <createTable tableName="BUDGET_CATEGORY_">
             <column name="ID" type="BIGINT(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -23,7 +23,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="3" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+    <changeSet id="3" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.0.xml">
         <createTable tableName="OPERATION_">
             <column name="ID" type="VARCHAR(64)" remarks="ИД операции">
                 <constraints primaryKey="true" nullable="false"/>
@@ -55,7 +55,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="4" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+    <changeSet id="4" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.0.xml">
         <addColumn tableName="OPERATION_">
             <column name="TRANSACTION_REF" type="VARCHAR(20)" remarks="Референс проводки">
                 <constraints nullable="true"/>
@@ -63,7 +63,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="5" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+    <changeSet id="5" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.0.xml">
         <addColumn tableName="OPERATION_">
             <column name="AUTHORIZATION_DATE" type="DATE" remarks="Дата авторизации">
                 <constraints nullable="true"/>
@@ -71,7 +71,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="6" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+    <changeSet id="6" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.0.xml">
         <createTable tableName="CARD_OPERATION_">
             <column name="ID" type="VARCHAR(64)" remarks="ИД операции">
                 <constraints primaryKey="true" nullable="false"/>
@@ -115,20 +115,20 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="7" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+    <changeSet id="7" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.0.xml">
         <addForeignKeyConstraint baseTableName="CARD_OPERATION_" baseColumnNames="ID" constraintName="FK_CARD_OPERATION"
                                  referencedTableName="OPERATION_"
                                  referencedColumnNames="ID"/>
     </changeSet>
 
-    <changeSet id="8" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+    <changeSet id="8" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.0.xml">
         <preConditions onFail="MARK_RAN">
             <foreignKeyConstraintExists foreignKeyTableName="CARD_OPERATION_" foreignKeyName="FK_CARD_OPERATION"/>
         </preConditions>
         <dropForeignKeyConstraint baseTableName="CARD_OPERATION_" constraintName="FK_CARD_OPERATION"/>
     </changeSet>
 
-    <changeSet id="9" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.0.xml">
+    <changeSet id="9" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.0.xml">
         <modifyDataType columnName="ID"
                         newDataType="VARCHAR(128)"
                         tableName="CARD_OPERATION_"/>

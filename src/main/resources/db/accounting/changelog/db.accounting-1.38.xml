@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="48" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.38.xml">
+    <changeSet id="48" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.38.xml">
         <createTable tableName="PERSON_">
             <column name="ID" type="BIGINT(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -23,7 +23,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="49" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.38.xml">
+    <changeSet id="49" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.38.xml">
         <addColumn tableName="ACCOUNT_">
             <column name="ACCOUNT_OWNER" type="VARCHAR(255)">
                 <constraints nullable="true" foreignKeyName="FK_ACCOUNT_OWNER" references="PERSON_(PERSON_UID)"/>

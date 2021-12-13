@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="11" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.3.xml">
+    <changeSet id="11" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.3.xml">
         <createTable tableName="TX_">
             <column name="ID" type="BIGINT(20)" autoIncrement="true" remarks="Суррогатный ключ">
                 <constraints primaryKey="true" nullable="false"/>
@@ -18,19 +18,19 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="12" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.3.xml">
+    <changeSet id="12" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.3.xml">
         <addForeignKeyConstraint baseTableName="TX_" baseColumnNames="PRIMARY_OP" constraintName="FK_TX_OP_1"
                                  referencedTableName="OPERATION_"
                                  referencedColumnNames="ID" onUpdate="RESTRICT" onDelete="RESTRICT"/>
     </changeSet>
 
-    <changeSet id="13" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.3.xml">
+    <changeSet id="13" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.3.xml">
         <addForeignKeyConstraint baseTableName="TX_" baseColumnNames="SECONDARY_OP" constraintName="FK_TX_OP_2"
                                  referencedTableName="OPERATION_"
                                  referencedColumnNames="ID" onUpdate="RESTRICT" onDelete="RESTRICT"/>
     </changeSet>
 
-    <changeSet id="14" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.3.xml">
+    <changeSet id="14" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.3.xml">
         <createTable tableName="REMAIN_">
             <column name="ID" type="BIGINT(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>

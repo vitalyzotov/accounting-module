@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="37" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.30.xml">
+    <changeSet id="37" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.30.xml">
         <createTable tableName="MCC_DETAILS">
             <column name="CODE" type="VARCHAR(4)">
                 <constraints nullable="false" unique="true"/>
@@ -15,7 +15,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="38" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.30.xml">
+    <changeSet id="38" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.30.xml">
         <createTable tableName="MCC_GROUP">
             <column name="ID" type="BIGINT(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -29,14 +29,14 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="39" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.30.xml">
+    <changeSet id="39" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.30.xml">
         <addForeignKeyConstraint baseTableName="MCC_DETAILS" baseColumnNames="GROUP_ID"
                                  constraintName="FK_MCC_GROUP"
                                  referencedTableName="MCC_GROUP"
                                  referencedColumnNames="ID"/>
     </changeSet>
 
-    <changeSet id="40" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.30.xml">
+    <changeSet id="40" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.30.xml">
         <sqlFile path="mcc-codes.sql" relativeToChangelogFile="true" encoding="UTF-8"/>
     </changeSet>
 

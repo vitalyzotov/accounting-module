@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="36" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.18.xml">
+    <changeSet id="36" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.18.xml">
         <createTable tableName="QR_OPERATIONS">
             <column name="OPERATION_ID" type="VARCHAR(128)">
                 <constraints nullable="false"/>
@@ -14,7 +14,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="37" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.18.xml">
+    <changeSet id="37" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.18.xml">
         <addPrimaryKey tableName="QR_OPERATIONS" columnNames="OPERATION_ID, QR_ID"/>
     </changeSet>
 

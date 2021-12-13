@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="17" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="17" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <addColumn tableName="CHECK_">
             <column name="CHECK_ID" type="VARCHAR(100)" remarks="Доменный идентификатор чека">
                 <constraints nullable="true"/>
@@ -11,7 +11,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="18" author="vzotov" dbms="mysql,mariadb,!h2" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="18" author="vzotov" dbms="mysql,mariadb,!h2" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <update tableName="CHECK_">
             <column name="CHECK_ID"
                     type="VARCHAR(100)"
@@ -26,15 +26,15 @@ OPERATION_TYPE
         </update>
     </changeSet>
 
-    <changeSet id="19" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="19" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <addNotNullConstraint tableName="CHECK_" columnName="CHECK_ID" columnDataType="VARCHAR(100)"/>
     </changeSet>
 
-    <changeSet id="20" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="20" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <addUniqueConstraint tableName="CHECK_" columnNames="CHECK_ID" constraintName="UNQ_CHECK__CHECK_ID"/>
     </changeSet>
 
-    <changeSet id="21" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="21" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <addColumn tableName="QR_CODE">
             <column name="CHECK_ID" type="VARCHAR(100)" remarks="Доменный идентификатор чека">
                 <constraints nullable="true"/>
@@ -42,7 +42,7 @@ OPERATION_TYPE
         </addColumn>
     </changeSet>
 
-    <changeSet id="22" author="vzotov" dbms="mysql,mariadb,!h2" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="22" author="vzotov" dbms="mysql,mariadb,!h2" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <update tableName="QR_CODE">
             <column name="CHECK_ID"
                     type="VARCHAR(100)"
@@ -57,15 +57,15 @@ OPERATION_TYPE
         </update>
     </changeSet>
 
-    <changeSet id="23" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="23" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <addNotNullConstraint tableName="QR_CODE" columnName="CHECK_ID" columnDataType="VARCHAR(100)"/>
     </changeSet>
 
-    <changeSet id="24" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="24" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <addUniqueConstraint tableName="QR_CODE" columnNames="CHECK_ID" constraintName="UNQ_QR_CODE_CHECK_ID"/>
     </changeSet>
 
-    <changeSet id="25" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="25" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <createTable tableName="PURCHASE_">
             <column name="ID" type="BIGINT(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -91,13 +91,13 @@ OPERATION_TYPE
         </createTable>
     </changeSet>
 
-    <changeSet id="26" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="26" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <createIndex tableName="PURCHASE_" indexName="IXFK_PURCHASE_CHECK">
             <column name="CHECK_ID"/>
         </createIndex>
     </changeSet>
 
-    <changeSet id="27" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.6.xml">
+    <changeSet id="27" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.6.xml">
         <createIndex tableName="PURCHASE_" indexName="IXFK_PURCHASE_OP">
             <column name="OPERATION_ID"/>
         </createIndex>

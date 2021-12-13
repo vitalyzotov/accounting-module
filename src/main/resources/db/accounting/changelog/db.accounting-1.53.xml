@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="60" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+    <changeSet id="60" author="vzotov" logicalFilePath="path-independent">
         <createTable tableName="DEAL_">
             <column name="ID" type="BIGINT(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -32,7 +32,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="61" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+    <changeSet id="61" author="vzotov" logicalFilePath="path-independent">
         <createTable tableName="DEAL_OPERATIONS">
             <column name="DEAL_ID" type="BIGINT(20)">
                 <constraints nullable="false" foreignKeyName="FK_DEAL_OPERATIONS_DEAL" references="DEAL_(ID)"/>
@@ -43,11 +43,11 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="62" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+    <changeSet id="62" author="vzotov" logicalFilePath="path-independent">
         <addUniqueConstraint constraintName="UNQ_DEAL_OPERATIONS" tableName="DEAL_OPERATIONS" columnNames="DEAL_ID, OPERATION_ID"/>
     </changeSet>
 
-    <changeSet id="63" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+    <changeSet id="63" author="vzotov" logicalFilePath="path-independent">
         <createTable tableName="DEAL_RECEIPTS">
             <column name="DEAL_ID" type="BIGINT(20)">
                 <constraints nullable="false" foreignKeyName="FK_DEAL_RECEIPTS_DEAL" references="DEAL_(ID)"/>
@@ -58,7 +58,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="64" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.53.xml">
+    <changeSet id="64" author="vzotov" logicalFilePath="path-independent">
         <addUniqueConstraint constraintName="UNQ_DEAL_RECEIPTS" tableName="DEAL_RECEIPTS" columnNames="DEAL_ID, RECEIPT_ID"/>
     </changeSet>
 

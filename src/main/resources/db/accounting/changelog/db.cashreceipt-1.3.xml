@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="16" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.3.xml">
+    <changeSet id="16" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.3.xml">
         <addColumn tableName="CHECK_ITEM">
             <column name="IDX" type="INTEGER(10)" remarks="Индекс позиции чека">
                 <constraints nullable="false"/>

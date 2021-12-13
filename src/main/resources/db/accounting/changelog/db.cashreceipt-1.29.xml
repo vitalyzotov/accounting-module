@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="39" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.29.xml">
+    <changeSet id="39" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.29.xml">
         <createTable tableName="QR_HOLDS">
             <column name="HOLD_ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -14,11 +14,11 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="40" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.29.xml">
+    <changeSet id="40" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.29.xml">
         <addPrimaryKey tableName="QR_HOLDS" columnNames="HOLD_ID, QR_ID"/>
     </changeSet>
 
-    <changeSet id="41" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.29.xml">
+    <changeSet id="41" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.29.xml">
         <createTable tableName="CHECK_HOLDS">
             <column name="HOLD_ID" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -29,7 +29,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="42" author="vzotov" logicalFilePath="db/cashreceipt/changelog/db.changelog-1.29.xml">
+    <changeSet id="42" author="vzotov" logicalFilePath="classpath:db/salescheck/changelog/db.changelog-1.29.xml">
         <addPrimaryKey tableName="CHECK_HOLDS" columnNames="HOLD_ID, CHECK_ID"/>
     </changeSet>
 

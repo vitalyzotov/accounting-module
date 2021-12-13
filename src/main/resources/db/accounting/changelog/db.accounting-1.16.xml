@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="22" author="vzotov" logicalFilePath="db/accounting/changelog/db.changelog-1.16.xml">
+    <changeSet id="22" author="vzotov" logicalFilePath="classpath:db/accounting/changelog/db.changelog-1.16.xml">
         <addColumn tableName="BUDGET_CATEGORY_">
             <column name="COLOR" type="VARCHAR(9)" remarks="Цвет">
                 <constraints nullable="true"/>
