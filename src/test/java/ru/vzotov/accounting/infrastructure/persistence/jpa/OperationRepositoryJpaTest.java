@@ -149,7 +149,6 @@ public class OperationRepositoryJpaTest {
         assertThat(operations).isNotEmpty();
         assertThat(operations).map(Operation::operationId)
                 .doesNotContain(new OperationId("test-operation-1"))
-                .doesNotContain(new OperationId("long-description"))
                 .doesNotContain(new OperationId("deal-operation-2"));
     }
 

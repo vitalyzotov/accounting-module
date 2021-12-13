@@ -91,7 +91,7 @@ public class BudgetRepositoryJpaTest {
 
     @Test
     public void testFind() {
-        Budget budget = budgetRepository.find(new BudgetId("test-budget-1"));
+        Budget budget = budgetRepository.find(new BudgetId("test-budget-2"));
         assertThat(budget).isNotNull();
         assertThat(budget.rules())
                 .hasSize(4)
