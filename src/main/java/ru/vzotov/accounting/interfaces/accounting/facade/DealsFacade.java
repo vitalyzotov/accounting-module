@@ -30,4 +30,6 @@ public interface DealsFacade {
 
     LocalDate getMinDealDate();
     LocalDate getMaxDealDate();
+
+    DealDTO mergeDeals(List<String> dealsIds);
 }

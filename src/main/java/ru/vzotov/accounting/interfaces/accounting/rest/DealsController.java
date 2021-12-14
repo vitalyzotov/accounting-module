@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,6 +18,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundExc
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.DealsMetadataResponse;
+import ru.vzotov.accounting.interfaces.accounting.rest.dto.MergeDealsRequest;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -66,5 +68,10 @@ public class DealsController {
         dealsFacade.modifyDeal(deal.getDealId(), deal.getDate(),
                 deal.getAmount().getAmount(), deal.getAmount().getCurrency(),
                 deal.getDescription(), deal.getComment(), deal.getCategory(), deal.getReceipts(), deal.getOperations(), deal.getPurchases());
+    }
+
+    @PatchMapping
+    public DealDTO mergeDeals(@RequestBody MergeDealsRequest body) {
+        return dealsFacade.mergeDeals(body.getDeals());
     }
 }

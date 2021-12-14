@@ -25,6 +25,7 @@ import ru.vzotov.purchases.domain.model.PurchaseRepository;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Currency;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -126,6 +127,26 @@ public class DealsFacadeImpl implements DealsFacade {
     @Transactional(value = "accounting-tx", readOnly = true)
     public LocalDate getMaxDealDate() {
         return dealRepository.findMaxDealDate();
+    }
+
+    @Override
+    @Transactional(value = "accounting-tx")
+    public DealDTO mergeDeals(List<String> dealIds) {
+        Validate.notNull(dealIds);
+        Validate.isTrue(dealIds.size() >= 2);
+
+        final LinkedList<Deal> deals = dealIds.stream()
+                .map(DealId::new)
+                .map(dealRepository::find)
+                .collect(LinkedList::new, LinkedList::addFirst, (l1, l2) -> l2.forEach(l1::addFirst));
+
+        final Deal target = deals.removeLast();
+        deals.forEach(target::join);
+        deals.forEach(dealRepository::store);
+        dealRepository.store(target);
+        deals.forEach(dealRepository::delete);
+
+        return DealDTOAssembler.toDTO(target);
     }
 
     @Override

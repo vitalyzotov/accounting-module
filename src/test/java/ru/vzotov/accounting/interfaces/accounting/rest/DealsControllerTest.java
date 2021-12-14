@@ -18,8 +18,11 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -108,5 +111,24 @@ public class DealsControllerTest {
         assertThat(exchange.getStatusCode())
                 .isEqualTo(HttpStatus.OK);
         assertThat(exchange.getBody()).isNull();
+    }
+
+    @Test
+    public void mergeDeals() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("deals", Arrays.asList("cf7cb2f0-ea2a-4ba4-8732-43544af8bbc8", "c68ad6eb-86af-47f3-8165-a09a9945093f"));
+
+        ResponseEntity<DealDTO> exchange = this.restTemplate.exchange(
+                "/accounting/deals",
+                HttpMethod.PATCH, new HttpEntity<>(data),
+                DealDTO.class
+        );
+
+        assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(exchange.getBody()).isNotNull();
+        assertThat(exchange.getBody().getOperations())
+                .containsExactlyInAnyOrder("98364d73-c42b-4e5b-93da-a0a6d6018a3b", "9102dfe0-a0c8-4a83-8283-d1d487a4695c");
+        assertThat(exchange.getBody().getReceipts())
+                .containsExactlyInAnyOrder("0a735210-65e5-4b1d-abf3-7a36f707b050", "f4668455-e756-4af8-89dd-d90a7ed6ff15");
     }
 }
