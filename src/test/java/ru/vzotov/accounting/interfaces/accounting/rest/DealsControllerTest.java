@@ -130,5 +130,6 @@ public class DealsControllerTest {
                 .containsExactlyInAnyOrder("98364d73-c42b-4e5b-93da-a0a6d6018a3b", "9102dfe0-a0c8-4a83-8283-d1d487a4695c");
         assertThat(exchange.getBody().getReceipts())
                 .containsExactlyInAnyOrder("0a735210-65e5-4b1d-abf3-7a36f707b050", "f4668455-e756-4af8-89dd-d90a7ed6ff15");
+        assertThat(exchange.getBody().getAmount().getAmount()).isEqualTo(-4999-2999);
     }
 }

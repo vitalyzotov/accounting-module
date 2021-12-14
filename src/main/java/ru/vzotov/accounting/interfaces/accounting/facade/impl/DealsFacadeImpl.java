@@ -7,6 +7,7 @@ import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
+import ru.vzotov.accounting.domain.model.OperationRepository;
 import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
@@ -24,20 +25,29 @@ import ru.vzotov.purchases.domain.model.PurchaseRepository;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class DealsFacadeImpl implements DealsFacade {
 
     private final DealRepository dealRepository;
+    private final OperationRepository operationRepository;
     private final PurchaseRepository purchaseRepository;
     private final BudgetCategoryRepository budgetCategoryRepository;
 
-    public DealsFacadeImpl(DealRepository dealRepository, PurchaseRepository purchaseRepository, BudgetCategoryRepository budgetCategoryRepository) {
+    public DealsFacadeImpl(
+            DealRepository dealRepository,
+            OperationRepository operationRepository,
+            PurchaseRepository purchaseRepository,
+            BudgetCategoryRepository budgetCategoryRepository
+    ) {
         this.dealRepository = dealRepository;
+        this.operationRepository = operationRepository;
         this.purchaseRepository = purchaseRepository;
         this.budgetCategoryRepository = budgetCategoryRepository;
     }
@@ -138,13 +148,41 @@ public class DealsFacadeImpl implements DealsFacade {
         final LinkedList<Deal> deals = dealIds.stream()
                 .map(DealId::new)
                 .map(dealRepository::find)
-                .collect(LinkedList::new, LinkedList::addFirst, (l1, l2) -> l2.forEach(l1::addFirst));
+                .collect(Collectors.toCollection(LinkedList::new));
 
-        final Deal target = deals.removeLast();
+        final Deal earliestDeal = deals.stream().min(Comparator.comparing(Deal::date))
+                .orElseThrow(NullPointerException::new);
+
+        final Deal target = deals.removeFirst();
+
+        final Deal firstOperationDeal = Stream.concat(Stream.of(target), deals.stream())
+                .filter(deal -> !deal.operations().isEmpty())
+                .min(Comparator.comparing(Deal::date))
+                .orElseThrow(NullPointerException::new);
+
         deals.forEach(target::join);
         deals.forEach(dealRepository::store);
-        dealRepository.store(target);
+
+        target.setDescription(firstOperationDeal.description());
+        target.setDate(earliestDeal.date());
+
+        Money amount = target.operations().stream()
+                .map(operationRepository::find)
+                .map(op -> {
+                    switch (op.type()) {
+                        case DEPOSIT:
+                            return op.amount();
+                        case WITHDRAW:
+                            return op.amount().negate();
+                        default:
+                            throw new IllegalArgumentException();
+                    }
+                })
+                .reduce(Money::add).orElseThrow(IllegalArgumentException::new);
+        target.setAmount(amount);
+
         deals.forEach(dealRepository::delete);
+        dealRepository.store(target);
 
         return DealDTOAssembler.toDTO(target);
     }

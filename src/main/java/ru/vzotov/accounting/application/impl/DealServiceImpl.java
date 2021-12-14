@@ -4,10 +4,8 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.application.DealService;
 import ru.vzotov.accounting.domain.model.Deal;
@@ -62,7 +60,7 @@ public class DealServiceImpl implements DealService {
     public void onQRCodeCreated(QRCodeCreatedEvent event) {
         Validate.notNull(event);
         CheckQRCode qrCode = qrCodeRepository.find(event.receiptId());
-        if(qrCode == null) {
+        if (qrCode == null) {
             log.error("Unable to create deal. QR code not found: {}", event.receiptId().value());
             return;
         }
@@ -80,6 +78,12 @@ public class DealServiceImpl implements DealService {
 
         Deal secondary = dealRepository.findByOperation(event.secondary());
         Validate.notNull(secondary);
+
+        if (secondary.date().isBefore(primary.date())) {
+            Deal d = primary;
+            primary = secondary;
+            secondary = d;
+        }
 
         primary.join(secondary);
         primary.setAmount(primary.amount().subtract(primary.amount()));

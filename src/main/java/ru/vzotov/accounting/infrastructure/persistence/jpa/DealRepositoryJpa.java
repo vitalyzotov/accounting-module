@@ -66,7 +66,6 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     @Override
     public void delete(Deal deal) {
         em.remove(deal);
-        em.flush();
     }
 
     @Override

@@ -237,8 +237,8 @@
         <sql>
             INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
             VALUES
-            ('98364d73-c42b-4e5b-93da-a0a6d6018a3b', '2021-12-10', NULL, 5000, 'RUR', '-', '40817810108290123456', 'покупка в магазине 5000', NULL)
-            ,('9102dfe0-a0c8-4a83-8283-d1d487a4695c', '2021-12-12', NULL, 3000, 'RUR', '-', '40817810108290123456', 'покупка в магазине 3000', NULL)
+            ('98364d73-c42b-4e5b-93da-a0a6d6018a3b', '2021-12-10', NULL, 4999, 'RUR', '-', '40817810108290123456', 'покупка в магазине 4999', NULL)
+            ,('9102dfe0-a0c8-4a83-8283-d1d487a4695c', '2021-12-12', NULL, 2999, 'RUR', '-', '40817810108290123456', 'покупка в магазине 2999', NULL)
             ;
 
             INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
