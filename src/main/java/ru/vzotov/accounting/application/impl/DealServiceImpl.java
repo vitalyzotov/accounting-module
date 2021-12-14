@@ -82,6 +82,8 @@ public class DealServiceImpl implements DealService {
         Validate.notNull(secondary);
 
         primary.join(secondary);
+        primary.setAmount(primary.amount().subtract(primary.amount()));
+
         dealRepository.delete(secondary);
         dealRepository.store(primary);
     }
