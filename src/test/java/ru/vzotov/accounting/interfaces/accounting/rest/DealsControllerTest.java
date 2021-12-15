@@ -16,6 +16,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
+import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -84,9 +87,9 @@ public class DealsControllerTest {
                         "deal-created-via-api", LocalDate.of(2021, 11, 21),
                         new MoneyDTO(-3000, "RUR"), DEAL_DESCRIPTION, "comment of deal",
                         781381038049753674L,
-                        Collections.singletonList("20180717152900_365000_8712000101115142_19645_3757443940_1"),
-                        Collections.singletonList("deal-operation-1"),
-                        Collections.singletonList("purchase-3000-1")
+                        Collections.singletonList(new ReceiptRef("20180717152900_365000_8712000101115142_19645_3757443940_1")),
+                        Collections.singletonList(new OperationRef("deal-operation-1")),
+                        Collections.singletonList(new PurchaseRef("purchase-3000-1"))
                 )),
                 DealDTO.class
         );
@@ -101,9 +104,9 @@ public class DealsControllerTest {
                         "deal-for-modification", LocalDate.of(2021, 11, 21),
                         new MoneyDTO(-5000, "RUR"), "modified description", "modified comment",
                         781381038049753674L,
-                        Collections.singletonList("20180724145300_10650_9281000100225396_2908_4063563774_1"),
-                        Collections.singletonList("deal-operation-3"),
-                        Collections.singletonList("purchase-5000-1")
+                        Collections.singletonList(new ReceiptRef("20180724145300_10650_9281000100225396_2908_4063563774_1")),
+                        Collections.singletonList(new OperationRef("deal-operation-3")),
+                        Collections.singletonList(new PurchaseRef("purchase-5000-1"))
                 )),
                 Void.class
         );
@@ -126,9 +129,9 @@ public class DealsControllerTest {
 
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(exchange.getBody()).isNotNull();
-        assertThat(exchange.getBody().getOperations())
+        assertThat(exchange.getBody().getOperations()).extracting(OperationRef::getOperationId)
                 .containsExactlyInAnyOrder("98364d73-c42b-4e5b-93da-a0a6d6018a3b", "9102dfe0-a0c8-4a83-8283-d1d487a4695c");
-        assertThat(exchange.getBody().getReceipts())
+        assertThat(exchange.getBody().getReceipts()).extracting(ReceiptRef::getCheckId)
                 .containsExactlyInAnyOrder("0a735210-65e5-4b1d-abf3-7a36f707b050", "f4668455-e756-4af8-89dd-d90a7ed6ff15");
         assertThat(exchange.getBody().getAmount().getAmount()).isEqualTo(-4999-2999);
     }

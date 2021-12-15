@@ -10,6 +10,7 @@ import ru.vzotov.purchase.domain.model.PurchaseId;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface DealsFacade {
     DealDTO createDeal(LocalDate date, long amount, String currency, String description, String comment,
@@ -20,7 +21,7 @@ public interface DealsFacade {
 
     DealDTO deleteDeal(String dealId) throws DealNotFoundException;
 
-    List<DealDTO> listDeals(LocalDate from, LocalDate to);
+    List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<String> expand);
 
     DealDTO getDeal(String dealId) throws DealNotFoundException;
 

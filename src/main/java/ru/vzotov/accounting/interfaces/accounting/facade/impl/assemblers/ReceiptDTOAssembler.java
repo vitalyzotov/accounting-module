@@ -1,12 +1,12 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
 import ru.vzotov.cashreceipt.domain.model.Check;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
 import ru.vzotov.accounting.interfaces.common.assembler.AbstractAssembler;
 import ru.vzotov.accounting.interfaces.common.assembler.MoneyDTOAssembler;
 
 public class ReceiptDTOAssembler extends AbstractAssembler<ReceiptDTO, Check> {
-
 
     @Override
     public ReceiptDTO toDTO(Check check) {

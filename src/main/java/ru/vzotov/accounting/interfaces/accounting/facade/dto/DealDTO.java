@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.dto;
 
+import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,17 +19,17 @@ public class DealDTO {
 
     private Long category;
 
-    private List<String> receipts;
+    private List<ReceiptRef> receipts;
 
-    private List<String> operations;
+    private List<OperationRef> operations;
 
-    private List<String> purchases;
+    private List<PurchaseRef> purchases;
 
     public DealDTO() {
     }
 
     public DealDTO(String dealId, LocalDate date, MoneyDTO amount, String description, String comment,
-                   Long category, List<String> receipts, List<String> operations, List<String> purchases) {
+                   Long category, List<ReceiptRef> receipts, List<OperationRef> operations, List<PurchaseRef> purchases) {
         this.dealId = dealId;
         this.date = date;
         this.amount = amount;
@@ -87,27 +89,27 @@ public class DealDTO {
         this.category = category;
     }
 
-    public List<String> getReceipts() {
+    public List<ReceiptRef> getReceipts() {
         return receipts;
     }
 
-    public void setReceipts(List<String> receipts) {
+    public void setReceipts(List<ReceiptRef> receipts) {
         this.receipts = receipts;
     }
 
-    public List<String> getOperations() {
+    public List<OperationRef> getOperations() {
         return operations;
     }
 
-    public void setOperations(List<String> operations) {
+    public void setOperations(List<OperationRef> operations) {
         this.operations = operations;
     }
 
-    public List<String> getPurchases() {
+    public List<PurchaseRef> getPurchases() {
         return purchases;
     }
 
-    public void setPurchases(List<String> purchases) {
+    public void setPurchases(List<PurchaseRef> purchases) {
         this.purchases = purchases;
     }
 }

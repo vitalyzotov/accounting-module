@@ -2,12 +2,12 @@ package ru.vzotov.accounting.interfaces.accounting.facade.dto;
 
 import java.time.LocalDate;
 
-public class AccountOperationDTO {
+public class AccountOperationDTO extends OperationRef {
+
     private String account;
     private LocalDate date;
     private LocalDate authorizationDate;
     private String transactionReference;
-    private String operationId;
     private String operationType;
     private double amount;
     private String currency;
@@ -21,11 +21,11 @@ public class AccountOperationDTO {
     public AccountOperationDTO(String account, LocalDate date, LocalDate authorizationDate, String transactionReference,
                                String operationId, String operationType, double amount, String currency,
                                String description, String comment, Long categoryId) {
+        super(operationId);
         this.account = account;
         this.date = date;
         this.authorizationDate = authorizationDate;
         this.transactionReference = transactionReference;
-        this.operationId = operationId;
         this.operationType = operationType;
         this.amount = amount;
         this.currency = currency;
@@ -80,14 +80,6 @@ public class AccountOperationDTO {
 
     public void setTransactionReference(String transactionReference) {
         this.transactionReference = transactionReference;
-    }
-
-    public String getOperationId() {
-        return operationId;
-    }
-
-    public void setOperationId(String operationId) {
-        this.operationId = operationId;
     }
 
     public String getOperationType() {

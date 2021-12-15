@@ -2,13 +2,15 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
-import ru.vzotov.banking.domain.model.OperationId;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
-import ru.vzotov.purchase.domain.model.PurchaseId;
+import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
 
 import java.util.stream.Collectors;
 
 public class DealDTOAssembler {
+
+    private static final QRCodeDTOAssembler receiptAssembler = new QRCodeDTOAssembler();
+    private static final PurchaseDTOAssembler purchaseAssembler = new PurchaseDTOAssembler();
+
     public static DealDTO toDTO(Deal deal) {
         return deal == null ? null : new DealDTO(
                 deal.dealId().value(),
@@ -17,9 +19,15 @@ public class DealDTOAssembler {
                 deal.description(),
                 deal.comment(),
                 deal.category() == null ? null : deal.category().id(),
-                deal.receipts().stream().map(CheckId::value).collect(Collectors.toList()),
-                deal.operations().stream().map(OperationId::idString).collect(Collectors.toList()),
-                deal.purchases().stream().map(PurchaseId::value).collect(Collectors.toList())
+                deal.receipts().stream()
+                        .map(receiptAssembler::toRef)
+                        .collect(Collectors.toList()),
+                deal.operations().stream()
+                        .map(OperationDTOAssembler::toRef)
+                        .collect(Collectors.toList()),
+                deal.purchases().stream()
+                        .map(purchaseAssembler::toRef)
+                        .collect(Collectors.toList())
         );
     }
 }

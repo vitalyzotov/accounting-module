@@ -4,8 +4,8 @@ import ru.vzotov.accounting.interfaces.common.dto.MoneyDTO;
 
 import java.time.LocalDateTime;
 
-public class PurchaseDTO {
-    private String purchaseId;
+public class PurchaseDTO extends PurchaseRef {
+
 
     private String checkId;
 
@@ -22,12 +22,14 @@ public class PurchaseDTO {
     public PurchaseDTO() {
     }
 
-    public String getPurchaseId() {
-        return purchaseId;
-    }
-
-    public void setPurchaseId(String purchaseId) {
-        this.purchaseId = purchaseId;
+    public PurchaseDTO(String purchaseId, String checkId, String name, LocalDateTime dateTime, MoneyDTO price, Double quantity, String categoryId) {
+        super(purchaseId);
+        this.checkId = checkId;
+        this.name = name;
+        this.dateTime = dateTime;
+        this.price = price;
+        this.quantity = quantity;
+        this.categoryId = categoryId;
     }
 
     public String getCheckId() {

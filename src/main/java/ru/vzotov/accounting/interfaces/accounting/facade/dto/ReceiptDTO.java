@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-public final class ReceiptDTO implements Serializable {
-    private String checkId;
+public final class ReceiptDTO extends ReceiptRef implements Serializable {
+
     private FiscalInfoDTO fiscalInfo;
     private LocalDateTime dateTime;
     private Long requestNumber;
@@ -55,7 +55,7 @@ public final class ReceiptDTO implements Serializable {
                       String address,
                       Long taxationType,
                       long operationType) {
-        this.checkId = checkId;
+        super(checkId);
         this.fiscalInfo = fiscalInfo;
         this.dateTime = dateTime;
         this.requestNumber = requestNumber;
@@ -83,10 +83,6 @@ public final class ReceiptDTO implements Serializable {
 
     public void setStornoItems(List<ItemDTO> stornoItems) {
         this.stornoItems = stornoItems;
-    }
-
-    public void setCheckId(String checkId) {
-        this.checkId = checkId;
     }
 
     public void setFiscalInfo(FiscalInfoDTO fiscalInfo) {
@@ -191,10 +187,6 @@ public final class ReceiptDTO implements Serializable {
 
     public void setRequestNumber(Long requestNumber) {
         this.requestNumber = requestNumber;
-    }
-
-    public String getCheckId() {
-        return checkId;
     }
 
     public FiscalInfoDTO getFiscalInfo() {

@@ -17,11 +17,21 @@ import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.DealsMetadataResponse;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.MergeDealsRequest;
+import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toSet;
 
 @RestController
 @RequestMapping("/accounting/deals")
@@ -33,8 +43,9 @@ public class DealsController {
 
     @GetMapping
     public List<DealDTO> listDeals(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        return dealsFacade.listDeals(from, to);
+                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                   @RequestParam(required = false) List<String> expand) {
+        return dealsFacade.listDeals(from, to, expand == null ? emptySet() : new HashSet<>(expand));
     }
 
     @GetMapping("metadata")
@@ -58,7 +69,13 @@ public class DealsController {
     @PostMapping
     public DealDTO createDeal(@RequestBody DealDTO deal) throws CategoryNotFoundException {
         return dealsFacade.createDeal(deal.getDate(), deal.getAmount().getAmount(), deal.getAmount().getCurrency(),
-                deal.getDescription(), deal.getComment(), deal.getCategory(), deal.getReceipts(), deal.getOperations(), deal.getPurchases());
+                deal.getDescription(), deal.getComment(), deal.getCategory(),
+                ofNullable(deal.getReceipts()).orElse(emptyList()).stream()
+                        .map(ReceiptRef::getCheckId).collect(toSet()),
+                ofNullable(deal.getOperations()).orElse(emptyList()).stream()
+                        .map(OperationRef::getOperationId).collect(toSet()),
+                ofNullable(deal.getPurchases()).orElse(emptyList()).stream()
+                        .map(PurchaseRef::getPurchaseId).collect(Collectors.toList()));
     }
 
     @PutMapping("{dealId}")
@@ -67,7 +84,13 @@ public class DealsController {
         deal.setDealId(dealId);
         dealsFacade.modifyDeal(deal.getDealId(), deal.getDate(),
                 deal.getAmount().getAmount(), deal.getAmount().getCurrency(),
-                deal.getDescription(), deal.getComment(), deal.getCategory(), deal.getReceipts(), deal.getOperations(), deal.getPurchases());
+                deal.getDescription(), deal.getComment(), deal.getCategory(),
+                ofNullable(deal.getReceipts()).orElse(emptyList()).stream()
+                        .map(ReceiptRef::getCheckId).collect(toSet()),
+                ofNullable(deal.getOperations()).orElse(emptyList()).stream()
+                        .map(OperationRef::getOperationId).collect(toSet()),
+                ofNullable(deal.getPurchases()).orElse(emptyList()).stream()
+                        .map(PurchaseRef::getPurchaseId).collect(Collectors.toList()));
     }
 
     @PatchMapping

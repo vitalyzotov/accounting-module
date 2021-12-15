@@ -2,8 +2,7 @@ package ru.vzotov.accounting.interfaces.accounting.facade.dto;
 
 import java.time.OffsetDateTime;
 
-public class QRCodeDTO {
-    private String checkId;
+public class QRCodeDTO extends ReceiptRef {
     private QRCodeDataDTO data;
     private String state;
     private Long loadingTryCount;
@@ -13,19 +12,11 @@ public class QRCodeDTO {
     }
 
     public QRCodeDTO(String checkId, QRCodeDataDTO data, String state, Long loadingTryCount, OffsetDateTime loadedAt) {
-        this.checkId = checkId;
+        super(checkId);
         this.data = data;
         this.state = state;
         this.loadingTryCount = loadingTryCount;
         this.loadedAt = loadedAt;
-    }
-
-    public String getCheckId() {
-        return checkId;
-    }
-
-    public void setCheckId(String checkId) {
-        this.checkId = checkId;
     }
 
     public QRCodeDataDTO getData() {
