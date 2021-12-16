@@ -1,0 +1,22 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="acc-68" author="vzotov" logicalFilePath="path-independent">
+        <sql dbms="mysql,mariadb,!h2">
+            alter table tx_ add column tx_hash binary(128) generated always as (
+                cast(sha2(concat(rpad(least(primary_op,secondary_op), 128, '0'), rpad(greatest(primary_op,secondary_op), 128, '0')),512) as binary)
+            ) stored;
+        </sql>
+        <sql dbms="h2">
+            alter table tx_ add column tx_hash binary(128) as (
+                cast(HASH('SHA256', concat(rpad(least(primary_op,secondary_op), 128, '0'), rpad(greatest(primary_op,secondary_op), 128, '0'))) as binary)
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="acc-69" author="vzotov" logicalFilePath="path-independent">
+        <addUniqueConstraint tableName="TX_" columnNames="TX_HASH" constraintName="UNQ_TX_HASH"/>
+    </changeSet>
+</databaseChangeLog>
