@@ -20,10 +20,11 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundExcepti
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.DealsMetadataResponse;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.MergeDealsRequest;
+import ru.vzotov.accounting.interfaces.accounting.rest.dto.PatchDealsRequest;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,8 +63,14 @@ public class DealsController {
     }
 
     @DeleteMapping("{dealId}")
-    public DealDTO deleteDeal(@PathVariable String dealId) throws DealNotFoundException {
-        return dealsFacade.deleteDeal(dealId);
+    public List<DealDTO> deleteDeal(@PathVariable String dealId,
+                              @RequestParam(required = false, defaultValue = "false") boolean split) throws DealNotFoundException {
+        if(split) {
+            return dealsFacade.splitDeal(dealId);
+        } else {
+            dealsFacade.deleteDeal(dealId);
+            return Collections.emptyList();
+        }
     }
 
     @PostMapping
@@ -94,7 +101,7 @@ public class DealsController {
     }
 
     @PatchMapping
-    public DealDTO mergeDeals(@RequestBody MergeDealsRequest body) {
+    public DealDTO patchDeals(@RequestBody PatchDealsRequest body) {
         return dealsFacade.mergeDeals(body.getDeals());
     }
 }

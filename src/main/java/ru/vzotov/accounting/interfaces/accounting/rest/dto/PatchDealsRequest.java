@@ -2,14 +2,14 @@ package ru.vzotov.accounting.interfaces.accounting.rest.dto;
 
 import java.util.List;
 
-public class MergeDealsRequest {
+public class PatchDealsRequest {
 
     private List<String> deals;
 
-    public MergeDealsRequest() {
+    public PatchDealsRequest() {
     }
 
-    public MergeDealsRequest(List<String> deals) {
+    public PatchDealsRequest(List<String> deals) {
         this.deals = deals;
     }
 

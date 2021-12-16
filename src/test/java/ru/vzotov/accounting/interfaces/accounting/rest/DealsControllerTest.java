@@ -69,14 +69,14 @@ public class DealsControllerTest {
 
     @Test
     public void deleteDeal() {
-        ResponseEntity<DealDTO> exchange = this.restTemplate.exchange(
+        ResponseEntity<List<DealDTO>> exchange = this.restTemplate.exchange(
                 "/accounting/deals/deal-for-remove",
                 HttpMethod.DELETE, new HttpEntity<>(null),
-                new ParameterizedTypeReference<DealDTO>() {
+                new ParameterizedTypeReference<List<DealDTO>>() {
                 }
         );
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(exchange.getBody()).hasFieldOrPropertyWithValue("dealId", "deal-for-remove");
+        assertThat(exchange.getBody()).hasSize(0);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class DealsControllerTest {
     }
 
     @Test
-    public void mergeDeals() {
+    public void patchDeals() {
         Map<String, Object> data = new HashMap<>();
         data.put("deals", Arrays.asList("cf7cb2f0-ea2a-4ba4-8732-43544af8bbc8", "c68ad6eb-86af-47f3-8165-a09a9945093f"));
 
@@ -133,6 +133,6 @@ public class DealsControllerTest {
                 .containsExactlyInAnyOrder("98364d73-c42b-4e5b-93da-a0a6d6018a3b", "9102dfe0-a0c8-4a83-8283-d1d487a4695c");
         assertThat(exchange.getBody().getReceipts()).extracting(ReceiptRef::getCheckId)
                 .containsExactlyInAnyOrder("0a735210-65e5-4b1d-abf3-7a36f707b050", "f4668455-e756-4af8-89dd-d90a7ed6ff15");
-        assertThat(exchange.getBody().getAmount().getAmount()).isEqualTo(-4999-2999);
+        assertThat(exchange.getBody().getAmount().getAmount()).isEqualTo(-4999 - 2999);
     }
 }
