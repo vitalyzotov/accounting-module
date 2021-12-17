@@ -95,6 +95,10 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
         if (purchase.getQuantity() != null) {
             p.setQuantity(BigDecimal.valueOf(purchase.getQuantity()));
         }
+
+        if (purchase.getCategoryId() != null) {
+            p.assignCategory(categoryRepository.findById(new PurchaseCategoryId(purchase.getCategoryId())));
+        }
     }
 
     @Override
