@@ -26,7 +26,7 @@
         <cashreceipt.model.version>1.52</cashreceipt.model.version>
         <purchases.model.version>1.2</purchases.model.version>
         <money.model.version>1.5</money.model.version>
-        <accounting.model.version>1.3-SNAPSHOT</accounting.model.version>
+        <accounting.model.version>1.3</accounting.model.version>
     </properties>
 
     <dependencies>
