@@ -59,7 +59,12 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
     @Override
     @Transactional(value = "accounting-tx")
     public PurchaseId deletePurchaseById(String purchaseId) {
-        PurchaseId id = new PurchaseId(purchaseId);
+        final PurchaseId id = new PurchaseId(purchaseId);
+        final Deal deal = dealRepository.findByPurchase(id);
+        if(deal != null) {
+            deal.removePurchase(id);
+            dealRepository.store(deal);
+        }
         purchaseRepository.delete(id);
         return id;
     }

@@ -1,0 +1,45 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="acc-70" author="vzotov">
+        <dropForeignKeyConstraint baseTableName="DEAL_OPERATIONS" constraintName="FK_DEAL_OPERATIONS_DEAL"/>
+        <dropForeignKeyConstraint baseTableName="DEAL_OPERATIONS" constraintName="FK_DEAL_OPERATIONS_OPERATION"/>
+        <dropForeignKeyConstraint baseTableName="DEAL_RECEIPTS" constraintName="FK_DEAL_RECEIPTS_DEAL"/>
+        <dropForeignKeyConstraint baseTableName="DEAL_PURCHASES" constraintName="FK_DEAL_PURCHASES_DEAL"/>
+    </changeSet>
+
+    <changeSet id="acc-71" author="vzotov">
+        <addForeignKeyConstraint baseTableName="DEAL_OPERATIONS" baseColumnNames="DEAL_ID"
+                                 constraintName="FK_DEAL_OPERATIONS_DEAL"
+                                 referencedTableName="DEAL_"
+                                 referencedColumnNames="ID"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="DEAL_OPERATIONS" baseColumnNames="OPERATION_ID"
+                                 constraintName="FK_DEAL_OPERATIONS_OPERATION"
+                                 referencedTableName="OPERATION_"
+                                 referencedColumnNames="ID"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="DEAL_RECEIPTS" baseColumnNames="DEAL_ID"
+                                 constraintName="FK_DEAL_RECEIPTS_DEAL"
+                                 referencedTableName="DEAL_"
+                                 referencedColumnNames="ID"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="DEAL_RECEIPTS" baseColumnNames="RECEIPT_ID"
+                                 constraintName="FK_DEAL_RECEIPTS_RECEIPT"
+                                 referencedTableName="QR_CODE"
+                                 referencedColumnNames="CHECK_ID"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="DEAL_PURCHASES" baseColumnNames="DEAL_ID"
+                                 constraintName="FK_DEAL_PURCHASES_DEAL"
+                                 referencedTableName="DEAL_"
+                                 referencedColumnNames="ID"
+                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="DEAL_PURCHASES" baseColumnNames="PURCHASE_ID"
+                                 constraintName="FK_DEAL_PURCHASES_PURCHASE"
+                                 referencedTableName="PURCHASE_"
+                                 referencedColumnNames="PURCHASE_ID"
+                                 onDelete="RESTRICT"/>
+    </changeSet>
+</databaseChangeLog>

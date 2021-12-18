@@ -5,6 +5,7 @@ import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -59,8 +60,23 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     }
 
     @Override
+    public Deal findByPurchase(PurchaseId purchaseId) {
+        try {
+            return em.createQuery("from Deal where :purchase member of purchases", Deal.class)
+                    .setParameter("purchase", purchaseId)
+                    .getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
     public void store(Deal deal) {
-        em.persist(deal);
+        if (hasId(deal, "id")) {
+            em.merge(deal);
+        } else {
+            em.persist(deal);
+        }
     }
 
     @Override

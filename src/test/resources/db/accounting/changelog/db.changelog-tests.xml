@@ -227,9 +227,20 @@
 
     <changeSet id="test16" author="vzotov">
         <sql>
-            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (1, '20180616135500_65624_8710000100313204_110992_2128735201_1');
-            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (2, '20171229165300_7734000_8710000100691108_1554_2182018037_1');
-            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (3, '20180723142000_7150_9281000100225396_2736_802663012_1');
+            INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
+            FISCAL_SIGN, OPERATION_TYPE, STATE, LOADING_COUNT, LOADED_AT)
+            VALUES
+            ('test16_receipt_1', '2018-06-16 13:55:00', 65624, 'RUR', '8710000100313204', 110992,
+            2128735202, 1, 'N', 1, '2021-12-10 14:00:00')
+            , ('test16_receipt_2', '2017-12-29 16:53:00', 7734000, 'RUR', '8710000100691108', 1554,
+            2182018037, 1, 'N', 1, '2021-12-12 14:00:00')
+            , ('test16_receipt_3', '2018-07-23 14:20:00', 7150, 'RUR', '9281000100225396', 2736,
+            802663013, 1, 'N', 1, '2021-12-12 14:00:00')
+            ;
+
+            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (1, 'test16_receipt_1');
+            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (2, 'test16_receipt_2');
+            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (3, 'test16_receipt_3');
         </sql>
     </changeSet>
 
@@ -265,6 +276,61 @@
             INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID)
                 SELECT ID, 'f4668455-e756-4af8-89dd-d90a7ed6ff15'
                 FROM DEAL_ WHERE DEAL_UID='c68ad6eb-86af-47f3-8165-a09a9945093f';
+        </sql>
+    </changeSet>
+
+    <changeSet id="DealRepositoryJpaTest.store" author="vzotov">
+        <sql>
+            INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
+            FISCAL_SIGN, OPERATION_TYPE, STATE, LOADING_COUNT, LOADED_AT)
+            VALUES
+            ('receipt-d06eeb5c598c', '2018-06-16 13:55:00', 65624, 'RUR', '8710000100313204', 110992,
+            2128735203, 1, 'N', 1, '2021-12-10 14:00:00');
+            INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
+            ('purchase-0912fc12d100', '2018-06-16 13:55:00', 'purchase 0912fc12d100', 500, 'RUR', 1.500, NULL);
+        </sql>
+    </changeSet>
+
+    <changeSet id="DealsControllerTest.modifyDeal" author="vzotov">
+        <sql>
+            INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
+            FISCAL_SIGN, OPERATION_TYPE, STATE, LOADING_COUNT, LOADED_AT)
+            VALUES
+            ('receipt-923fe9456109', '2018-06-16 13:55:00', 65624, 'RUR', '8710000100313204', 110992,
+            2128735204, 1, 'N', 1, '2021-12-10 14:00:00');
+
+            INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
+            ('purchase-5000-1', '2018-06-16 13:55:00', 'purchase-5000-1', 500, 'RUR', 1.500, NULL);
+        </sql>
+    </changeSet>
+
+    <changeSet id="DealsControllerTest.createDeal" author="vzotov">
+        <sql>
+            INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
+            FISCAL_SIGN, OPERATION_TYPE, STATE, LOADING_COUNT, LOADED_AT)
+            VALUES
+            ('receipt-6380ff16f05e', '2018-06-16 13:55:00', 65624, 'RUR', '8710000100313204', 110992,
+            2128735205, 1, 'N', 1, '2021-12-10 14:00:00');
+
+            INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
+            ('purchase-3000-1', '2018-06-16 13:55:00', 'purchase-3000-1', 500, 'RUR', 1.500, NULL);
+
+        </sql>
+    </changeSet>
+
+    <changeSet id="PurchaseFacadeImplTest.deletePurchaseById" author="vzotov">
+        <sql>
+            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES
+                ('deal-61423570595d', '2021-12-10', -223344, 'RUR');
+
+            INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
+            ('purchase-80ad2d7a1294', '2021-12-10 13:55:00', 'purchase-80ad2d7a1294', 500, 'RUR', 1.500, NULL),
+            ('purchase-2d01489c2478', '2021-12-10 13:55:00', 'purchase-2d01489c2478', 500, 'RUR', 1.500, NULL);
+
+            INSERT INTO DEAL_PURCHASES (DEAL_ID, PURCHASE_ID, PURCHASE_ORDER)
+            SELECT ID, 'purchase-80ad2d7a1294', 0 FROM DEAL_ WHERE DEAL_UID='deal-61423570595d';
+            INSERT INTO DEAL_PURCHASES (DEAL_ID, PURCHASE_ID, PURCHASE_ORDER)
+            SELECT ID, 'purchase-2d01489c2478', 1 FROM DEAL_ WHERE DEAL_UID='deal-61423570595d';
         </sql>
     </changeSet>
 </databaseChangeLog>

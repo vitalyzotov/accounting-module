@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <include file="db.cashreceipt-1.0.xml" relativeToChangelogFile="true"/>
     <include file="db.cashreceipt-1.3.xml" relativeToChangelogFile="true"/>
@@ -39,6 +38,6 @@
     <include file="db.accounting-1.53.xml" relativeToChangelogFile="true"/>
     <include file="db.accounting-1.54.xml" relativeToChangelogFile="true"/>
     <include file="db.accounting-1.57.xml" relativeToChangelogFile="true"/>
-
+    <include file="db.accounting-1.58.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

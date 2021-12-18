@@ -34,8 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class DealRepositoryJpaTest {
     private static final Logger log = LoggerFactory.getLogger(DealRepositoryJpaTest.class);
-    private static final String CHECK_ID_1 = "20180616135500_65624_8710000100313204_110992_2128735201_1";
-    private static final String CHECK_ID_2 = "20190612105200_11000_9280440300024677_35260_1993523058_1";
+    private static final String CHECK_ID_1 = "test16_receipt_1";
 
     @Autowired
     private DealRepository dealRepository;
@@ -68,7 +67,7 @@ public class DealRepositoryJpaTest {
 
     @Test
     public void findByReceipt() {
-        final CheckId receipt = new CheckId("20180616135500_65624_8710000100313204_110992_2128735201_1");
+        final CheckId receipt = new CheckId("test16_receipt_1");
         Deal deal = dealRepository.findByReceipt(receipt);
         assertThat(deal).isNotNull();
         assertThat(deal.receipts()).contains(receipt);
@@ -101,9 +100,9 @@ public class DealRepositoryJpaTest {
                 DealId.nextId(), LocalDate.of(2021, 11, 21), Money.kopecks(123456),
                 "description", "comment",
                 new BudgetCategoryId(781381038049753674L),
-                Collections.singleton(new CheckId(CHECK_ID_2)),
+                Collections.singleton(new CheckId("receipt-d06eeb5c598c")),
                 Collections.singleton(new OperationId("deal-operation-4")),
-                Collections.singletonList(new PurchaseId("purchase-1"))
+                Collections.singletonList(new PurchaseId("purchase-0912fc12d100"))
         );
         dealRepository.store(deal);
     }

@@ -34,4 +34,9 @@ public class PurchaseFacadeImplTest {
                 isNotEmpty().
                 hasAtLeastOneElementOfType(PurchaseDTO.class);
     }
+
+    @Test
+    public void deletePurchaseById() {
+        facade.deletePurchaseById("purchase-80ad2d7a1294");
+    }
 }

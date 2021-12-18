@@ -87,7 +87,7 @@ public class DealsControllerTest {
                         "deal-created-via-api", LocalDate.of(2021, 11, 21),
                         new MoneyDTO(-3000, "RUR"), DEAL_DESCRIPTION, "comment of deal",
                         781381038049753674L,
-                        Collections.singletonList(new ReceiptRef("20180717152900_365000_8712000101115142_19645_3757443940_1")),
+                        Collections.singletonList(new ReceiptRef("receipt-6380ff16f05e")),
                         Collections.singletonList(new OperationRef("deal-operation-1")),
                         Collections.singletonList(new PurchaseRef("purchase-3000-1"))
                 )),
@@ -104,7 +104,7 @@ public class DealsControllerTest {
                         "deal-for-modification", LocalDate.of(2021, 11, 21),
                         new MoneyDTO(-5000, "RUR"), "modified description", "modified comment",
                         781381038049753674L,
-                        Collections.singletonList(new ReceiptRef("20180724145300_10650_9281000100225396_2908_4063563774_1")),
+                        Collections.singletonList(new ReceiptRef("receipt-923fe9456109")),
                         Collections.singletonList(new OperationRef("deal-operation-3")),
                         Collections.singletonList(new PurchaseRef("purchase-5000-1"))
                 )),

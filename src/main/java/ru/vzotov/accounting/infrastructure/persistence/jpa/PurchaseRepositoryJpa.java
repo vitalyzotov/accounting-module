@@ -1,10 +1,10 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -53,8 +53,12 @@ public class PurchaseRepositoryJpa extends JpaRepository implements PurchaseRepo
 
     @Override
     public boolean delete(PurchaseId id) {
-        return em.createQuery("DELETE FROM Purchase WHERE purchaseId.value = :id")
-                .setParameter("id", id.value())
-                .executeUpdate() > 0;
+        final Purchase p = find(id);
+        if (p != null) {
+            em.remove(p);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
