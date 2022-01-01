@@ -12,10 +12,11 @@ import ru.vzotov.accounting.application.AccountingService;
 import ru.vzotov.accounting.domain.model.AccountRepository;
 import ru.vzotov.accounting.domain.model.CardOperationRepository;
 import ru.vzotov.accounting.domain.model.HoldOperationRepository;
-import ru.vzotov.banking.domain.model.OperationCreatedEvent;
 import ru.vzotov.accounting.domain.model.OperationRepository;
 import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountNumber;
+import ru.vzotov.banking.domain.model.BankingEvents.CardOperationCreatedEvent;
+import ru.vzotov.banking.domain.model.BankingEvents.OperationCreatedEvent;
 import ru.vzotov.banking.domain.model.CardNumber;
 import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.HoldId;
@@ -130,6 +131,7 @@ public class AccountingServiceImpl implements AccountingService {
         );
 
         cardOperationRepository.store(op);
+        eventPublisher.publishEvent(new CardOperationCreatedEvent(operationId));
 
         return op.operationId();
     }

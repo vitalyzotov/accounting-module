@@ -8,12 +8,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.application.DealService;
+import ru.vzotov.accounting.domain.model.CardOperationRepository;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.accounting.domain.model.OperationRepository;
+import ru.vzotov.banking.domain.model.BankingEvents;
+import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.Operation;
-import ru.vzotov.banking.domain.model.OperationCreatedEvent;
 import ru.vzotov.banking.domain.model.TransactionCreatedEvent;
 import ru.vzotov.cashreceipt.domain.model.CheckQRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeCreatedEvent;
@@ -30,21 +32,25 @@ public class DealServiceImpl implements DealService {
 
     private final OperationRepository operationRepository;
 
+    private final CardOperationRepository cardOperationRepository;
+
     private final QRCodeRepository qrCodeRepository;
 
     private final DealRepository dealRepository;
 
     public DealServiceImpl(OperationRepository operationRepository,
+                           CardOperationRepository cardOperationRepository,
                            QRCodeRepository qrCodeRepository,
                            DealRepository dealRepository) {
         this.operationRepository = operationRepository;
+        this.cardOperationRepository = cardOperationRepository;
         this.qrCodeRepository = qrCodeRepository;
         this.dealRepository = dealRepository;
     }
 
     @EventListener
     @Transactional("accounting-tx")
-    public void onOperationCreated(OperationCreatedEvent event) {
+    public void onOperationCreated(BankingEvents.OperationCreatedEvent event) {
         Validate.notNull(event);
         Operation operation = operationRepository.find(event.operationId());
         if (operation == null) {
@@ -53,6 +59,18 @@ public class DealServiceImpl implements DealService {
         }
 
         createDealForOperation(operation);
+    }
+
+    @EventListener
+    @Transactional("accounting-tx")
+    public void onCardOperationCreated(BankingEvents.CardOperationCreatedEvent event) {
+        Validate.notNull(event);
+        CardOperation operation = cardOperationRepository.find(event.operationId());
+        if(operation == null) {
+            log.error("Unable to modify deal for non-existing card operation {}", event.operationId().idString());
+        }
+
+        modifyDealForCardOperation(operation);
     }
 
     @EventListener
@@ -119,9 +137,11 @@ public class DealServiceImpl implements DealService {
                 throw new IllegalArgumentException();
         }
 
+        final CardOperation cardOperation = cardOperationRepository.find(operation.operationId());
+
         final Deal deal = new Deal(
                 DealId.nextId(),
-                Optional.ofNullable(operation.authorizationDate()).orElse(operation.date()),
+                Optional.ofNullable(cardOperation).map(CardOperation::purchaseDate).orElse(operation.date()),
                 amount,
                 operation.description(),
                 operation.comment(),
@@ -131,6 +151,22 @@ public class DealServiceImpl implements DealService {
                 Collections.emptyList()
         );
         dealRepository.store(deal);
+    }
+
+    private void modifyDealForCardOperation(CardOperation cardOperation) {
+        Validate.notNull(cardOperation, "Null card operation not allowed");
+
+        final Deal deal = dealRepository.findByOperation(cardOperation.operationId());
+        final Operation operation = operationRepository.find(cardOperation.operationId());
+        if(operation == null) {
+            log.error("Unable to process event for card operation {}", cardOperation.operationId());
+        } else {
+            if (deal == null) {
+                createDealForOperation(operation);
+            } else {
+                deal.setDate(Optional.of(cardOperation).map(CardOperation::purchaseDate).orElse(operation.date()));
+            }
+        }
     }
 
     private void createDealForQrCode(CheckQRCode qrCode) {
