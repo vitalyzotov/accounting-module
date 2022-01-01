@@ -7,6 +7,7 @@ import ru.vzotov.cashreceipt.domain.model.CheckQRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,10 @@ public class ReceiptEnricher extends AbstractEnricher<ReceiptRef> {
     private final Map<String, CheckQRCode> cache;
 
     private final QRCodeDTOAssembler assembler = new QRCodeDTOAssembler();
+
+    public ReceiptEnricher(QRCodeRepository repository) {
+        this(repository, Collections.emptySet());
+    }
 
     public ReceiptEnricher(QRCodeRepository repository, Collection<CheckQRCode> cache) {
         this.repository = repository;

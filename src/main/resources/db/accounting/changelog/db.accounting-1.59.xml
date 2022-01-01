@@ -1,0 +1,12 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="acc-72" author="vzotov">
+        <createView viewName="DEAL_CARD_OPERATIONS" fullDefinition="false">
+            SELECT DEAL_ID, OPERATION_ID FROM DEAL_OPERATIONS WHERE EXISTS (SELECT 1 FROM CARD_OPERATION_ cop WHERE cop.ID=OPERATION_ID)
+        </createView>
+    </changeSet>
+
+</databaseChangeLog>

@@ -25,6 +25,9 @@ public class DealDTOAssembler {
                 deal.operations().stream()
                         .map(OperationDTOAssembler::toRef)
                         .collect(Collectors.toList()),
+                deal.cardOperations().stream()
+                        .map(OperationDTOAssembler::toRef)
+                        .collect(Collectors.toList()),
                 deal.purchases().stream()
                         .map(purchaseAssembler::toRef)
                         .collect(Collectors.toList())

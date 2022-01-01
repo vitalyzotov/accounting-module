@@ -58,6 +58,15 @@
                 </collection-table>
             </element-collection>
 
+            <element-collection name="cardOperations" fetch="EAGER">
+                <attribute-override name="id">
+                    <column name="OPERATION_ID" insertable="false" updatable="false"/>
+                </attribute-override>
+                <collection-table name="DEAL_CARD_OPERATIONS">
+                    <join-column name="DEAL_ID" nullable="false" insertable="false" updatable="false"/>
+                </collection-table>
+            </element-collection>
+
             <element-collection name="purchases" fetch="EAGER">
                 <order-column name="PURCHASE_ORDER"/>
                 <attribute-override name="value">

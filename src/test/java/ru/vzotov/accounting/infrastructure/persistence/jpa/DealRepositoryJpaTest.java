@@ -102,6 +102,7 @@ public class DealRepositoryJpaTest {
                 new BudgetCategoryId(781381038049753674L),
                 Collections.singleton(new CheckId("receipt-d06eeb5c598c")),
                 Collections.singleton(new OperationId("deal-operation-4")),
+                Collections.emptySet(),
                 Collections.singletonList(new PurchaseId("purchase-0912fc12d100"))
         );
         dealRepository.store(deal);

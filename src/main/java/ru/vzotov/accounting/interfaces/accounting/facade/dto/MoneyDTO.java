@@ -1,6 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.dto;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public final class MoneyDTO implements Serializable {
     private long amount;
@@ -20,5 +21,23 @@ public final class MoneyDTO implements Serializable {
 
     public String getCurrency() {
         return currency;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MoneyDTO moneyDTO = (MoneyDTO) o;
+
+        if (amount != moneyDTO.amount) return false;
+        return Objects.equals(currency, moneyDTO.currency);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (amount ^ (amount >>> 32));
+        result = 31 * result + (currency != null ? currency.hashCode() : 0);
+        return result;
     }
 }

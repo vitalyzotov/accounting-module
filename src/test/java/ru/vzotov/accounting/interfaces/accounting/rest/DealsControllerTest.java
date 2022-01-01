@@ -14,9 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.CardOperationDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.PosTerminalDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 
@@ -65,6 +67,37 @@ public class DealsControllerTest {
         );
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(exchange.getBody()).hasFieldOrPropertyWithValue("dealId", "deal-1");
+        assertThat(exchange.getBody()).hasFieldOrPropertyWithValue("cardOperations",
+                Collections.singletonList(new OperationRef("test-operation-1")));
+    }
+
+    @Test
+    public void getDealWithExpansion() {
+        ResponseEntity<DealDTO> exchange = this.restTemplate.exchange(
+                "/accounting/deals/deal-1?expand=card_operations",
+                HttpMethod.GET, new HttpEntity<>(null),
+                new ParameterizedTypeReference<DealDTO>() {
+                }
+        );
+        assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(exchange.getBody()).hasFieldOrPropertyWithValue("dealId", "deal-1");
+        assertThat(exchange.getBody()).hasFieldOrPropertyWithValue("cardOperations",
+                Collections.singletonList(new CardOperationDTO(
+                        "test-operation-1",
+                        "555957++++++1234",
+                        new PosTerminalDTO(
+                                "10705017",
+                                "RUS",
+                                "MOSCOW",
+                                "1 YA T",
+                                "ROSTELECOM"
+                        ),
+                        LocalDate.of(2018, 7, 10),
+                        LocalDate.of(2018, 7, 7),
+                        new MoneyDTO(50000, "RUR"),
+                        null,
+                        "4812"
+                )));
     }
 
     @Test
@@ -89,6 +122,7 @@ public class DealsControllerTest {
                         781381038049753674L,
                         Collections.singletonList(new ReceiptRef("receipt-6380ff16f05e")),
                         Collections.singletonList(new OperationRef("deal-operation-1")),
+                        Collections.emptyList(),
                         Collections.singletonList(new PurchaseRef("purchase-3000-1"))
                 )),
                 DealDTO.class
@@ -106,6 +140,7 @@ public class DealsControllerTest {
                         781381038049753674L,
                         Collections.singletonList(new ReceiptRef("receipt-923fe9456109")),
                         Collections.singletonList(new OperationRef("deal-operation-3")),
+                        Collections.emptyList(),
                         Collections.singletonList(new PurchaseRef("purchase-5000-1"))
                 )),
                 Void.class

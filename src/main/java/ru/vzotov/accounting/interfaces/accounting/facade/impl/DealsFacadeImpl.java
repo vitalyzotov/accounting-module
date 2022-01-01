@@ -4,6 +4,7 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
+import ru.vzotov.accounting.domain.model.CardOperationRepository;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
@@ -12,8 +13,10 @@ import ru.vzotov.accounting.domain.model.TransactionRepository;
 import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTOExpansion;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.DealDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.CardOperationEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.OperationEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.PurchaseEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.ReceiptEnricher;
@@ -21,6 +24,7 @@ import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
 import ru.vzotov.banking.domain.model.BudgetCategory;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
+import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.Operation;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.OperationType;
@@ -42,6 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,6 +58,7 @@ public class DealsFacadeImpl implements DealsFacade {
 
     private final DealRepository dealRepository;
     private final OperationRepository operationRepository;
+    private final CardOperationRepository cardOperationRepository;
     private final PurchaseRepository purchaseRepository;
     private final BudgetCategoryRepository budgetCategoryRepository;
     private final QRCodeRepository qrCodeRepository;
@@ -61,12 +67,14 @@ public class DealsFacadeImpl implements DealsFacade {
     public DealsFacadeImpl(
             DealRepository dealRepository,
             OperationRepository operationRepository,
+            CardOperationRepository cardOperationRepository,
             PurchaseRepository purchaseRepository,
             BudgetCategoryRepository budgetCategoryRepository,
             QRCodeRepository qrCodeRepository,
             TransactionRepository transactionRepository) {
         this.dealRepository = dealRepository;
         this.operationRepository = operationRepository;
+        this.cardOperationRepository = cardOperationRepository;
         this.purchaseRepository = purchaseRepository;
         this.budgetCategoryRepository = budgetCategoryRepository;
         this.qrCodeRepository = qrCodeRepository;
@@ -92,6 +100,7 @@ public class DealsFacadeImpl implements DealsFacade {
                 description, comment, budgetCategoryId,
                 receipts.stream().map(CheckId::new).collect(Collectors.toSet()),
                 operations.stream().map(OperationId::new).collect(Collectors.toSet()),
+                Collections.emptySet(),
                 purchases.stream().map(PurchaseId::new).collect(Collectors.toList())
         );
 
@@ -163,6 +172,7 @@ public class DealsFacadeImpl implements DealsFacade {
                     deal.category(),
                     Collections.emptySet(),
                     Collections.emptySet(),
+                    Collections.emptySet(),
                     Collections.emptyList()
             );
             deal.moveReceipt(receiptId, d);
@@ -180,6 +190,7 @@ public class DealsFacadeImpl implements DealsFacade {
                     operation.description(),
                     operation.comment(),
                     deal.category(),
+                    Collections.emptySet(),
                     Collections.emptySet(),
                     Collections.emptySet(),
                     Collections.emptyList()
@@ -215,42 +226,20 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    public List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<String> expand) {
-        Validate.notNull(expand);
-        final boolean expandReceipts = expand.contains("receipts");
-        final boolean expandOperations = expand.contains("operations");
-        final boolean expandPurchases = expand.contains("purchases");
-
-        final List<Operation> operations = expandOperations ?
-                operationRepository.findByDate(from, to) : emptyList();
-        final List<CheckQRCode> receipts = expandReceipts ?
-                qrCodeRepository.findByDate(from, to) : emptyList();
-        final List<Purchase> purchases = expandPurchases ?
-                purchaseRepository.findByDate(from.atStartOfDay(), to.plusDays(1).atStartOfDay()) : emptyList();
-
-        final OperationEnricher operationEnricher = new OperationEnricher(operationRepository, operations);
-        final ReceiptEnricher receiptEnricher = new ReceiptEnricher(qrCodeRepository, receipts);
-        final PurchaseEnricher purchaseEnricher = new PurchaseEnricher(purchaseRepository, purchases);
-
-        Stream<DealDTO> stream = dealRepository.findByDate(from, to)
-                .stream()
-                .map(DealDTOAssembler::toDTO);
-        if (expandOperations)
-            stream = stream.peek(dto -> dto.setOperations(operationEnricher.list(dto.getOperations())));
-        if (expandReceipts)
-            stream = stream.peek(dto -> dto.setReceipts(receiptEnricher.list(dto.getReceipts())));
-        if (expandPurchases)
-            stream = stream.peek(dto -> dto.setPurchases(purchaseEnricher.list(dto.getPurchases())));
-
-        return stream.collect(Collectors.toList());
+    public List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<DealDTOExpansion> expand) {
+        return expandDeals(expand, from, to,
+                () -> dealRepository.findByDate(from, to).stream().map(DealDTOAssembler::toDTO))
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    public DealDTO getDeal(String dealId) throws DealNotFoundException {
+    public DealDTO getDeal(String dealId, Set<DealDTOExpansion> expand) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
-        return DealDTOAssembler.toDTO(deal);
+
+        return expandDeals(expand, null, null, () -> Stream.of(DealDTOAssembler.toDTO(deal)))
+                .findFirst().orElseThrow(DealNotFoundException::new);
     }
 
     @Override
@@ -337,5 +326,39 @@ public class DealsFacadeImpl implements DealsFacade {
         source.movePurchase(purchaseId, target);
         dealRepository.store(source);
         dealRepository.store(target);
+    }
+
+    private Stream<DealDTO> expandDeals(Set<DealDTOExpansion> expand, LocalDate cacheFrom, LocalDate cacheTo, Supplier<Stream<DealDTO>> request) {
+        Validate.notNull(expand);
+        final boolean expandReceipts = expand.contains(DealDTOExpansion.RECEIPTS);
+        final boolean expandOperations = expand.contains(DealDTOExpansion.OPERATIONS);
+        final boolean expandCardOperations = expand.contains(DealDTOExpansion.CARD_OPERATIONS);
+        final boolean expandPurchases = expand.contains(DealDTOExpansion.PURCHASES);
+        final boolean cache = cacheFrom != null && cacheTo != null;
+
+        final List<Operation> operations = cache && expandOperations ?
+                operationRepository.findByDate(cacheFrom, cacheTo) : emptyList();
+        final List<CardOperation> cardOperations = cache && expandCardOperations ?
+                cardOperationRepository.findByDate(cacheFrom, cacheTo) : emptyList();
+        final List<CheckQRCode> receipts = cache && expandReceipts ?
+                qrCodeRepository.findByDate(cacheFrom, cacheTo) : emptyList();
+        final List<Purchase> purchases = cache && expandPurchases ?
+                purchaseRepository.findByDate(cacheFrom.atStartOfDay(), cacheTo.plusDays(1).atStartOfDay()) : emptyList();
+
+        final OperationEnricher operationEnricher = new OperationEnricher(operationRepository, operations);
+        final CardOperationEnricher cardOperationEnricher = new CardOperationEnricher(cardOperationRepository, cardOperations);
+        final ReceiptEnricher receiptEnricher = new ReceiptEnricher(qrCodeRepository, receipts);
+        final PurchaseEnricher purchaseEnricher = new PurchaseEnricher(purchaseRepository, purchases);
+
+        Stream<DealDTO> stream = request.get();
+        if (expandOperations)
+            stream = stream.peek(dto -> dto.setOperations(operationEnricher.list(dto.getOperations())));
+        if (expandCardOperations)
+            stream = stream.peek(dto -> dto.setCardOperations(cardOperationEnricher.list(dto.getCardOperations())));
+        if (expandReceipts)
+            stream = stream.peek(dto -> dto.setReceipts(receiptEnricher.list(dto.getReceipts())));
+        if (expandPurchases)
+            stream = stream.peek(dto -> dto.setPurchases(purchaseEnricher.list(dto.getPurchases())));
+        return stream;
     }
 }

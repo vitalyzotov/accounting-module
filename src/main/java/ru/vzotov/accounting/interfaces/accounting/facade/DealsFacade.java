@@ -3,6 +3,7 @@ package ru.vzotov.accounting.interfaces.accounting.facade;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTOExpansion;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.purchase.domain.model.PurchaseId;
@@ -22,9 +23,9 @@ public interface DealsFacade {
     DealDTO deleteDeal(String dealId) throws DealNotFoundException;
     List<DealDTO> splitDeal(String dealId) throws DealNotFoundException;
 
-    List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<String> expand);
+    List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<DealDTOExpansion> expand);
 
-    DealDTO getDeal(String dealId) throws DealNotFoundException;
+    DealDTO getDeal(String dealId, Set<DealDTOExpansion> expand) throws DealNotFoundException;
 
     List<PurchaseDTO> listDealPurchases(String dealId);
 

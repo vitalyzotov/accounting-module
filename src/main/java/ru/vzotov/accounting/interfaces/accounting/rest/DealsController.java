@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTOExpansion;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
@@ -25,7 +26,6 @@ import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +46,7 @@ public class DealsController {
     public List<DealDTO> listDeals(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
                                    @RequestParam(required = false) List<String> expand) {
-        return dealsFacade.listDeals(from, to, expand == null ? emptySet() : new HashSet<>(expand));
+        return dealsFacade.listDeals(from, to, expand == null ? emptySet() : expand.stream().map(DealDTOExpansion::of).collect(toSet()));
     }
 
     @GetMapping("metadata")
@@ -58,14 +58,14 @@ public class DealsController {
     }
 
     @GetMapping("{dealId}")
-    public DealDTO getDeal(@PathVariable String dealId) throws DealNotFoundException {
-        return dealsFacade.getDeal(dealId);
+    public DealDTO getDeal(@PathVariable String dealId, @RequestParam(required = false) List<String> expand) throws DealNotFoundException {
+        return dealsFacade.getDeal(dealId, expand == null ? emptySet() : expand.stream().map(DealDTOExpansion::of).collect(toSet()));
     }
 
     @DeleteMapping("{dealId}")
     public List<DealDTO> deleteDeal(@PathVariable String dealId,
-                              @RequestParam(required = false, defaultValue = "false") boolean split) throws DealNotFoundException {
-        if(split) {
+                                    @RequestParam(required = false, defaultValue = "false") boolean split) throws DealNotFoundException {
+        if (split) {
             return dealsFacade.splitDeal(dealId);
         } else {
             dealsFacade.deleteDeal(dealId);

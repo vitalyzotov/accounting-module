@@ -7,6 +7,7 @@ import ru.vzotov.purchase.domain.model.PurchaseId;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,10 @@ public class PurchaseEnricher extends AbstractEnricher<PurchaseRef> {
     private final Map<String, Purchase> cache;
 
     private final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
+
+    public PurchaseEnricher(PurchaseRepository repository) {
+        this(repository, Collections.emptySet());
+    }
 
     public PurchaseEnricher(PurchaseRepository repository, Collection<Purchase> cache) {
         this.repository = repository;

@@ -148,6 +148,7 @@ public class DealServiceImpl implements DealService {
                 operation.category(),
                 Collections.emptySet(),
                 Collections.singleton(operation.operationId()),
+                Collections.emptySet(),
                 Collections.emptyList()
         );
         dealRepository.store(deal);
@@ -192,6 +193,7 @@ public class DealServiceImpl implements DealService {
                 null,
                 null,
                 Collections.singleton(qrCode.checkId()),
+                Collections.emptySet(),
                 Collections.emptySet(),
                 Collections.emptyList()
         );

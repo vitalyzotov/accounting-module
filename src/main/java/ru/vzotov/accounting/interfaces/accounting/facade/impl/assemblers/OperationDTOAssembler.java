@@ -1,8 +1,10 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.CardOperationDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.HoldOperationDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
+import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.HoldOperation;
 import ru.vzotov.banking.domain.model.Operation;
 import ru.vzotov.banking.domain.model.OperationId;
@@ -30,6 +32,19 @@ public class OperationDTOAssembler {
                 model.description(),
                 model.comment(),
                 model.category() == null ? null : model.category().id()
+        );
+    }
+
+    public static CardOperationDTO toDTO(CardOperation model) {
+        return model == null ? null : new CardOperationDTO(
+                model.operationId().idString(),
+                model.cardNumber().value(),
+                PosTerminalDTOAssembler.toDTO(model.terminal()), //nullable
+                model.authDate(),
+                model.purchaseDate(),
+                MoneyDTOAssembler.toDTO(model.amount()),
+                model.extraInfo(),
+                model.mcc().value()
         );
     }
 
