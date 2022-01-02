@@ -1,6 +1,7 @@
 package ru.vzotov.accounting.interfaces.purchases.rest;
 
 import ru.vzotov.accounting.domain.model.DealId;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.purchases.facade.PurchasesFacade;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseCreateRequest;
@@ -54,7 +55,7 @@ public class PurchaseController {
         return purchasesFacade.findPurchases(from, to);
     }
 
-    @PostMapping(params = {"!receiptId"})
+    @PostMapping(params = {"!receiptId", "!dealId"})
     public PurchaseStoreResponse newPurchase(@RequestBody PurchaseCreateRequest purchase) {
         final PurchaseDTO dto = toPurchaseDTO(purchase);
 
@@ -65,6 +66,11 @@ public class PurchaseController {
     @PostMapping(params = {"receiptId"})
     public List<PurchaseDTO> createPurchasesFromReceipt(@RequestParam String receiptId) {
         return purchasesFacade.createPurchasesFromReceipt(receiptId);
+    }
+
+    @PostMapping(params = {"dealId"})
+    public List<PurchaseDTO> createPurchasesFromDealReceipts(@RequestParam String dealId) throws DealNotFoundException {
+        return purchasesFacade.createPurchasesFromDealReceipts(dealId);
     }
 
     @PutMapping("{purchaseId}")

@@ -88,7 +88,7 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     public LocalDate findMinDealDate() {
         try {
             return em.createQuery("select min(date) from Deal", LocalDate.class).getSingleResult();
-        }catch (NoResultException ex) {
+        } catch (NoResultException ex) {
             return null;
         }
     }

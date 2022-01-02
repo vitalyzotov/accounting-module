@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.purchases.facade.PurchasesFacade;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,7 +63,7 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
     public PurchaseId deletePurchaseById(String purchaseId) {
         final PurchaseId id = new PurchaseId(purchaseId);
         final Deal deal = dealRepository.findByPurchase(id);
-        if(deal != null) {
+        if (deal != null) {
             deal.removePurchase(id);
             dealRepository.store(deal);
         }
@@ -143,6 +145,7 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
         Validate.notNull(receiptId);
         final CheckId rid = new CheckId(receiptId);
         final Check receipt = receiptRepository.find(rid);
+
         final Deal deal = dealRepository.findByReceipt(rid);
         final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
         final List<PurchaseDTO> result = receipt.products().items().stream()
@@ -155,6 +158,35 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
                     return assembler.toDTO(p);
                 })
                 .collect(Collectors.toList());
+        dealRepository.store(deal);
+        return result;
+    }
+
+    @Override
+    @Transactional(value = "accounting-tx")
+    public List<PurchaseDTO> createPurchasesFromDealReceipts(String dealId) throws DealNotFoundException {
+        Validate.notNull(dealId);
+        final Deal deal = dealRepository.find(new DealId(dealId));
+        if (deal == null) {
+            throw new DealNotFoundException(String.format("Deal with ID=%s not found", dealId));
+        }
+
+        final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
+
+        final List<PurchaseDTO> result = deal.receipts().stream()
+                .map(receiptRepository::find)
+                .filter(Objects::nonNull)
+                .flatMap(receipt -> receipt.products().items().stream().map(i -> {
+                    final Purchase p = new Purchase(PurchaseId.nextId(), i.name(),
+                            receipt.dateTime(), i.price(), BigDecimal.valueOf(i.quantity()));
+                    p.assignCheck(receipt.checkId());
+                    return p;
+                }))
+                .peek(purchaseRepository::store)
+                .peek(p -> deal.addPurchase(p.purchaseId()))
+                .map(assembler::toDTO)
+                .collect(Collectors.toList());
+
         dealRepository.store(deal);
         return result;
     }
