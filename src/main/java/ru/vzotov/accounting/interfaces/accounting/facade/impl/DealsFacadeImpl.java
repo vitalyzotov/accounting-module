@@ -1,5 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -277,6 +278,18 @@ public class DealsFacadeImpl implements DealsFacade {
 
         deals.forEach(target::join);
         deals.forEach(dealRepository::store);
+
+        Stream.concat(Stream.of(target), deals.stream())
+                .map(Deal::comment)
+                .filter(StringUtils::isNotBlank)
+                .findFirst()
+                .ifPresent(target::setComment);
+
+        Stream.concat(Stream.of(target), deals.stream())
+                .map(Deal::category)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .ifPresent(target::assignCategory);
 
         target.setDescription(firstOperationDeal.description());
         target.setDate(earliestDeal.date());

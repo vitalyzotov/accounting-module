@@ -169,5 +169,7 @@ public class DealsControllerTest {
         assertThat(exchange.getBody().getReceipts()).extracting(ReceiptRef::getCheckId)
                 .containsExactlyInAnyOrder("0a735210-65e5-4b1d-abf3-7a36f707b050", "f4668455-e756-4af8-89dd-d90a7ed6ff15");
         assertThat(exchange.getBody().getAmount().getAmount()).isEqualTo(-4999 - 2999);
+        assertThat(exchange.getBody()).hasFieldOrPropertyWithValue("comment", "comment a09a9945093f");
+        assertThat(exchange.getBody()).hasFieldOrPropertyWithValue("category", 781381038049753674L);
     }
 }
