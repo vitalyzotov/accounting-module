@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/accounting/purchases")
@@ -57,10 +59,12 @@ public class PurchaseController {
 
     @PostMapping(params = {"!receiptId", "!dealId"})
     public PurchaseStoreResponse newPurchase(@RequestBody PurchaseCreateRequest purchase) {
-        final PurchaseDTO dto = toPurchaseDTO(purchase);
+        final List<PurchaseDTO> dtoList = purchase.getPurchases().stream()
+                .map(this::toPurchaseDTO)
+                .collect(Collectors.toList());
 
-        final PurchaseId pid = purchasesFacade.createPurchase(dto, new DealId(purchase.getDealId()));
-        return new PurchaseStoreResponse(pid.value());
+        final List<PurchaseId> pid = purchasesFacade.createPurchase(dtoList, new DealId(purchase.getDealId()));
+        return new PurchaseStoreResponse(pid.stream().map(PurchaseId::value).collect(Collectors.toList()));
     }
 
     @PostMapping(params = {"receiptId"})
@@ -78,7 +82,7 @@ public class PurchaseController {
         final PurchaseDTO dto = toPurchaseDTO(purchase);
         dto.setPurchaseId(purchaseId);
         purchasesFacade.modifyPurchase(dto);
-        return new PurchaseStoreResponse(purchaseId);
+        return new PurchaseStoreResponse(Collections.singletonList(purchaseId));
     }
 
     PurchaseDTO toPurchaseDTO(@RequestBody PurchaseDataRequest purchase) {

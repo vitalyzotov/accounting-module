@@ -7,6 +7,7 @@ import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public interface PurchasesFacade {
 
     void modifyPurchase(PurchaseDTO purchase);
 
-    PurchaseId createPurchase(PurchaseDTO purchase, DealId dealId);
+    List<PurchaseId> createPurchase(Collection<PurchaseDTO> purchases, DealId dealId);
 
     List<PurchaseDTO> createPurchasesFromReceipt(String receiptId);
 

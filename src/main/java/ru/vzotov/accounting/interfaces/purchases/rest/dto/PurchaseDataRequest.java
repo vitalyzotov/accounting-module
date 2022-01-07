@@ -17,6 +17,18 @@ public abstract class PurchaseDataRequest {
 
     private String categoryId;
 
+    public PurchaseDataRequest() {
+    }
+
+    public PurchaseDataRequest(String name, LocalDateTime dateTime, MoneyDTO price, Double quantity, String checkId, String categoryId) {
+        this.name = name;
+        this.dateTime = dateTime;
+        this.price = price;
+        this.quantity = quantity;
+        this.checkId = checkId;
+        this.categoryId = categoryId;
+    }
+
     public String getCheckId() {
         return checkId;
     }

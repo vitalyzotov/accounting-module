@@ -1,21 +1,23 @@
 package ru.vzotov.accounting.interfaces.purchases.rest.dto;
 
+import java.util.List;
+
 public class PurchaseStoreResponse {
 
-    private String purchaseId;
+    private List<String> purchaseId;
 
     public PurchaseStoreResponse() {
     }
 
-    public PurchaseStoreResponse(String purchaseId) {
+    public PurchaseStoreResponse(List<String> purchaseId) {
         this.purchaseId = purchaseId;
     }
 
-    public String getPurchaseId() {
+    public List<String> getPurchaseId() {
         return purchaseId;
     }
 
-    public void setPurchaseId(String purchaseId) {
+    public void setPurchaseId(List<String> purchaseId) {
         this.purchaseId = purchaseId;
     }
 }

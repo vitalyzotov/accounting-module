@@ -24,6 +24,7 @@ import ru.vzotov.purchases.domain.model.PurchaseRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
@@ -110,33 +111,44 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
-    public PurchaseId createPurchase(PurchaseDTO purchase, DealId dealId) {
-        Validate.notNull(purchase);
+    public List<PurchaseId> createPurchase(Collection<PurchaseDTO> purchases, DealId dealId) {
+        Validate.notEmpty(purchases);
         Validate.notNull(dealId);
-        log.info("New purchase {} will be created for deal {}", purchase.getPurchaseId(), dealId);
+
+        log.info("New purchase will be created for deal {}", dealId);
         final Deal deal = dealRepository.find(dealId);
         Validate.notNull(deal);
 
-        final Purchase p;
-        if (purchase.getPurchaseId() != null) {
-            throw new IllegalArgumentException("It is not allowed to modify purchase here");
-        } else {
-            Money price = Money.ofRaw(purchase.getPrice().getAmount(), Currency.getInstance(purchase.getPrice().getCurrency()));
-            p = new Purchase(PurchaseId.nextId(), purchase.getName(), purchase.getDateTime(), price, BigDecimal.valueOf(purchase.getQuantity()));
-        }
+        final List<Purchase> entities = purchases.stream()
+                .map(dto -> {
+                    final Purchase p;
+                    if (dto.getPurchaseId() != null) {
+                        throw new IllegalArgumentException("It is not allowed to modify purchase here");
+                    } else {
+                        Money price = Money.ofRaw(dto.getPrice().getAmount(), Currency.getInstance(dto.getPrice().getCurrency()));
+                        p = new Purchase(PurchaseId.nextId(), dto.getName(), dto.getDateTime(), price, BigDecimal.valueOf(dto.getQuantity()));
+                    }
 
-        if (purchase.getCheckId() != null) {
-            p.assignCheck(new CheckId(purchase.getCheckId()));
-        }
-        if (purchase.getCategoryId() != null) {
-            p.assignCategory(categoryRepository.findById(new PurchaseCategoryId(purchase.getCategoryId())));
-        }
+                    if (dto.getCheckId() != null) {
+                        p.assignCheck(new CheckId(dto.getCheckId()));
+                    }
+                    if (dto.getCategoryId() != null) {
+                        p.assignCategory(categoryRepository.findById(new PurchaseCategoryId(dto.getCategoryId())));
+                    }
+                    return p;
+                })
+                .collect(Collectors.toList());
 
-        purchaseRepository.store(p);
-        deal.addPurchase(p.purchaseId());
+        final List<PurchaseId> result = entities.stream().peek(p -> {
+                    purchaseRepository.store(p);
+                    deal.addPurchase(p.purchaseId());
+                })
+                .map(Purchase::purchaseId)
+                .collect(Collectors.toList());
+
         dealRepository.store(deal);
 
-        return p.purchaseId();
+        return result;
     }
 
     @Override

@@ -15,11 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.interfaces.common.dto.MoneyDTO;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseCreateRequest;
+import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseData;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseModifyRequest;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseStoreResponse;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,14 +50,18 @@ public class PurchaseControllerTest {
 
     @Test
     public void newPurchase() {
-        PurchaseCreateRequest request = new PurchaseCreateRequest("deal-2");
-        request.setName("Позиция 3");
-        request.setDateTime(LocalDateTime.of(2018, Month.JUNE, 16, 13, 55, 10));
-        request.setPrice(new MoneyDTO(60000, "RUR"));
-        request.setQuantity(10d);
+        PurchaseData data = new PurchaseData();
+        data.setName("Позиция 3");
+        data.setDateTime(LocalDateTime.of(2018, Month.JUNE, 16, 13, 55, 10));
+        data.setPrice(new MoneyDTO(60000, "RUR"));
+        data.setQuantity(10d);
+
+        PurchaseCreateRequest request = new PurchaseCreateRequest("deal-2", Collections.singletonList(data));
+
         PurchaseStoreResponse response = this.restTemplate.postForObject("/accounting/purchases", request, PurchaseStoreResponse.class);
         assertThat(response).isNotNull();
         assertThat(response.getPurchaseId()).isNotEmpty();
+        assertThat(response.getPurchaseId().get(0)).isNotEmpty();
     }
 
     @Test
@@ -69,7 +75,7 @@ public class PurchaseControllerTest {
                 "/accounting/purchases/20180616135500_2ee_56e0ad53f97dc8ac9ddbc7fa37052b44", HttpMethod.PUT,
                 new HttpEntity<>(request), PurchaseStoreResponse.class);
         assertThat(response).isNotNull();
-        assertThat(response.getBody().getPurchaseId()).isNotEmpty().isEqualTo("20180616135500_2ee_56e0ad53f97dc8ac9ddbc7fa37052b44");
+        assertThat(response.getBody().getPurchaseId()).isNotEmpty().isEqualTo(Collections.singletonList("20180616135500_2ee_56e0ad53f97dc8ac9ddbc7fa37052b44"));
     }
 
 }
