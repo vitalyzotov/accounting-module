@@ -87,7 +87,7 @@ public class PurchaseController {
 
     PurchaseDTO toPurchaseDTO(@RequestBody PurchaseDataRequest purchase) {
         final PurchaseDTO dto = new PurchaseDTO();
-        dto.setCheckId(purchase.getCheckId());
+        dto.setReceiptId(purchase.getReceiptId());
         dto.setName(purchase.getName());
         dto.setDateTime(purchase.getDateTime());
         dto.setPrice(purchase.getPrice());

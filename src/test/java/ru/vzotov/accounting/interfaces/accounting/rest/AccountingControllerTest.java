@@ -57,7 +57,7 @@ public class AccountingControllerTest {
     @Test
     public void getReceipts() {
         GetReceiptsResponse body = this.restTemplate.getForObject("/accounting/receipts/?from=2018-06-16&to=2018-06-17", GetReceiptsResponse.class);
-        assertThat(body.getChecks()).isNotEmpty();
+        assertThat(body.getReceipts()).isNotEmpty();
     }
 
     @Test
@@ -91,7 +91,7 @@ public class AccountingControllerTest {
     @Test
     public void getReceipt() {
         GetReceiptResponse body = this.restTemplate.getForObject("/accounting/receipts/2128735201?t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&n=1", GetReceiptResponse.class);
-        assertThat(body.getCheck().getItems()).hasSize(2);
+        assertThat(body.getReceipt().getItems()).hasSize(2);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class AccountingControllerTest {
         final String qrValue = "t=20180717T1655&s=1350.00&fn=9288000100080483&i=944&fp=2361761706&n=1";
         final QRCodeData qr = new QRCodeData(qrValue);
 
-        try (BufferedReader data = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/check017.json"))))) {
+        try (BufferedReader data = new BufferedReader(new InputStreamReader(Objects.requireNonNull(getClass().getResourceAsStream("/receipt017.json"))))) {
             String dataString = data.lines().collect(Collectors.joining(System.lineSeparator()));
 
             given(this.nalogru.findByQRCodeData(qr)).willReturn(dataString);

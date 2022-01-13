@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class PurchaseDTO extends PurchaseRef {
 
 
-    private String checkId;
+    private String receiptId;
 
     private String name;
 
@@ -22,9 +22,9 @@ public class PurchaseDTO extends PurchaseRef {
     public PurchaseDTO() {
     }
 
-    public PurchaseDTO(String purchaseId, String checkId, String name, LocalDateTime dateTime, MoneyDTO price, Double quantity, String categoryId) {
+    public PurchaseDTO(String purchaseId, String receiptId, String name, LocalDateTime dateTime, MoneyDTO price, Double quantity, String categoryId) {
         super(purchaseId);
-        this.checkId = checkId;
+        this.receiptId = receiptId;
         this.name = name;
         this.dateTime = dateTime;
         this.price = price;
@@ -32,12 +32,12 @@ public class PurchaseDTO extends PurchaseRef {
         this.categoryId = categoryId;
     }
 
-    public String getCheckId() {
-        return checkId;
+    public String getReceiptId() {
+        return receiptId;
     }
 
-    public void setCheckId(String checkId) {
-        this.checkId = checkId;
+    public void setReceiptId(String receiptId) {
+        this.receiptId = receiptId;
     }
 
     public String getName() {

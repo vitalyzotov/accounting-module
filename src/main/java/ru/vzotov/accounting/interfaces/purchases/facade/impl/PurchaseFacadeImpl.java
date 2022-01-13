@@ -12,8 +12,8 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundExcepti
 import ru.vzotov.accounting.interfaces.purchases.facade.PurchasesFacade;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
-import ru.vzotov.cashreceipt.domain.model.Check;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
@@ -129,8 +129,8 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
                         p = new Purchase(PurchaseId.nextId(), dto.getName(), dto.getDateTime(), price, BigDecimal.valueOf(dto.getQuantity()));
                     }
 
-                    if (dto.getCheckId() != null) {
-                        p.assignCheck(new CheckId(dto.getCheckId()));
+                    if (dto.getReceiptId() != null) {
+                        p.assignReceipt(new ReceiptId(dto.getReceiptId()));
                     }
                     if (dto.getCategoryId() != null) {
                         p.assignCategory(categoryRepository.findById(new PurchaseCategoryId(dto.getCategoryId())));
@@ -155,8 +155,8 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
     @Transactional(value = "accounting-tx")
     public List<PurchaseDTO> createPurchasesFromReceipt(String receiptId) {
         Validate.notNull(receiptId);
-        final CheckId rid = new CheckId(receiptId);
-        final Check receipt = receiptRepository.find(rid);
+        final ReceiptId rid = new ReceiptId(receiptId);
+        final Receipt receipt = receiptRepository.find(rid);
 
         final Deal deal = dealRepository.findByReceipt(rid);
         final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
@@ -164,7 +164,7 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
                 .map(i -> {
                     final PurchaseId pid = PurchaseId.nextId();
                     final Purchase p = new Purchase(pid, i.name(), receipt.dateTime(), i.price(), BigDecimal.valueOf(i.quantity()));
-                    p.assignCheck(rid);
+                    p.assignReceipt(rid);
                     purchaseRepository.store(p);
                     deal.addPurchase(pid);
                     return assembler.toDTO(p);
@@ -191,7 +191,7 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
                 .flatMap(receipt -> receipt.products().items().stream().map(i -> {
                     final Purchase p = new Purchase(PurchaseId.nextId(), i.name(),
                             receipt.dateTime(), i.price(), BigDecimal.valueOf(i.quantity()));
-                    p.assignCheck(receipt.checkId());
+                    p.assignReceipt(receipt.receiptId());
                     return p;
                 }))
                 .peek(purchaseRepository::store)

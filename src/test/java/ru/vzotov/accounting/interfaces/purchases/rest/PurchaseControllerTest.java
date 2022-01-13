@@ -67,7 +67,7 @@ public class PurchaseControllerTest {
     @Test
     public void modifyPurchase() {
         PurchaseModifyRequest request = new PurchaseModifyRequest();
-        request.setCheckId("20180616135500_65624_8710000100313204_110992_2128735201_1");
+        request.setReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1");
         request.setName("Позиция с другим названием");
         request.setCategoryId("id-12345678901234567890");
 

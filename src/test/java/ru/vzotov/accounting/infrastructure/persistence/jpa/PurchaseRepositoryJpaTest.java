@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.config.DatasourceConfig;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
@@ -36,7 +36,7 @@ public class PurchaseRepositoryJpaTest {
 
         Purchase p1 = purchaseRepository.find(id);
         assertThat(p1).isNotNull();
-        assertThat(p1.checkId()).isEqualTo(new CheckId("20180616135500_65624_8710000100313204_110992_2128735201_1"));
+        assertThat(p1.receiptId()).isEqualTo(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"));
     }
 
     @Test

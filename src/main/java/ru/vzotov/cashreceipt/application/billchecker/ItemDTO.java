@@ -1,7 +1,7 @@
 package ru.vzotov.cashreceipt.application.billchecker;
 
 @SuppressWarnings("unused")
-class Item {
+class ItemDTO {
     Long sum;
 
     Double quantity;

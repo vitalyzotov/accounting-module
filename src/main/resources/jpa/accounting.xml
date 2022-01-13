@@ -8,7 +8,7 @@
         <query>SELECT op.* FROM OPERATION_ op WHERE NOT EXISTS (SELECT 1 FROM DEAL_OPERATIONS dop WHERE dop.OPERATION_ID=op.ID)</query>
     </named-native-query>
 
-    <named-native-query name="receipts-without-deals" result-set-mapping="CheckQRCodeMapping" result-class="ru.vzotov.cashreceipt.domain.model.CheckQRCode">
+    <named-native-query name="receipts-without-deals" result-set-mapping="ReceiptQRCodeMapping" result-class="ru.vzotov.cashreceipt.domain.model.QRCode">
         <query>SELECT qr_.* FROM QR_CODE qr_ WHERE qr_.CHECK_ID NOT IN (SELECT dr.RECEIPT_ID FROM DEAL_RECEIPTS dr)</query>
     </named-native-query>
 
@@ -16,8 +16,8 @@
         <entity-result entity-class="ru.vzotov.banking.domain.model.Operation"/>
     </sql-result-set-mapping>
 
-    <sql-result-set-mapping name="CheckQRCodeMapping">
-        <entity-result entity-class="ru.vzotov.cashreceipt.domain.model.CheckQRCode"/>
+    <sql-result-set-mapping name="ReceiptQRCodeMapping">
+        <entity-result entity-class="ru.vzotov.cashreceipt.domain.model.QRCode"/>
     </sql-result-set-mapping>
 
     <entity name="Deal" class="ru.vzotov.accounting.domain.model.Deal" access="FIELD">
@@ -543,7 +543,7 @@
                 <join-column name="CATEGORY_ID"/>
             </many-to-one>
 
-            <embedded name="checkId">
+            <embedded name="receiptId">
                 <attribute-override name="value">
                     <column name="CHECK_ID" nullable="true"/>
                 </attribute-override>
@@ -566,7 +566,7 @@
         </attributes>
     </entity>
 
-    <entity name="Check" class="ru.vzotov.cashreceipt.domain.model.Check" access="FIELD">
+    <entity name="Receipt" class="ru.vzotov.cashreceipt.domain.model.Receipt" access="FIELD">
         <table name="CHECK_"/>
 
         <attributes>
@@ -590,7 +590,7 @@
             <embedded name="retailPlace"/>
             <embedded name="products"/>
             <embedded name="paymentInfo"/>
-            <embedded name="checkId">
+            <embedded name="receiptId">
                 <attribute-override name="value">
                     <column name="CHECK_ID" nullable="false" unique="true"/>
                 </attribute-override>
@@ -658,7 +658,7 @@
         </attributes>
     </entity>
 
-    <entity class="ru.vzotov.cashreceipt.domain.model.CheckQRCode" access="FIELD">
+    <entity class="ru.vzotov.cashreceipt.domain.model.QRCode" access="FIELD">
         <table name="QR_CODE"/>
         <attributes>
             <id name="id">
@@ -675,8 +675,8 @@
                 <column name="LOADED_AT" nullable="true"/>
             </basic>
 
-            <embedded name="code"/>
-            <embedded name="checkId">
+            <embedded name="data"/>
+            <embedded name="receiptId">
                 <attribute-override name="value">
                     <column name="CHECK_ID" nullable="false" unique="true"/>
                 </attribute-override>
@@ -859,7 +859,7 @@
         </attributes>
     </embeddable>
 
-    <embeddable class="ru.vzotov.cashreceipt.domain.model.CheckId" access="FIELD">
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.ReceiptId" access="FIELD">
         <attributes>
             <basic name="value">
                 <column name="CHECK_ID"/>

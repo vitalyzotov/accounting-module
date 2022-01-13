@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import ru.vzotov.cashreceipt.application.ReceiptParsingService;
 import ru.vzotov.cashreceipt.domain.model.Address;
-import ru.vzotov.cashreceipt.domain.model.Check;
-import ru.vzotov.cashreceipt.domain.model.CheckOperationType;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptOperationType;
 import ru.vzotov.cashreceipt.domain.model.FiscalInfo;
 import ru.vzotov.cashreceipt.domain.model.Marketing;
 import ru.vzotov.cashreceipt.domain.model.PaymentInfo;
@@ -31,24 +31,24 @@ import java.util.stream.IntStream;
 
 public class ReceiptParsingServiceImpl implements ReceiptParsingService {
 
-    public Check parse(InputStream in) throws IOException {
+    public Receipt parse(InputStream in) throws IOException {
         ObjectMapper mapper = createMapper();
         NalogRuRoot root = mapper.readValue(in, NalogRuRoot.class);
-        Receipt receipt = root.document.receipt;
+        ru.vzotov.cashreceipt.application.nalogru.Receipt receipt = root.document.receipt;
 
         return parse(receipt);
     }
 
     @Override
-    public Check parse(String data) throws IOException {
+    public Receipt parse(String data) throws IOException {
         ObjectMapper mapper = createMapper();
         NalogRuRoot root = mapper.readValue(data, NalogRuRoot.class);
-        Receipt receipt = root.document.receipt;
+        ru.vzotov.cashreceipt.application.nalogru.Receipt receipt = root.document.receipt;
 
         return parse(receipt);
     }
 
-    private Check parse(Receipt receipt) {
+    private Receipt parse(ru.vzotov.cashreceipt.application.nalogru.Receipt receipt) {
         final ZoneId moscowZone = ZoneId.systemDefault();
 
         Function<List<Item>, List<ru.vzotov.cashreceipt.domain.model.Item>> itemsMapper =
@@ -77,9 +77,9 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
                 receipt.retailPlaceAddress == null ? null : new Address(receipt.retailPlaceAddress),
                 receipt.taxationType
         );
-        return new Check(
+        return new Receipt(
                 receipt.dateTime.atZone(moscowZone).toLocalDateTime(),
-                CheckOperationType.of(receipt.operationType),
+                ReceiptOperationType.of(receipt.operationType),
                 receipt.requestNumber,
                 fiscalInfo,
                 Marketing.emptyMarketing(),

@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import ru.vzotov.cashreceipt.application.ReceiptParsingService;
 import ru.vzotov.cashreceipt.domain.model.Address;
-import ru.vzotov.cashreceipt.domain.model.Check;
-import ru.vzotov.cashreceipt.domain.model.CheckOperationType;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptOperationType;
 import ru.vzotov.cashreceipt.domain.model.FiscalInfo;
 import ru.vzotov.cashreceipt.domain.model.Marketing;
 import ru.vzotov.cashreceipt.domain.model.PaymentInfo;
@@ -30,17 +30,17 @@ import java.util.stream.IntStream;
 
 public class ReceiptParsingServiceImpl implements ReceiptParsingService {
 
-    public Check parse(InputStream in) throws IOException {
+    public Receipt parse(InputStream in) throws IOException {
         ObjectMapper mapper = createMapper();
-        Receipt receipt = mapper.readValue(in, Receipt.class);
+        ReceiptDTO receipt = mapper.readValue(in, ReceiptDTO.class);
 
         return parse(receipt);
     }
 
     @Override
-    public Check parse(String data) throws IOException {
+    public Receipt parse(String data) throws IOException {
         ObjectMapper mapper = createMapper();
-        Receipt receipt = mapper.readValue(data, Receipt.class);
+        ReceiptDTO receipt = mapper.readValue(data, ReceiptDTO.class);
 
         return parse(receipt);
     }
@@ -53,18 +53,18 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
         return mapper;
     }
 
-    private Check parse(Receipt receipt) {
+    private Receipt parse(ReceiptDTO receipt) {
         final ZoneId utcZone = ZoneId.of("GMT");//TODO: почему GMT?
 
-        Function<List<Item>, List<ru.vzotov.cashreceipt.domain.model.Item>> itemsMapper =
+        Function<List<ItemDTO>, List<ru.vzotov.cashreceipt.domain.model.Item>> itemsMapper =
                 (items) -> IntStream.range(0, items.size()).mapToObj((index) -> {
-                    Item i = items.get(index);
+                    ItemDTO i = items.get(index);
                     return new ru.vzotov.cashreceipt.domain.model.Item(i.name, Money.kopecks(i.price), i.quantity, Money.kopecks(i.sum), index);
                 }).collect(Collectors.toList());
 
-        return new Check(
+        return new Receipt(
                 receipt.dateTime.atZone(utcZone).toLocalDateTime(),
-                CheckOperationType.of(receipt.operationType),
+                ReceiptOperationType.of(receipt.operationType),
                 receipt.requestNumber,
                 new FiscalInfo(
                         null,

@@ -1,7 +1,5 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.dto;
 
-import ru.vzotov.cashreceipt.domain.model.CheckState;
-
 public enum DealDTOExpansion {
     RECEIPTS("receipts"),
     OPERATIONS("operations"),

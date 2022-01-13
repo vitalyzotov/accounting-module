@@ -1,17 +1,17 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa.util;
 
-import ru.vzotov.cashreceipt.domain.model.CheckState;
+import ru.vzotov.cashreceipt.domain.model.ReceiptState;
 
 import javax.persistence.AttributeConverter;
 
-public class ReceiptStateAttributeConverter implements AttributeConverter<CheckState, String> {
+public class ReceiptStateAttributeConverter implements AttributeConverter<ReceiptState, String> {
     @Override
-    public String convertToDatabaseColumn(CheckState attribute) {
+    public String convertToDatabaseColumn(ReceiptState attribute) {
         return attribute == null ? null : String.valueOf(attribute.symbol());
     }
 
     @Override
-    public CheckState convertToEntityAttribute(String dbData) {
-        return dbData == null || dbData.length() != 1 ? null : CheckState.of(dbData.charAt(0));
+    public ReceiptState convertToEntityAttribute(String dbData) {
+        return dbData == null || dbData.length() != 1 ? null : ReceiptState.of(dbData.charAt(0));
     }
 }

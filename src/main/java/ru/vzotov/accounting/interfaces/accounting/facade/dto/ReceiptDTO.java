@@ -35,7 +35,7 @@ public final class ReceiptDTO extends ReceiptRef implements Serializable {
     public ReceiptDTO() {
     }
 
-    public ReceiptDTO(String checkId,
+    public ReceiptDTO(String receiptId,
                       FiscalInfoDTO fiscalInfo,
                       LocalDateTime dateTime,
                       Long requestNumber,
@@ -55,7 +55,7 @@ public final class ReceiptDTO extends ReceiptRef implements Serializable {
                       String address,
                       Long taxationType,
                       long operationType) {
-        super(checkId);
+        super(receiptId);
         this.fiscalInfo = fiscalInfo;
         this.dateTime = dateTime;
         this.requestNumber = requestNumber;

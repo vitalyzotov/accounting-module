@@ -1,6 +1,6 @@
 package ru.vzotov.cashreceipt.nalogru2;
 
-import ru.vzotov.cashreceipt.domain.model.Check;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.cashreceipt.ReceiptFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,35 +20,35 @@ public class ReceiptParsingServiceTest {
 
     @Test
     public void parse001() throws IOException {
-        Check check = new ReceiptFactory().createReceiptFromJson2("/nalogru2/check001.json");
-        log.info("Parsed check {}", check);
+        Receipt receipt = new ReceiptFactory().createReceiptFromJson2("/nalogru2/receipt001.json");
+        log.info("Parsed receipt {}", receipt);
         assertThat(
                 LocalDateTime.of(2020, 8, 5, 21, 11)
-        ).isEqualTo(check.dateTime());
+        ).isEqualTo(receipt.dateTime());
     }
 
     @Test
     public void parse002() throws IOException {
-        Check check = new ReceiptFactory().createReceiptFromJson2("/nalogru2/check002.json");
-        log.info("Parsed check {}", check);
+        Receipt receipt = new ReceiptFactory().createReceiptFromJson2("/nalogru2/receipt002.json");
+        log.info("Parsed receipt {}", receipt);
     }
 
     @Test
     public void parse003() throws IOException {
-        Check check = new ReceiptFactory().createReceiptFromJson2("/nalogru2/check003.json");
-        log.info("Parsed check {}", check);
+        Receipt receipt = new ReceiptFactory().createReceiptFromJson2("/nalogru2/receipt003.json");
+        log.info("Parsed receipt {}", receipt);
     }
 
     @Test
     public void parse023() throws IOException {
-        Check check = new ReceiptFactory().createReceiptFromJson2("/nalogru2/check023.json");
-        log.info("Parsed check {}", check);
+        Receipt receipt = new ReceiptFactory().createReceiptFromJson2("/nalogru2/receipt023.json");
+        log.info("Parsed receipt {}", receipt);
     }
 
     @Test
     public void parse024() throws IOException {
-        Check check = new ReceiptFactory().createReceiptFromJson2("/nalogru2/check024.json");
-        log.info("Parsed check {}", check);
+        Receipt receipt = new ReceiptFactory().createReceiptFromJson2("/nalogru2/receipt024.json");
+        log.info("Parsed receipt {}", receipt);
     }
 
 }

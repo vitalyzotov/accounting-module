@@ -11,10 +11,10 @@ import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptParsingService;
 import ru.vzotov.cashreceipt.application.ReceiptRegistrationService;
 import ru.vzotov.cashreceipt.application.nalogru2.ReceiptRepositoryNalogru2;
-import ru.vzotov.cashreceipt.domain.model.Check;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
-import ru.vzotov.cashreceipt.domain.model.CheckQRCode;
-import ru.vzotov.cashreceipt.domain.model.CheckState;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.cashreceipt.domain.model.QRCode;
+import ru.vzotov.cashreceipt.domain.model.ReceiptState;
 import ru.vzotov.cashreceipt.domain.model.QRCodeCreatedEvent;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
@@ -79,56 +79,55 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
     }
 
     @Override
-    public CheckId register(QRCodeData qrCodeData) throws ReceiptNotFoundException, IOException {
-        log.debug("Try registering check {}", qrCodeData);
+    public ReceiptId register(QRCodeData qrCodeData) throws ReceiptNotFoundException, IOException {
+        log.debug("Try registering receipt {}", qrCodeData);
 
-        final CheckQRCode alreadyRegistered = qrCodeRepository.findByQRCodeData(qrCodeData);
+        final QRCode alreadyRegistered = qrCodeRepository.findByQRCodeData(qrCodeData);
         if (alreadyRegistered != null) {
-            return alreadyRegistered.checkId();
+            return alreadyRegistered.receiptId();
         }
 
-        final CheckQRCode qrCode = new CheckQRCode(qrCodeData);
+        final QRCode qrCode = new QRCode(qrCodeData);
         qrCodeRepository.store(qrCode);
 
-        eventPublisher.publishEvent(new QRCodeCreatedEvent(qrCode.checkId()));
+        eventPublisher.publishEvent(new QRCodeCreatedEvent(qrCode.receiptId()));
 
-        return qrCode.checkId();
+        return qrCode.receiptId();
     }
 
     @Override
-    public CheckId loadDetails(QRCodeData qrCodeData) throws ReceiptNotFoundException, IOException {
-        log.debug("Try loading check details {}", qrCodeData);
+    public ReceiptId loadDetails(QRCodeData qrCodeData) throws ReceiptNotFoundException, IOException {
+        log.debug("Try loading receipt details {}", qrCodeData);
 
-        Check check = receiptRepository.findByQRCodeData(qrCodeData);
-        if (check != null) {
-            return check.checkId();
+        Receipt receipt = receiptRepository.findByQRCodeData(qrCodeData);
+        if (receipt != null) {
+            return receipt.receiptId();
         }
 
-        CheckQRCode qrCode = qrCodeRepository.findByQRCodeData(qrCodeData);
+        QRCode qrCode = qrCodeRepository.findByQRCodeData(qrCodeData);
         if (qrCode == null) {
             throw new ReceiptNotFoundException("QR code is not yet registered");
         }
-        Validate.isTrue(CheckState.NEW.equals(qrCode.state()), "Wrong state of check");
+        Validate.isTrue(ReceiptState.NEW.equals(qrCode.state()), "Wrong state of receipt");
 
         qrCode.tryLoading();
         try {
             try {
-                final String checkData = nalogru.findByQRCodeData(qrCodeData);
-                if (checkData == null) {
+                final String receiptData = nalogru.findByQRCodeData(qrCodeData);
+                if (receiptData == null) {
                     throw new ReceiptNotFoundException();
                 }
 
-                check = receiptParsingService.parse(checkData);
-                if (check == null) {
+                receipt = receiptParsingService.parse(receiptData);
+                if (receipt == null) {
                     throw new ReceiptNotFoundException();
                 }
 
-                //check.associateWithOperations(qrCode.operations());
-                receiptRepository.store(check);
+                receiptRepository.store(receipt);
 
                 qrCode.markLoaded();
             } catch (IllegalArgumentException ex) {
-                log.error("Parse error when parsing check {}", qrCodeData);
+                log.error("Parse error when parsing receipt {}", qrCodeData);
                 log.error("Parse error", ex);
                 throw ex;
             }
@@ -136,45 +135,45 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
             qrCodeRepository.store(qrCode);
         }
 
-        return check.checkId();
+        return receipt.receiptId();
     }
 
-    private Set<CheckQRCode> selectCodesForLoading(final Collection<CheckQRCode> codes) {
+    private Set<QRCode> selectCodesForLoading(final Collection<QRCode> codes) {
         return selectionStrategy.select(codes, MAX_LOAD_SIZE);
     }
 
     @Override
     public void loadNewReceipts() {
-        log.info("Start loading new checks");
+        log.info("Start loading new receipts");
 
         final OffsetDateTime threshold = OffsetDateTime.now().minusHours(LOADING_FREQUENCY_MAX);
         log.info("Loading threshold {}", threshold);
 
-        final List<CheckQRCode> allNewCodes = qrCodeRepository.findAllInState(CheckState.NEW).stream()
+        final List<QRCode> allNewCodes = qrCodeRepository.findAllInState(ReceiptState.NEW).stream()
                 // Выбираем только те чеки, которые пытались загрузить раньше порогового интервала,
                 // или те которые никогда не пытались загрузить
                 .filter((code) -> (code.loadedAt() == null || code.loadedAt().isBefore(threshold)) && (code.loadingTryCount() < maxTryCount))
                 .collect(Collectors.toList());
-        log.info("Found {} new checks", allNewCodes.size());
+        log.info("Found {} new receipts", allNewCodes.size());
 
         if (allNewCodes.isEmpty()) {
             log.info("There are no suitable new codes. Skip loading.");
         } else {
-            final Set<CheckQRCode> codesToLoad = selectCodesForLoading(allNewCodes);
+            final Set<QRCode> codesToLoad = selectCodesForLoading(allNewCodes);
 
-            for (CheckQRCode code : codesToLoad) {
+            for (QRCode code : codesToLoad) {
                 try {
                     loadDetails(code.code());
                 } catch (ReceiptNotFoundException e) {
-                    log.error("Unable to load check {} details, check was not found", code);
+                    log.error("Unable to load receipt {} details, receipt was not found", code);
                 } catch (IOException e) {
-                    log.error("Unable to load check {} details, I/O error", code);
+                    log.error("Unable to load receipt {} details, I/O error", code);
                 }
 
                 waitToPreventFloodLock();
             }
         }
-        log.info("Finish loading new checks");
+        log.info("Finish loading new receipts");
     }
 
     private void waitToPreventFloodLock() {

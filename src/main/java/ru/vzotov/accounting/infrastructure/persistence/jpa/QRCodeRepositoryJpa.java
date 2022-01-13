@@ -1,8 +1,8 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import ru.vzotov.cashreceipt.domain.model.CheckId;
-import ru.vzotov.cashreceipt.domain.model.CheckQRCode;
-import ru.vzotov.cashreceipt.domain.model.CheckState;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.cashreceipt.domain.model.QRCode;
+import ru.vzotov.cashreceipt.domain.model.ReceiptState;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.cashreceipt.domain.model.QRCodeDateTime;
@@ -20,11 +20,11 @@ public class QRCodeRepositoryJpa extends JpaRepository implements QRCodeReposito
     }
 
     @Override
-    public CheckQRCode find(CheckId id) {
+    public QRCode find(ReceiptId id) {
         try {
-            return em.createQuery("from CheckQRCode where checkId=:checkId"
-                    , CheckQRCode.class)
-                    .setParameter("checkId", id)
+            return em.createQuery("from QRCode where receiptId=:receiptId"
+                    , QRCode.class)
+                    .setParameter("receiptId", id)
                     .getSingleResult();
         } catch (NoResultException ex) {
             return null;
@@ -32,15 +32,15 @@ public class QRCodeRepositoryJpa extends JpaRepository implements QRCodeReposito
     }
 
     @Override
-    public CheckQRCode findByQRCodeData(QRCodeData data) {
+    public QRCode findByQRCodeData(QRCodeData data) {
         try {
-            return em.createQuery("from CheckQRCode where code.dateTime = :dateTime" +
-                            " AND code.totalSum = :totalSum" +
-                            " AND code.fiscalDriveNumber = :fiscalDriveNumber" +
-                            " AND code.fiscalDocumentNumber = :fiscalDocumentNumber" +
-                            " AND code.fiscalSign.value = :fiscalSign" +
-                            " AND code.operationType = :operationType"
-                    , CheckQRCode.class)
+            return em.createQuery("from QRCode where data.dateTime = :dateTime" +
+                            " AND data.totalSum = :totalSum" +
+                            " AND data.fiscalDriveNumber = :fiscalDriveNumber" +
+                            " AND data.fiscalDocumentNumber = :fiscalDocumentNumber" +
+                            " AND data.fiscalSign.value = :fiscalSign" +
+                            " AND data.operationType = :operationType"
+                    , QRCode.class)
                     .setParameter("dateTime", data.dateTime())
                     .setParameter("totalSum", data.totalSum())
                     .setParameter("fiscalDriveNumber", data.fiscalDriveNumber())
@@ -55,29 +55,29 @@ public class QRCodeRepositoryJpa extends JpaRepository implements QRCodeReposito
     }
 
     @Override
-    public void store(CheckQRCode qrCode) {
+    public void store(QRCode qrCode) {
         em.persist(qrCode);
     }
 
     @Override
-    public List<CheckQRCode> findByDate(LocalDate fromDate, LocalDate toDate) {
+    public List<QRCode> findByDate(LocalDate fromDate, LocalDate toDate) {
         final ZoneId zoneId = ZoneId.systemDefault().normalized();
-        return em.createQuery("from CheckQRCode where code.dateTime >= :fromDate AND code.dateTime < :toDatePlusOneDay", CheckQRCode.class)
+        return em.createQuery("from QRCode where data.dateTime >= :fromDate AND data.dateTime < :toDatePlusOneDay", QRCode.class)
                 .setParameter("fromDate", new QRCodeDateTime(fromDate.atStartOfDay()))
                 .setParameter("toDatePlusOneDay", new QRCodeDateTime(toDate.plusDays(1).atStartOfDay()))
                 .getResultList();
     }
 
     @Override
-    public List<CheckQRCode> findAllInState(CheckState state) {
-        return em.createQuery("from CheckQRCode where state = :state", CheckQRCode.class)
+    public List<QRCode> findAllInState(ReceiptState state) {
+        return em.createQuery("from QRCode where state = :state", QRCode.class)
                 .setParameter("state", state)
                 .getResultList();
     }
 
     @Override
-    public List<CheckQRCode> findWithoutDeals() {
-        return em.createNamedQuery("receipts-without-deals", CheckQRCode.class)
+    public List<QRCode> findWithoutDeals() {
+        return em.createNamedQuery("receipts-without-deals", QRCode.class)
                 .getResultList();
     }
 }

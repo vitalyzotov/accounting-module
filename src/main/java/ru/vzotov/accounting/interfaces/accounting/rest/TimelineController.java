@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.CashreceiptsFacade;
+import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,16 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 public class TimelineController {
 
-    private final CashreceiptsFacade cashreceiptsFacade;
+    private final ReceiptsFacade receiptsFacade;
 
     @Autowired
-    public TimelineController(CashreceiptsFacade cashreceiptsFacade) {
-        this.cashreceiptsFacade = cashreceiptsFacade;
+    public TimelineController(ReceiptsFacade receiptsFacade) {
+        this.receiptsFacade = receiptsFacade;
     }
 
     @GetMapping
     public TimelineDTO getTimeline() {
-        return cashreceiptsFacade.getTimeline();
+        return receiptsFacade.getTimeline();
     }
 
 }

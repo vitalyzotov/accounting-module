@@ -29,8 +29,8 @@ import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.Operation;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.OperationType;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
-import ru.vzotov.cashreceipt.domain.model.CheckQRCode;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.purchase.domain.model.Purchase;
@@ -99,7 +99,7 @@ public class DealsFacadeImpl implements DealsFacade {
         Deal deal = new Deal(DealId.nextId(), date,
                 Money.ofRaw(amount, Currency.getInstance(currency)),
                 description, comment, budgetCategoryId,
-                receipts.stream().map(CheckId::new).collect(Collectors.toSet()),
+                receipts.stream().map(ReceiptId::new).collect(Collectors.toSet()),
                 operations.stream().map(OperationId::new).collect(Collectors.toSet()),
                 Collections.emptySet(),
                 purchases.stream().map(PurchaseId::new).collect(Collectors.toList())
@@ -128,7 +128,7 @@ public class DealsFacadeImpl implements DealsFacade {
         deal.setDescription(description);
         deal.setComment(comment);
         deal.assignCategory(budgetCategoryId);
-        deal.setReceipts(receipts.stream().map(CheckId::new).collect(Collectors.toSet()));
+        deal.setReceipts(receipts.stream().map(ReceiptId::new).collect(Collectors.toSet()));
         deal.setOperations(operations.stream().map(OperationId::new).collect(Collectors.toSet()));
         deal.setPurchases(purchases.stream().map(PurchaseId::new).collect(Collectors.toList()));
 
@@ -161,9 +161,9 @@ public class DealsFacadeImpl implements DealsFacade {
                 .forEach(transactionRepository::delete);
 
         // create deals for receipts
-        final Set<CheckId> receipts = new HashSet<>(deal.receipts());
-        for (CheckId receiptId : receipts) {
-            final CheckQRCode qr = qrCodeRepository.find(receiptId);
+        final Set<ReceiptId> receipts = new HashSet<>(deal.receipts());
+        for (ReceiptId receiptId : receipts) {
+            final QRCode qr = qrCodeRepository.find(receiptId);
             final Deal d = new Deal(
                     DealId.nextId(),
                     qr.code().dateTime().value().toLocalDate(),
@@ -353,7 +353,7 @@ public class DealsFacadeImpl implements DealsFacade {
                 operationRepository.findByDate(cacheFrom, cacheTo) : emptyList();
         final List<CardOperation> cardOperations = cache && expandCardOperations ?
                 cardOperationRepository.findByDate(cacheFrom, cacheTo) : emptyList();
-        final List<CheckQRCode> receipts = cache && expandReceipts ?
+        final List<QRCode> receipts = cache && expandReceipts ?
                 qrCodeRepository.findByDate(cacheFrom, cacheTo) : emptyList();
         final List<Purchase> purchases = cache && expandPurchases ?
                 purchaseRepository.findByDate(cacheFrom.atStartOfDay(), cacheTo.plusDays(1).atStartOfDay()) : emptyList();

@@ -13,8 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.config.DatasourceConfig;
 import ru.vzotov.cashreceipt.ReceiptFactory;
-import ru.vzotov.cashreceipt.domain.model.Check;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategory;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
@@ -38,14 +38,14 @@ public class ReceiptRepositoryJpaTest {
 
     @Test
     public void find() {
-        Check receipt = receiptRepository.find(new CheckId("20180616135500_65624_8710000100313204_110992_2128735201_1"));
+        Receipt receipt = receiptRepository.find(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"));
         log.info("Receipt loaded {}", receipt);
         Assert.assertNotNull(receipt);
     }
 
     @Test
     public void assignItemToCategory() {
-        Check receipt = receiptRepository.find(new CheckId("20180616135500_65624_8710000100313204_110992_2128735201_1"));
+        Receipt receipt = receiptRepository.find(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"));
         log.info("Receipt loaded {}", receipt);
         Assert.assertNotNull(receipt);
 
@@ -61,23 +61,23 @@ public class ReceiptRepositoryJpaTest {
 
     @Test
     public void store() {
-        Check receipt = new ReceiptFactory().createCheckSimple();
+        Receipt receipt = new ReceiptFactory().createReceiptSimple();
         receiptRepository.store(receipt);
     }
 
     @Test
     public void storeLongUser() {
-        Check receipt = new ReceiptFactory().createCheckWithLongUser();
+        Receipt receipt = new ReceiptFactory().createReceiptWithLongUser();
         receiptRepository.store(receipt);
     }
 
     @Test
     public void findByQRCodeData() {
-        Check notFound = receiptRepository.findByQRCodeData(new QRCodeData("t=20180614T1641&s=566.92&fn=8710000100312991&i=21128&fp=2663320648&n=1"));
+        Receipt notFound = receiptRepository.findByQRCodeData(new QRCodeData("t=20180614T1641&s=566.92&fn=8710000100312991&i=21128&fp=2663320648&n=1"));
         Assert.assertNull(notFound);
 
-        Check receipt = receiptRepository.findByQRCodeData(new QRCodeData("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1"));
-        log.info("Check loaded {}", receipt);
+        Receipt receipt = receiptRepository.findByQRCodeData(new QRCodeData("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1"));
+        log.info("Receipt loaded {}", receipt);
         Assert.assertNotNull(receipt);
     }
 }

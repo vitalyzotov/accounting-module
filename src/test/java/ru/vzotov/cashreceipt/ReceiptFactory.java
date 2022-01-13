@@ -1,8 +1,8 @@
 package ru.vzotov.cashreceipt;
 
 import ru.vzotov.cashreceipt.domain.model.Address;
-import ru.vzotov.cashreceipt.domain.model.Check;
-import ru.vzotov.cashreceipt.domain.model.CheckOperationType;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptOperationType;
 import ru.vzotov.cashreceipt.domain.model.FiscalInfo;
 import ru.vzotov.cashreceipt.domain.model.Marketing;
 import ru.vzotov.cashreceipt.domain.model.PaymentInfo;
@@ -21,10 +21,10 @@ import java.util.Collections;
 
 public class ReceiptFactory {
 
-    public Check createCheckSimple() {
-        return new Check(
+    public Receipt createReceiptSimple() {
+        return new Receipt(
                 LocalDateTime.now(),
-                CheckOperationType.INCOME,
+                ReceiptOperationType.INCOME,
                 1L,
                 new FiscalInfo(
                         "0001107425024311",
@@ -40,10 +40,10 @@ public class ReceiptFactory {
         );
     }
 
-    public Check createCheckWithLongUser() {
-        return new Check(
+    public Receipt createReceiptWithLongUser() {
+        return new Receipt(
                 LocalDateTime.now(),
-                CheckOperationType.INCOME,
+                ReceiptOperationType.INCOME,
                 1L,
                 new FiscalInfo(
                         "0001107425024311",
@@ -60,16 +60,15 @@ public class ReceiptFactory {
         );
     }
 
-    public Check createCheckFromBillchecker(String path) throws IOException {
-        ReceiptParsingServiceImpl parser =
-                new ReceiptParsingServiceImpl();
+    public Receipt createReceiptFromBillchecker(String path) throws IOException {
+        ReceiptParsingServiceImpl parser = new ReceiptParsingServiceImpl();
 
         try (InputStream data = getClass().getResourceAsStream(path)) {
             return parser.parse(data);
         }
     }
 
-    public Check createReceiptFromJson(String path) throws IOException {
+    public Receipt createReceiptFromJson(String path) throws IOException {
         ru.vzotov.cashreceipt.application.nalogru.ReceiptParsingServiceImpl parser =
                 new ru.vzotov.cashreceipt.application.nalogru.ReceiptParsingServiceImpl();
 
@@ -78,7 +77,7 @@ public class ReceiptFactory {
         }
     }
 
-    public Check createReceiptFromJson2(String path) throws IOException {
+    public Receipt createReceiptFromJson2(String path) throws IOException {
         ru.vzotov.cashreceipt.application.nalogru2.ReceiptParsingServiceImpl parser =
                 new ru.vzotov.cashreceipt.application.nalogru2.ReceiptParsingServiceImpl();
 

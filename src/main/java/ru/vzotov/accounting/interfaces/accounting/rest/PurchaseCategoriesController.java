@@ -1,7 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
-import ru.vzotov.accounting.interfaces.accounting.facade.CashreceiptsFacade;
+import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,30 +19,30 @@ import java.util.List;
 @RequestMapping("/accounting/purchase-categories")
 @CrossOrigin
 public class PurchaseCategoriesController {
-    private final CashreceiptsFacade cashreceiptsFacade;
+    private final ReceiptsFacade receiptsFacade;
 
     @Autowired
-    public PurchaseCategoriesController(CashreceiptsFacade cashreceiptsFacade) {
-        this.cashreceiptsFacade = cashreceiptsFacade;
+    public PurchaseCategoriesController(ReceiptsFacade receiptsFacade) {
+        this.receiptsFacade = receiptsFacade;
     }
 
     @GetMapping
     public List<PurchaseCategoryDTO> listCategories() {
-        return cashreceiptsFacade.getAllCategories();
+        return receiptsFacade.getAllCategories();
     }
 
     @GetMapping("/{categoryId}")
     public PurchaseCategoryDTO getCategory(@PathVariable String categoryId) {
-        return cashreceiptsFacade.getCategory(new PurchaseCategoryId(categoryId));
+        return receiptsFacade.getCategory(new PurchaseCategoryId(categoryId));
     }
 
     @PostMapping
     public PurchaseCategoryDTO createNewCategory(@RequestBody PurchaseCategoryDTO category) {
-        return cashreceiptsFacade.createNewCategory(category.getName());
+        return receiptsFacade.createNewCategory(category.getName());
     }
 
     @PatchMapping("/{categoryId}")
     public PurchaseCategoryDTO renameCategory(@PathVariable String categoryId, @RequestBody PurchaseCategoryDTO category) {
-        return cashreceiptsFacade.renameCategory(new PurchaseCategoryId(categoryId), category.getName());
+        return receiptsFacade.renameCategory(new PurchaseCategoryId(categoryId), category.getName());
     }
 }

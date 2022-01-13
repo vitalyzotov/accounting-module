@@ -4,14 +4,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ReceiptRepository {
-    Check find(CheckId id);
+    Receipt find(ReceiptId id);
 
-    Check findByQRCodeData(QRCodeData data);
+    Receipt findByQRCodeData(QRCodeData data);
 
-    void store(Check receipt);
+    void store(Receipt receipt);
 
-    List<Check> findByDate(LocalDate fromDate, LocalDate toDate);
+    List<Receipt> findByDate(LocalDate fromDate, LocalDate toDate);
     long countByDate(LocalDate fromDate, LocalDate toDate);
 
-    Check findOldest();
+    Receipt findOldest();
 }

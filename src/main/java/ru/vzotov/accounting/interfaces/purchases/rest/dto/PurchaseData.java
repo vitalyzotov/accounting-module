@@ -9,7 +9,7 @@ public class PurchaseData extends PurchaseDataRequest {
     public PurchaseData() {
     }
 
-    public PurchaseData(String name, LocalDateTime dateTime, MoneyDTO price, Double quantity, String checkId, String categoryId) {
-        super(name, dateTime, price, quantity, checkId, categoryId);
+    public PurchaseData(String name, LocalDateTime dateTime, MoneyDTO price, Double quantity, String receiptId, String categoryId) {
+        super(name, dateTime, price, quantity, receiptId, categoryId);
     }
 }

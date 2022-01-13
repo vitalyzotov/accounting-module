@@ -1,20 +1,20 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.dto;
 
 public class ReceiptRef {
-    private String checkId;
+    private String receiptId;
 
     public ReceiptRef() {
     }
 
-    public ReceiptRef(String checkId) {
-        this.checkId = checkId;
+    public ReceiptRef(String receiptId) {
+        this.receiptId = receiptId;
     }
 
-    public String getCheckId() {
-        return checkId;
+    public String getReceiptId() {
+        return receiptId;
     }
 
-    public void setCheckId(String checkId) {
-        this.checkId = checkId;
+    public void setReceiptId(String receiptId) {
+        this.receiptId = receiptId;
     }
 }

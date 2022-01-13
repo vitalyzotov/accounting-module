@@ -4,7 +4,7 @@ import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.banking.domain.model.OperationId;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import javax.persistence.EntityManager;
@@ -49,7 +49,7 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     }
 
     @Override
-    public Deal findByReceipt(CheckId receiptId) {
+    public Deal findByReceipt(ReceiptId receiptId) {
         try {
             return em.createQuery("from Deal where :receipt member of receipts", Deal.class)
                     .setParameter("receipt", receiptId)

@@ -1,7 +1,7 @@
 package ru.vzotov.accounting.domain.model;
 
 import ru.vzotov.banking.domain.model.OperationId;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import java.time.LocalDate;
@@ -14,7 +14,7 @@ public interface DealRepository {
 
     Deal findByOperation(OperationId operation);
 
-    Deal findByReceipt(CheckId receiptId);
+    Deal findByReceipt(ReceiptId receiptId);
 
     Deal findByPurchase(PurchaseId purchaseId);
 

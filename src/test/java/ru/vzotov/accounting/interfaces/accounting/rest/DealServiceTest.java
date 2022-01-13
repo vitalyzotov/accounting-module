@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.vzotov.cashreceipt.domain.model.CheckOperationType;
+import ru.vzotov.cashreceipt.domain.model.ReceiptOperationType;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.QRCodeDateTime;
 import ru.vzotov.domain.model.Money;
@@ -45,7 +45,7 @@ public class DealServiceTest {
                 "9280440301422813",
                 "2732",
                 new FiscalSign("0385604187"),
-                CheckOperationType.INCOME
+                ReceiptOperationType.INCOME
         );
 
         Map<String, String> data = new HashMap<>();

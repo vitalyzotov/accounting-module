@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-// todo: move class to jpa utils
 public class OffsetDateTimeAttributeConverter implements AttributeConverter<OffsetDateTime, Timestamp> {
     @Override
     public Timestamp convertToDatabaseColumn(OffsetDateTime offsetDateTime) {

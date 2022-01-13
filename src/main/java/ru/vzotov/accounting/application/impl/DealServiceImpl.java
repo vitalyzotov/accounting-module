@@ -17,7 +17,7 @@ import ru.vzotov.banking.domain.model.BankingEvents;
 import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.Operation;
 import ru.vzotov.banking.domain.model.TransactionCreatedEvent;
-import ru.vzotov.cashreceipt.domain.model.CheckQRCode;
+import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeCreatedEvent;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.domain.model.Money;
@@ -77,7 +77,7 @@ public class DealServiceImpl implements DealService {
     @Transactional(value = "accounting-tx")
     public void onQRCodeCreated(QRCodeCreatedEvent event) {
         Validate.notNull(event);
-        CheckQRCode qrCode = qrCodeRepository.find(event.receiptId());
+        QRCode qrCode = qrCodeRepository.find(event.receiptId());
         if (qrCode == null) {
             log.error("Unable to create deal. QR code not found: {}", event.receiptId().value());
             return;
@@ -170,8 +170,8 @@ public class DealServiceImpl implements DealService {
         }
     }
 
-    private void createDealForQrCode(CheckQRCode qrCode) {
-        log.info("Automatically create deal for QR code {}", qrCode.checkId());
+    private void createDealForQrCode(QRCode qrCode) {
+        log.info("Automatically create deal for QR code {}", qrCode.receiptId());
         Money amount;
         switch (qrCode.code().operationType()) {
             case INCOME:
@@ -192,7 +192,7 @@ public class DealServiceImpl implements DealService {
                 qrCode.code().fiscalSign().toString(),
                 null,
                 null,
-                Collections.singleton(qrCode.checkId()),
+                Collections.singleton(qrCode.receiptId()),
                 Collections.emptySet(),
                 Collections.emptySet(),
                 Collections.emptyList()

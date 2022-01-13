@@ -1,8 +1,8 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
-import ru.vzotov.cashreceipt.domain.model.Check;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
-import ru.vzotov.cashreceipt.domain.model.CheckQRCode;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategory;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
@@ -12,7 +12,7 @@ import ru.vzotov.cashreceipt.application.ReceiptRegistrationService;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
-import ru.vzotov.accounting.interfaces.accounting.facade.CashreceiptsFacade;
+import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
@@ -35,9 +35,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CashreceiptsFacadeImpl implements CashreceiptsFacade {
+public class ReceiptsFacadeImpl implements ReceiptsFacade {
 
-    private static final Logger log = LoggerFactory.getLogger(CashreceiptsFacadeImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ReceiptsFacadeImpl.class);
 
     private final ReceiptRepository receiptRepository;
 
@@ -47,10 +47,10 @@ public class CashreceiptsFacadeImpl implements CashreceiptsFacade {
 
     private final ReceiptRegistrationService receiptRegistrationService;
 
-    public CashreceiptsFacadeImpl(ReceiptRepository receiptRepository,
-                                  PurchaseCategoryRepository categoryRepository,
-                                  QRCodeRepository codeRepository,
-                                  ReceiptRegistrationService receiptRegistrationService) {
+    public ReceiptsFacadeImpl(ReceiptRepository receiptRepository,
+                              PurchaseCategoryRepository categoryRepository,
+                              QRCodeRepository codeRepository,
+                              ReceiptRegistrationService receiptRegistrationService) {
         this.receiptRepository = receiptRepository;
         this.categoryRepository = categoryRepository;
         this.codeRepository = codeRepository;
@@ -62,23 +62,23 @@ public class CashreceiptsFacadeImpl implements CashreceiptsFacade {
      */
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    public List<ReceiptDTO> listAllChecks(LocalDate fromDate, LocalDate toDate) {
-        List<Check> checks = receiptRepository.findByDate(fromDate, toDate);
-        return checks.stream().map(check -> new ReceiptDTOAssembler().toDTO(check)).collect(Collectors.toList());
+    public List<ReceiptDTO> listAllReceipts(LocalDate fromDate, LocalDate toDate) {
+        List<Receipt> receipts = receiptRepository.findByDate(fromDate, toDate);
+        return receipts.stream().map(receipt -> new ReceiptDTOAssembler().toDTO(receipt)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     public List<QRCodeDTO> listAllCodes(LocalDate fromDate, LocalDate toDate) {
-        List<CheckQRCode> checks = codeRepository.findByDate(fromDate, toDate);
-        return checks.stream().map(check -> new QRCodeDTOAssembler().toDTO(check)).collect(Collectors.toList());
+        List<QRCode> codes = codeRepository.findByDate(fromDate, toDate);
+        return codes.stream().map(code -> new QRCodeDTOAssembler().toDTO(code)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     public QRCodeDTO getCode(String receiptId) {
-        CheckQRCode check = codeRepository.find(new CheckId(receiptId));
-        return new QRCodeDTOAssembler().toDTO(check);
+        QRCode code = codeRepository.find(new ReceiptId(receiptId));
+        return new QRCodeDTOAssembler().toDTO(code);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class CashreceiptsFacadeImpl implements CashreceiptsFacade {
         final TimelineDTO result = new TimelineDTO();
         final ZoneId zoneId = ZoneId.systemDefault().normalized();
         final LocalDate today = LocalDate.now();
-        final Check oldest = receiptRepository.findOldest();
+        final Receipt oldest = receiptRepository.findOldest();
 
         if (oldest != null) {
             LocalDate startOfMonth = oldest.dateTime().atZone(zoneId).toLocalDate().withDayOfMonth(1);
@@ -95,7 +95,7 @@ public class CashreceiptsFacadeImpl implements CashreceiptsFacade {
             do {
                 endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
-                log.debug("Count checks from {} to {}", startOfMonth, endOfMonth);
+                log.debug("Count receipts from {} to {}", startOfMonth, endOfMonth);
 
                 final long count = receiptRepository.countByDate(startOfMonth, endOfMonth);
                 final TimePeriodDTO period = new TimePeriodDTO(
@@ -115,47 +115,47 @@ public class CashreceiptsFacadeImpl implements CashreceiptsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Deprecated
-    public ReceiptDTO loadCheck(String qrCodeData) {
-        Check check = receiptRepository.findByQRCodeData(new QRCodeData(qrCodeData));
-        return check == null ? null : new ReceiptDTOAssembler().toDTO(check);
+    public ReceiptDTO loadReceipt(String qrCodeData) {
+        Receipt receipt = receiptRepository.findByQRCodeData(new QRCodeData(qrCodeData));
+        return receipt == null ? null : new ReceiptDTOAssembler().toDTO(receipt);
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    public ReceiptDTO getCheck(String qrCodeData) {
-        Check check = receiptRepository.findByQRCodeData(new QRCodeData(qrCodeData));
-        return check == null ? null : new ReceiptDTOAssembler().toDTO(check);
+    public ReceiptDTO getReceipt(String qrCodeData) {
+        Receipt receipt = receiptRepository.findByQRCodeData(new QRCodeData(qrCodeData));
+        return receipt == null ? null : new ReceiptDTOAssembler().toDTO(receipt);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
-    public ReceiptDTO loadCheckDetails(QRCodeData qrCodeData) {
+    public ReceiptDTO loadReceiptDetails(QRCodeData qrCodeData) {
         Validate.notNull(qrCodeData);
         try {
-            CheckId checkId = receiptRegistrationService.loadDetails(qrCodeData);
-            return new ReceiptDTOAssembler().toDTO(receiptRepository.find(checkId));
+            ReceiptId receiptId = receiptRegistrationService.loadDetails(qrCodeData);
+            return new ReceiptDTOAssembler().toDTO(receiptRepository.find(receiptId));
         } catch (ReceiptNotFoundException | IOException e) {
-            log.error("Unable to load check details", e);
+            log.error("Unable to load receipt details", e);
         }
         return null;
     }
 
     @Override
     @Transactional(value = "accounting-tx")
-    public void assignCategoryToItem(CheckId checkId, Integer itemIndex, String newCategory)
+    public void assignCategoryToItem(ReceiptId receiptId, Integer itemIndex, String newCategory)
             throws ReceiptNotFoundException, ReceiptItemNotFoundException {
-        Check check = receiptRepository.find(checkId);
-        if (check == null) {
+        Receipt receipt = receiptRepository.find(receiptId);
+        if (receipt == null) {
             throw new ReceiptNotFoundException();
         }
         PurchaseCategory newCat = categoryRepository.findByName(newCategory);
 
-        if (check.products().items().stream().filter(item -> item.index().equals(itemIndex)).count() != 1) {
+        if (receipt.products().items().stream().filter(item -> item.index().equals(itemIndex)).count() != 1) {
             throw new ReceiptItemNotFoundException();
         }
 
-        check.assignCategoryToItem(itemIndex, newCat);
-        receiptRepository.store(check);
+        receipt.assignCategoryToItem(itemIndex, newCat);
+        receiptRepository.store(receipt);
     }
 
     @Override

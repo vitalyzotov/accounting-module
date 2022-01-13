@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
-import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
@@ -13,7 +13,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface CashreceiptsFacade {
+public interface ReceiptsFacade {
 
     /**
      * Получение всех чеков в заданном интервале дат
@@ -22,7 +22,7 @@ public interface CashreceiptsFacade {
      * @param toDate   конечная дата (включается в интервал)
      * @return список чеков
      */
-    List<ReceiptDTO> listAllChecks(LocalDate fromDate, LocalDate toDate);
+    List<ReceiptDTO> listAllReceipts(LocalDate fromDate, LocalDate toDate);
 
     /**
      * Получение всех зарегистрированных кодов чеков в заданном интервале дат
@@ -44,40 +44,40 @@ public interface CashreceiptsFacade {
     TimelineDTO getTimeline();
 
     /**
-     * Get check from persistent storage
+     * Get receipt from persistent storage
      *
      * @param qrCodeData
      * @return
-     * @deprecated use getCheck(String qrCodeData)
+     * @deprecated use getReceipt(String qrCodeData)
      */
     @Deprecated
-    ReceiptDTO loadCheck(String qrCodeData);
+    ReceiptDTO loadReceipt(String qrCodeData);
 
     /**
-     * Get check from persistent storage
+     * Get receipt from persistent storage
      *
      * @param qrCodeData QR code
-     * @return check
+     * @return receipt
      */
-    ReceiptDTO getCheck(String qrCodeData);
+    ReceiptDTO getReceipt(String qrCodeData);
 
     /**
      * Попытаться загрузить чек из внешних систем
      * @param qrCodeData
      * @return
      */
-    ReceiptDTO loadCheckDetails(QRCodeData qrCodeData);
+    ReceiptDTO loadReceiptDetails(QRCodeData qrCodeData);
 
     /**
      * Назначение категории для позиции чека
      *
-     * @param checkId     суррогатный идентификатор чека
+     * @param receiptId     суррогатный идентификатор чека
      * @param itemIndex   номер позиции
      * @param newCategory категория, которую нужно назначить позиции
      * @throws ReceiptNotFoundException     если чек не найден
      * @throws ReceiptItemNotFoundException если позиция в чеке не найдена
      */
-    void assignCategoryToItem(CheckId checkId,
+    void assignCategoryToItem(ReceiptId receiptId,
                               Integer itemIndex,
                               String newCategory) throws ReceiptNotFoundException, ReceiptItemNotFoundException;
 

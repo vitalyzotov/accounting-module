@@ -87,7 +87,7 @@ public class ReceiptRepositoryNalogru {
         try {
             verifyLimits();
         } catch (RestClientException e) {
-            log.error("Unable to load check from nalog.ru due to daily limits. Check qr code {}", data);
+            log.error("Unable to load receipt from nalog.ru due to daily limits. QR code {}", data);
             return null;
         }
 
@@ -103,7 +103,7 @@ public class ReceiptRepositoryNalogru {
 
             switch (response.getStatusCode()) {
                 case ACCEPTED:
-                    log.info("Check request accepted, wait for nalog.ru to prepare data");
+                    log.info("Receipt request accepted, wait for nalog.ru to prepare data");
                     break;
 
                 case NOT_ACCEPTABLE:
@@ -111,12 +111,12 @@ public class ReceiptRepositoryNalogru {
                     break;
 
                 case OK:
-                    final String checkJson = response.getBody();
-                    log.info(checkJson);
-                    return checkJson;
+                    final String receiptJson = response.getBody();
+                    log.info(receiptJson);
+                    return receiptJson;
 
                 default:
-                    log.info("Check not loaded. Try loading again later. HTTP Status {}", response.getStatusCodeValue());
+                    log.info("Receipt not loaded. Try loading again later. HTTP Status {}", response.getStatusCodeValue());
                     break;
             }
         } catch (HttpStatusCodeException e) {

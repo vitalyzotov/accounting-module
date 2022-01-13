@@ -82,7 +82,7 @@ public class ReceiptRepositoryNalogru2 {
             Ticket ticket = findTicket(data);
             return getTicketInfoAsString(ticket);
         } catch (IllegalArgumentException e) {
-            log.error("Unable to load check from nalog.ru", e);
+            log.error("Unable to load receipt from nalog.ru", e);
         } catch (RestClientException e) {
             log.error("Unknown rest client error", e);
         }

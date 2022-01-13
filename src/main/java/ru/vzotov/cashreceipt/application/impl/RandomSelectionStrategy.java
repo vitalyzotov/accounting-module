@@ -1,6 +1,6 @@
 package ru.vzotov.cashreceipt.application.impl;
 
-import ru.vzotov.cashreceipt.domain.model.CheckQRCode;
+import ru.vzotov.cashreceipt.domain.model.QRCode;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class RandomSelectionStrategy implements ReceiptSelectionStrategy {
 
     @Override
-    public Set<CheckQRCode> select(Collection<CheckQRCode> codes, int count) {
+    public Set<QRCode> select(Collection<QRCode> codes, int count) {
         return getRandomElements(codes, count);
     }
 
@@ -25,12 +25,12 @@ public class RandomSelectionStrategy implements ReceiptSelectionStrategy {
      * @param <T> тип
      * @return набор выбранных элементов
      */
-    private <T extends CheckQRCode> Set<T> getRandomElements(final Collection<T> from, final int count) {
+    private <T extends QRCode> Set<T> getRandomElements(final Collection<T> from, final int count) {
         final int size = from.size();
         final Set<T> result = (size > count) ? new HashSet<>(count) : new HashSet<>(from);
         if (size > count) {
             final List<T> source = from.stream()
-                    .sorted(Comparator.comparing(CheckQRCode::loadingTryCount))
+                    .sorted(Comparator.comparing(QRCode::loadingTryCount))
                     .collect(Collectors.toList());
             Random random = new Random();
             for (int i = 0; i < count; i++) {

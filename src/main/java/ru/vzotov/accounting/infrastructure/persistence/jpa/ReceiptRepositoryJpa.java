@@ -1,7 +1,7 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import ru.vzotov.cashreceipt.domain.model.Check;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 
@@ -17,10 +17,10 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
     }
 
     @Override
-    public Check find(CheckId id) {
+    public Receipt find(ReceiptId id) {
         try {
-            return em.createQuery("from Check where checkId = :id"
-                    , Check.class)
+            return em.createQuery("from Receipt where receiptId = :id"
+                    , Receipt.class)
                     .setParameter("id", id)
                     .getSingleResult();
         } catch (NoResultException ex) {
@@ -29,15 +29,15 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
     }
 
     @Override
-    public Check findByQRCodeData(QRCodeData data) {
+    public Receipt findByQRCodeData(QRCodeData data) {
         try {
-            return em.createQuery("from Check where dateTime = :dateTime" +
+            return em.createQuery("from Receipt where dateTime = :dateTime" +
                             " AND products.totalSum = :totalSum" +
                             " AND fiscalInfo.fiscalDriveNumber = :fiscalDriveNumber" +
                             " AND fiscalInfo.fiscalDocumentNumber = :fiscalDocumentNumber" +
                             " AND fiscalInfo.fiscalSign.value = :fiscalSign" +
                             " AND operationType = :operationType"
-                    , Check.class)
+                    , Receipt.class)
                     .setParameter("dateTime", data.dateTime().value())
                     .setParameter("totalSum", data.totalSum())
                     .setParameter("fiscalDriveNumber", data.fiscalDriveNumber())
@@ -51,7 +51,7 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
     }
 
     @Override
-    public void store(Check receipt) {
+    public void store(Receipt receipt) {
         if (hasId(receipt, "id")) {
             em.detach(receipt);
             em.merge(receipt);
@@ -62,8 +62,8 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
     }
 
     @Override
-    public List<Check> findByDate(LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("from Check where dateTime >= :fromDate AND dateTime < :toDatePlusOneDay", Check.class)
+    public List<Receipt> findByDate(LocalDate fromDate, LocalDate toDate) {
+        return em.createQuery("from Receipt where dateTime >= :fromDate AND dateTime < :toDatePlusOneDay", Receipt.class)
                 .setParameter("fromDate", fromDate.atStartOfDay())
                 .setParameter("toDatePlusOneDay", toDate.plusDays(1).atStartOfDay())
                 .getResultList();
@@ -71,15 +71,15 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
 
     @Override
     public long countByDate(LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("select count(c) from Check c where c.dateTime >= :fromDate AND c.dateTime < :toDatePlusOneDay", Long.class)
+        return em.createQuery("select count(c) from Receipt c where c.dateTime >= :fromDate AND c.dateTime < :toDatePlusOneDay", Long.class)
                 .setParameter("fromDate", fromDate.atStartOfDay())
                 .setParameter("toDatePlusOneDay", toDate.plusDays(1).atStartOfDay())
                 .getSingleResult();
     }
 
-    public Check findOldest() {
+    public Receipt findOldest() {
         try {
-            return em.createQuery("from Check order by dateTime asc", Check.class).setMaxResults(1).getSingleResult();
+            return em.createQuery("from Receipt order by dateTime asc", Receipt.class).setMaxResults(1).getSingleResult();
         } catch (NoResultException ex) {
             return null;
         }

@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptDTOAssembler;
 import ru.vzotov.cashreceipt.ReceiptFactory;
-import ru.vzotov.cashreceipt.domain.model.Check;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ItemDTO;
 
@@ -22,9 +22,9 @@ public class ReceiptDTOAssemblerTest {
     @Test
     public void toDTO() throws IOException {
         final ReceiptDTOAssembler assembler = new ReceiptDTOAssembler();
-        final Check check = new ReceiptFactory().createReceiptFromJson("/check015.json");
+        final Receipt receipt = new ReceiptFactory().createReceiptFromJson("/receipt015.json");
 
-        final ReceiptDTO dto = assembler.toDTO(check);
+        final ReceiptDTO dto = assembler.toDTO(receipt);
 
         assertThat(dto).isNotNull();
         assertThat(dto.getDateTime())
@@ -50,10 +50,10 @@ public class ReceiptDTOAssemblerTest {
     @Test
     public void toDTOList() throws IOException {
         final ReceiptDTOAssembler assembler = new ReceiptDTOAssembler();
-        final Check check1 = new ReceiptFactory().createReceiptFromJson("/check015.json");
-        final Check check2 = new ReceiptFactory().createReceiptFromJson("/check017.json");
+        final Receipt receipt1 = new ReceiptFactory().createReceiptFromJson("/receipt015.json");
+        final Receipt receipt2 = new ReceiptFactory().createReceiptFromJson("/receipt017.json");
 
-        List<ReceiptDTO> list = assembler.toDTOList(Arrays.asList(check1, check2));
+        List<ReceiptDTO> list = assembler.toDTOList(Arrays.asList(receipt1, receipt2));
         Assertions.assertThat(list).hasSize(2);
     }
 }

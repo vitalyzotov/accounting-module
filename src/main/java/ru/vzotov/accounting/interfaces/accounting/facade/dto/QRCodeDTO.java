@@ -11,8 +11,8 @@ public class QRCodeDTO extends ReceiptRef {
     public QRCodeDTO() {
     }
 
-    public QRCodeDTO(String checkId, QRCodeDataDTO data, String state, Long loadingTryCount, OffsetDateTime loadedAt) {
-        super(checkId);
+    public QRCodeDTO(String receiptId, QRCodeDataDTO data, String state, Long loadingTryCount, OffsetDateTime loadedAt) {
+        super(receiptId);
         this.data = data;
         this.state = state;
         this.loadingTryCount = loadingTryCount;

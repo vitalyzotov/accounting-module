@@ -4,15 +4,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface QRCodeRepository {
-    CheckQRCode find(CheckId id);
+    QRCode find(ReceiptId id);
 
-    CheckQRCode findByQRCodeData(QRCodeData data);
+    QRCode findByQRCodeData(QRCodeData data);
 
-    void store(CheckQRCode qrCode);
+    void store(QRCode qrCode);
 
-    List<CheckQRCode> findByDate(LocalDate fromDate, LocalDate toDate);
+    List<QRCode> findByDate(LocalDate fromDate, LocalDate toDate);
 
-    List<CheckQRCode> findAllInState(CheckState state);
+    List<QRCode> findAllInState(ReceiptState state);
 
-    List<CheckQRCode> findWithoutDeals();
+    List<QRCode> findWithoutDeals();
 }

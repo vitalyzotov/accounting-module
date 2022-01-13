@@ -78,7 +78,7 @@ public class DealsController {
         return dealsFacade.createDeal(deal.getDate(), deal.getAmount().getAmount(), deal.getAmount().getCurrency(),
                 deal.getDescription(), deal.getComment(), deal.getCategory(),
                 ofNullable(deal.getReceipts()).orElse(emptyList()).stream()
-                        .map(ReceiptRef::getCheckId).collect(toSet()),
+                        .map(ReceiptRef::getReceiptId).collect(toSet()),
                 ofNullable(deal.getOperations()).orElse(emptyList()).stream()
                         .map(OperationRef::getOperationId).collect(toSet()),
                 ofNullable(deal.getPurchases()).orElse(emptyList()).stream()
@@ -93,7 +93,7 @@ public class DealsController {
                 deal.getAmount().getAmount(), deal.getAmount().getCurrency(),
                 deal.getDescription(), deal.getComment(), deal.getCategory(),
                 ofNullable(deal.getReceipts()).orElse(emptyList()).stream()
-                        .map(ReceiptRef::getCheckId).collect(toSet()),
+                        .map(ReceiptRef::getReceiptId).collect(toSet()),
                 ofNullable(deal.getOperations()).orElse(emptyList()).stream()
                         .map(OperationRef::getOperationId).collect(toSet()),
                 ofNullable(deal.getPurchases()).orElse(emptyList()).stream()

@@ -1,9 +1,9 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
-import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.CashreceiptsFacade;
+import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.ReceiptItemCategoryPatch;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/accounting/receipt-items")
 @CrossOrigin
 public class ReceiptItemsController {
-    private final CashreceiptsFacade cashreceiptsFacade;
+    private final ReceiptsFacade receiptsFacade;
 
     @Autowired
-    public ReceiptItemsController(CashreceiptsFacade cashreceiptsFacade) {
-        this.cashreceiptsFacade = cashreceiptsFacade;
+    public ReceiptItemsController(ReceiptsFacade receiptsFacade) {
+        this.receiptsFacade = receiptsFacade;
     }
 
     @PatchMapping("/{itemIndex}")
@@ -32,6 +32,6 @@ public class ReceiptItemsController {
                                   @RequestBody ReceiptItemCategoryPatch patch) throws ReceiptNotFoundException, ReceiptItemNotFoundException {
         Validate.notNull(itemIndex);
         Validate.isTrue(itemIndex >= 0);
-        cashreceiptsFacade.assignCategoryToItem(new CheckId(receiptId), itemIndex, patch.getCategory());
+        receiptsFacade.assignCategoryToItem(new ReceiptId(receiptId), itemIndex, patch.getCategory());
     }
 }

@@ -5,19 +5,19 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
 import java.util.List;
 
 public class GetReceiptsResponse {
-    private List<ReceiptDTO> checks;
+    private List<ReceiptDTO> receipts;
 
     private List<ReceiptDTO> qrCodes;
 
     public GetReceiptsResponse() {
     }
 
-    public GetReceiptsResponse(List<ReceiptDTO> checks) {
-        this.checks = checks;
+    public GetReceiptsResponse(List<ReceiptDTO> receipts) {
+        this.receipts = receipts;
     }
 
-    public List<ReceiptDTO> getChecks() {
-        return checks;
+    public List<ReceiptDTO> getReceipts() {
+        return receipts;
     }
 
 }

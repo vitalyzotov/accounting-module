@@ -16,7 +16,7 @@ import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.banking.domain.model.OperationId;
-import ru.vzotov.cashreceipt.domain.model.CheckId;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class DealRepositoryJpaTest {
     private static final Logger log = LoggerFactory.getLogger(DealRepositoryJpaTest.class);
-    private static final String CHECK_ID_1 = "test16_receipt_1";
+    private static final String RECEIPT_ID_1 = "test16_receipt_1";
 
     @Autowired
     private DealRepository dealRepository;
@@ -47,7 +47,7 @@ public class DealRepositoryJpaTest {
                 .isNotNull()
         ;
         assertThat(deal.operations()).contains(new OperationId("test-operation-1"));
-        assertThat(deal.receipts()).contains(new CheckId(CHECK_ID_1));
+        assertThat(deal.receipts()).contains(new ReceiptId(RECEIPT_ID_1));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class DealRepositoryJpaTest {
 
     @Test
     public void findByReceipt() {
-        final CheckId receipt = new CheckId("test16_receipt_1");
+        final ReceiptId receipt = new ReceiptId("test16_receipt_1");
         Deal deal = dealRepository.findByReceipt(receipt);
         assertThat(deal).isNotNull();
         assertThat(deal.receipts()).contains(receipt);
@@ -100,7 +100,7 @@ public class DealRepositoryJpaTest {
                 DealId.nextId(), LocalDate.of(2021, 11, 21), Money.kopecks(123456),
                 "description", "comment",
                 new BudgetCategoryId(781381038049753674L),
-                Collections.singleton(new CheckId("receipt-d06eeb5c598c")),
+                Collections.singleton(new ReceiptId("receipt-d06eeb5c598c")),
                 Collections.singleton(new OperationId("deal-operation-4")),
                 Collections.emptySet(),
                 Collections.singletonList(new PurchaseId("purchase-0912fc12d100"))

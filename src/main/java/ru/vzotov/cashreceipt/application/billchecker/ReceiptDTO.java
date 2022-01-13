@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 @SuppressWarnings("unused")
-class Receipt {
+class ReceiptDTO {
 
     String kktNumber;
 
@@ -31,7 +31,7 @@ class Receipt {
     String user;
     String userInn;
 
-    List<Item> items;
+    List<ItemDTO> items;
 
     Long operationType;
 
@@ -39,7 +39,7 @@ class Receipt {
 
     Long requestNumber;
 
-    List<Item> stornoItems;
+    List<ItemDTO> stornoItems;
 
     Long fiscalSign;
 

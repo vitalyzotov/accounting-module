@@ -153,13 +153,13 @@ public class JpaConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public ReceiptRepository checkRepository(@Qualifier("accounting-emf") EntityManager em) {
+    public ReceiptRepository receiptRepository(@Qualifier("accounting-emf") EntityManager em) {
         return new ReceiptRepositoryJpa(em);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public QRCodeRepository checkQRCodeRepository(@Qualifier("accounting-emf") EntityManager em) {
+    public QRCodeRepository qrCodeRepository(@Qualifier("accounting-emf") EntityManager em) {
         return new QRCodeRepositoryJpa(em);
     }
 
