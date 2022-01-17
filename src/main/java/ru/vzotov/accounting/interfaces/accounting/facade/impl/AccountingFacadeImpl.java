@@ -3,6 +3,17 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
+import org.springframework.security.acls.domain.PrincipalSid;
+import org.springframework.security.acls.model.MutableAcl;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.NotFoundException;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.application.AccountingService;
@@ -68,6 +79,9 @@ import java.util.stream.Stream;
 public class AccountingFacadeImpl implements AccountingFacade {
 
     @Autowired
+    private MutableAclService aclService;
+
+    @Autowired
     private AccountingService accountingService;
 
     @Autowired
@@ -99,6 +113,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PostFilter("hasPermission(filterObject.number, 'ru.vzotov.banking.domain.model.Account', 'READ')")
     public List<AccountDTO> listAccounts() {
         return accountRepository.findAll()
                 .stream()
@@ -108,12 +123,14 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasPermission(#number, 'ru.vzotov.banking.domain.model.Account','READ')")
     public AccountDTO getAccount(String number) {
         return AccountDtoAssembler.assemble(accountRepository.find(new AccountNumber(number)));
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public String createAccount(String number, String name, String bankId, String currency, String owner, List<String> aliases) {
         Account account = new Account(
                 new AccountNumber(number),
@@ -123,23 +140,42 @@ public class AccountingFacadeImpl implements AccountingFacade {
                 owner == null ? null : new PersonId(owner),
                 aliases == null ? null : new AccountAliases(aliases)
         );
-        accountRepository.store(account);
+        accountRepository.create(account);
+
+        SecurityContextHolder.getContext().getAuthentication();
+
+        final ObjectIdentity oi = new ObjectIdentityImpl(Account.class, number);
+        final PrincipalSid sid = new PrincipalSid(SecurityContextHolder.getContext().getAuthentication());
+        // Create or update the relevant ACL
+        MutableAcl acl;
+        try {
+            acl = (MutableAcl) aclService.readAclById(oi);
+        } catch (NotFoundException nfe) {
+            acl = aclService.createAcl(oi);
+        }
+
+        acl.setOwner(sid);
+        acl.insertAce(acl.getEntries().size(), BasePermission.READ, sid, true);
+        acl.insertAce(acl.getEntries().size(), BasePermission.WRITE, sid, true);
+
         return account.accountNumber().number();
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasPermission(#number, 'ru.vzotov.banking.domain.model.Account','WRITE')")
     public void modifyAccount(String number, String name, String bankId, String currency, List<String> aliases) {
         Account account = accountRepository.find(new AccountNumber(number));
         account.rename(name);
         account.setBankId(new BankId(bankId));
         account.setCurrency(currency == null ? null : Currency.getInstance(currency));
         account.setAliases(aliases == null ? null : new AccountAliases(aliases));
-        accountRepository.store(account);
+        accountRepository.update(account);
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PostFilter("hasPermission(filterObject.accountNumber, 'ru.vzotov.banking.domain.model.Account', 'READ')")
     public List<RemainDTO> listRemains(LocalDate from, LocalDate to) {
         return remainRepository.findByDate(from, to)
                 .stream()
@@ -149,6 +185,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasPermission(#accountNumber, 'ru.vzotov.banking.domain.model.Account','READ')")
     public List<RemainDTO> listRemains(String accountNumber) {
         return remainRepository.findByAccountNumber(new AccountNumber(accountNumber))
                 .stream()
@@ -158,12 +195,14 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PostAuthorize("hasPermission(returnObject.accountNumber, 'ru.vzotov.banking.domain.model.Account','READ')")
     public RemainDTO getRemain(String remainId) {
         return RemainDTOAssembler.toDTO(remainRepository.find(new RemainId(remainId)));
     }
 
     @Override
     @Transactional("accounting-tx")
+    @PreAuthorize("hasPermission(#accountNumber, 'ru.vzotov.banking.domain.model.Account','WRITE')")
     public String createRemain(String accountNumber, LocalDate date, MoneyDTO value) {
         Remain remain = new Remain(
                 new AccountNumber(accountNumber),
@@ -178,11 +217,17 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Transactional("accounting-tx")
     public void deleteRemain(String remainId) {
         Remain remain = remainRepository.find(new RemainId(remainId));
+        deleteRemain(remain);
+    }
+
+    @PreAuthorize("hasPermission(#remain.account().number(), 'ru.vzotov.banking.domain.model.Account','WRITE')")
+    protected void deleteRemain(Remain remain) {
         remainRepository.delete(remain);
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PostFilter("hasPermission(filterObject.account, 'ru.vzotov.banking.domain.model.Account', 'READ')")
     public List<AccountOperationDTO> listOperations(OperationType type, LocalDate from, LocalDate to) {
         Validate.notNull(from);
         Validate.notNull(to);
@@ -194,6 +239,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasPermission(#accountNumber, 'ru.vzotov.banking.domain.model.Account','READ')")
     public List<AccountOperationDTO> listOperations(String accountNumber, LocalDate from, LocalDate to) {
         return operationRepository.findByAccountAndDate(new AccountNumber(accountNumber), from, to)
                 .stream()
@@ -203,6 +249,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PostAuthorize("hasPermission(returnObject.account, 'ru.vzotov.banking.domain.model.Account', 'READ')")
     public AccountOperationDTO getOperation(String operationId) throws OperationNotFoundException {
         Operation operation = operationRepository.find(new OperationId(operationId));
         if (operation == null) {
@@ -213,6 +260,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasPermission(#accountNumberValue, 'ru.vzotov.banking.domain.model.Account','WRITE')")
     public AccountOperationDTO createOperation(String accountNumberValue, LocalDate date, LocalDate authorizationDate,
                                                String transactionReference, char operationType,
                                                double amount, String currency,
@@ -284,7 +332,12 @@ public class AccountingFacadeImpl implements AccountingFacade {
             throw new OperationNotFoundException();
         }
 
-        operation.setComment(comment);
+        return modifyOperationComment(comment, operation);
+    }
+
+    @PreAuthorize("hasPermission(#operation.account().number(), 'ru.vzotov.banking.domain.model.Account','READ')")
+    private AccountOperationDTO modifyOperationComment(String newComment, Operation operation) {
+        operation.setComment(newComment);
 
         operationRepository.store(operation);
         return OperationDTOAssembler.toDTO(operation);
@@ -292,6 +345,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasPermission(#accountNumber, 'ru.vzotov.banking.domain.model.Account','READ')")
     public List<HoldOperationDTO> listHolds(String accountNumber, LocalDate from, LocalDate to) {
         return holdOperationRepository.findByAccountAndDate(new AccountNumber(accountNumber), from, to)
                 .stream()
@@ -346,6 +400,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BankId createBank(BankId bankId, String name, String shortName, String longName) {
         bankRepository.store(new Bank(bankId, name, shortName, longName));
         return bankId;
@@ -353,6 +408,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BankId modifyBank(BankId bankId, String name, String shortName, String longName) {
         Bank bank = bankRepository.find(bankId);
         if (bank == null) return null;

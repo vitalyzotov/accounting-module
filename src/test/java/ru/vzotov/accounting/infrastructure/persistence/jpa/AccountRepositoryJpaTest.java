@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.banking.domain.model.Account;
@@ -57,7 +56,7 @@ public class AccountRepositoryJpaTest {
     @Test
     public void store() {
         Account account = new Account(new AccountNumber("40817810808290123456"), "Счет кредитной карты", PersonId.nextId());
-        accountRepository.store(account);
+        accountRepository.update(account);
     }
 
     @Test

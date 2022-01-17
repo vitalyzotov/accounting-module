@@ -57,7 +57,17 @@ public class AccountRepositoryJpa extends JpaRepository implements AccountReposi
     }
 
     @Override
-    public void store(Account account) {
+    public void update(Account account) {
         em.persist(account);
+    }
+
+    @Override
+    public void create(Account account) {
+        Account a = this.find(account.accountNumber());
+        if(a == null) {
+            em.persist(account);
+        } else {
+            throw new IllegalStateException("Unable to create account " + account.accountNumber());
+        }
     }
 }

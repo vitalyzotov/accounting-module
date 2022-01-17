@@ -39,7 +39,7 @@ public class AccountsController {
     }
 
     @GetMapping("{accountNumber}")
-    public AccountDTO listAccounts(@PathVariable String accountNumber) {
+    public AccountDTO getAccount(@PathVariable String accountNumber) {
         return accountingFacade.getAccount(accountNumber);
     }
 
