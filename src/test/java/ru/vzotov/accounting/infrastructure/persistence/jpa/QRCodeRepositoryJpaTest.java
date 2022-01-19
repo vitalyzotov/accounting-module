@@ -11,6 +11,7 @@ import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
+import ru.vzotov.person.domain.model.PersonId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
 public class QRCodeRepositoryJpaTest {
+
+    private static final PersonId PERSON_ID = new PersonId("c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2");
 
     @Autowired
     private QRCodeRepository repository;
@@ -48,7 +51,8 @@ public class QRCodeRepositoryJpaTest {
     @Test
     public void store() {
         QRCode qrCode = new QRCode(
-                new QRCodeData("t=20190215T145400&s=741.92&fn=9282000100199855&i=493&fp=1237736343&n=1")
+                new QRCodeData("t=20190215T145400&s=741.92&fn=9282000100199855&i=493&fp=1237736343&n=1"),
+                PERSON_ID
         );
         repository.store(qrCode);
     }

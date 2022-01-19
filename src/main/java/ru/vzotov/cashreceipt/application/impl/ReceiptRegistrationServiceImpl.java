@@ -5,8 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.vzotov.accounting.infrastructure.SecurityUtils;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptParsingService;
 import ru.vzotov.cashreceipt.application.ReceiptRegistrationService;
@@ -29,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional("accounting-tx")
 public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationService {
 
     private static final Logger log = LoggerFactory.getLogger(ReceiptRegistrationServiceImpl.class);
@@ -79,6 +80,8 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
     }
 
     @Override
+    @Transactional("accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ReceiptId register(QRCodeData qrCodeData) throws ReceiptNotFoundException, IOException {
         log.debug("Try registering receipt {}", qrCodeData);
 
@@ -87,7 +90,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
             return alreadyRegistered.receiptId();
         }
 
-        final QRCode qrCode = new QRCode(qrCodeData);
+        final QRCode qrCode = new QRCode(qrCodeData, SecurityUtils.getCurrentPerson());
         qrCodeRepository.store(qrCode);
 
         eventPublisher.publishEvent(new QRCodeCreatedEvent(qrCode.receiptId()));
@@ -96,6 +99,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
     }
 
     @Override
+    @Transactional("accounting-tx")
     public ReceiptId loadDetails(QRCodeData qrCodeData) throws ReceiptNotFoundException, IOException {
         log.debug("Try loading receipt details {}", qrCodeData);
 
@@ -143,6 +147,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
     }
 
     @Override
+    @Transactional("accounting-tx")
     public void loadNewReceipts() {
         log.info("Start loading new receipts");
 
@@ -150,8 +155,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
         log.info("Loading threshold {}", threshold);
 
         final List<QRCode> allNewCodes = qrCodeRepository.findAllInState(ReceiptState.NEW).stream()
-                // Выбираем только те чеки, которые пытались загрузить раньше порогового интервала,
-                // или те которые никогда не пытались загрузить
+                // Select receipts, that we never tried to load, or that we tried to load before threshold
                 .filter((code) -> (code.loadedAt() == null || code.loadedAt().isBefore(threshold)) && (code.loadingTryCount() < maxTryCount))
                 .collect(Collectors.toList());
         log.info("Found {} new receipts", allNewCodes.size());

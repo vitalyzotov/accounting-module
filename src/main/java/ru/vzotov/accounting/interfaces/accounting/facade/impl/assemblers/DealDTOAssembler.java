@@ -14,6 +14,7 @@ public class DealDTOAssembler {
     public static DealDTO toDTO(Deal deal) {
         return deal == null ? null : new DealDTO(
                 deal.dealId().value(),
+                deal.owner().value(),
                 deal.date(),
                 MoneyDTOAssembler.toDTO(deal.amount()),
                 deal.description(),

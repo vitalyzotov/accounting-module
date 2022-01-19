@@ -5,6 +5,7 @@ import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import javax.persistence.EntityManager;
@@ -32,6 +33,15 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     @Override
     public List<Deal> findByDate(LocalDate fromDate, LocalDate toDate) {
         return em.createQuery("from Deal where date >= :dateFrom and date <= :dateTo", Deal.class)
+                .setParameter("dateFrom", fromDate)
+                .setParameter("dateTo", toDate)
+                .getResultList();
+    }
+
+    @Override
+    public List<Deal> findByDate(PersonId owner, LocalDate fromDate, LocalDate toDate) {
+        return em.createQuery("from Deal where owner=:owner and date >= :dateFrom and date <= :dateTo", Deal.class)
+                .setParameter("owner", owner)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
                 .getResultList();
@@ -85,18 +95,22 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     }
 
     @Override
-    public LocalDate findMinDealDate() {
+    public LocalDate findMinDealDate(PersonId owner) {
         try {
-            return em.createQuery("select min(date) from Deal", LocalDate.class).getSingleResult();
+            return em.createQuery("select min(date) from Deal where owner=:owner", LocalDate.class)
+                    .setParameter("owner", owner)
+                    .getSingleResult();
         } catch (NoResultException ex) {
             return null;
         }
     }
 
     @Override
-    public LocalDate findMaxDealDate() {
+    public LocalDate findMaxDealDate(PersonId owner) {
         try {
-            return em.createQuery("select max(date) from Deal", LocalDate.class).getSingleResult();
+            return em.createQuery("select max(date) from Deal where owner=:owner", LocalDate.class)
+                    .setParameter("owner", owner)
+                    .getSingleResult();
         } catch (NoResultException ex) {
             return null;
         }

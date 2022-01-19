@@ -2,6 +2,7 @@ package ru.vzotov.accounting.domain.model;
 
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import java.time.LocalDate;
@@ -11,6 +12,8 @@ public interface DealRepository {
     Deal find(DealId dealId);
 
     List<Deal> findByDate(LocalDate fromDate, LocalDate toDate);
+
+    List<Deal> findByDate(PersonId owner, LocalDate fromDate, LocalDate toDate);
 
     Deal findByOperation(OperationId operation);
 
@@ -22,7 +25,7 @@ public interface DealRepository {
 
     void delete(Deal deal);
 
-    LocalDate findMinDealDate();
+    LocalDate findMinDealDate(PersonId owner);
 
-    LocalDate findMaxDealDate();
+    LocalDate findMaxDealDate(PersonId owner);
 }

@@ -9,15 +9,12 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.HoldId;
 import ru.vzotov.banking.domain.model.HoldOperation;
 import ru.vzotov.banking.domain.model.OperationType;
-import ru.vzotov.banking.domain.model.PersonId;
 import ru.vzotov.domain.model.Money;
 
 import javax.transaction.Transactional;

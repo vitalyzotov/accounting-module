@@ -9,6 +9,8 @@ public class DealDTO {
 
     private String dealId;
 
+    private String owner;
+
     private LocalDate date;
 
     private MoneyDTO amount;
@@ -30,13 +32,14 @@ public class DealDTO {
     public DealDTO() {
     }
 
-    public DealDTO(String dealId, LocalDate date, MoneyDTO amount, String description, String comment,
+    public DealDTO(String dealId, String owner, LocalDate date, MoneyDTO amount, String description, String comment,
                    Long category,
                    List<ReceiptRef> receipts,
                    List<OperationRef> operations,
                    List<OperationRef> cardOperations,
                    List<PurchaseRef> purchases) {
         this.dealId = dealId;
+        this.owner = owner;
         this.date = date;
         this.amount = amount;
         this.description = description;
@@ -54,6 +57,14 @@ public class DealDTO {
 
     public void setDealId(String dealId) {
         this.dealId = dealId;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public LocalDate getDate() {

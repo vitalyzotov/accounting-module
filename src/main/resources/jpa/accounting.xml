@@ -90,10 +90,17 @@
             </embedded>
 
             <embedded name="amount"/>
+
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="OWNER"/>
+                </attribute-override>
+            </embedded>
+
         </attributes>
     </entity>
 
-    <entity name="Person" class="ru.vzotov.banking.domain.model.Person" access="FIELD">
+    <entity name="Person" class="ru.vzotov.person.domain.model.Person" access="FIELD">
         <table name="PERSON_"/>
         <attributes>
             <id name="id">
@@ -681,6 +688,13 @@
                     <column name="CHECK_ID" nullable="false" unique="true"/>
                 </attribute-override>
             </embedded>
+
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="OWNER"/>
+                </attribute-override>
+            </embedded>
+
         </attributes>
     </entity>
 
@@ -1053,7 +1067,7 @@
         </attributes>
     </embeddable>
 
-    <embeddable class="ru.vzotov.banking.domain.model.PersonId" access="FIELD">
+    <embeddable class="ru.vzotov.person.domain.model.PersonId" access="FIELD">
         <attributes>
             <basic name="value">
                 <column name="PERSON_UID" />

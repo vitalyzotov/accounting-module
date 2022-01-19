@@ -15,7 +15,7 @@ import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.BankId;
 import ru.vzotov.banking.domain.model.CardNumber;
-import ru.vzotov.banking.domain.model.PersonId;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;

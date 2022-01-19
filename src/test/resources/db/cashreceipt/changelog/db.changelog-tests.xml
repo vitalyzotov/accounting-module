@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-<!--    <include file="db.changelog-master.xml" relativeToChangelogFile="true"/>-->
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    <!--    <include file="db.changelog-master.xml" relativeToChangelogFile="true"/>-->
 
     <!--<changeSet id="test-ddl" author="vzotov">
         <sql>
@@ -146,28 +145,7 @@
     </changeSet>
 
     <changeSet id="test-3" author="vzotov">
-        <sql>
-            INSERT INTO qr_code (
-            check_id,
-            check_datetime,
-            total_sum, SUM_CURRENCY,
-            fiscal_drive, fiscal_doc, fiscal_sign, operation_type,
-            state, loading_count, loaded_at
-            ) VALUES (
-            '20180616135500_65624_8710000100313204_110992_2128735201_1',
-            '2018-06-16 13:55:00',
-            65624, 'RUR',
-            '8710000100313204', 110992, 2128735201, 1,
-            'N', 1, '2018-06-16 14:00:00'
-            ), (
-            '20180616135500_65625_8710000100313205_110993_2128735202_1',
-            '2018-06-16 13:55:00',
-            65625, 'RUR',
-            '8710000100313205', 110993, 2128735202, 1,
-            'N', 1, '2018-06-16 14:00:00'
-            )
-            ;
-        </sql>
+        <loadData tableName="qr_code" file="qr_code.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
     <changeSet id="test-4" author="vzotov">

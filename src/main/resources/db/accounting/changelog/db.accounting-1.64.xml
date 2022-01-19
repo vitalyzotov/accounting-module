@@ -1,0 +1,22 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="acc-73" author="vzotov">
+        <addColumn tableName="DEAL_">
+            <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
+                <constraints nullable="false" foreignKeyName="FK_DEAL_OWNER" references="PERSON_(PERSON_UID)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="acc-74" author="vzotov">
+        <addColumn tableName="QR_CODE">
+            <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
+                <constraints nullable="false" foreignKeyName="FK_QR_OWNER" references="PERSON_(PERSON_UID)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

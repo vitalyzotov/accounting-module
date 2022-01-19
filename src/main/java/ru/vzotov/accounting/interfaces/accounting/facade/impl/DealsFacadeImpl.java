@@ -2,6 +2,8 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
@@ -11,6 +13,7 @@ import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.accounting.domain.model.OperationRepository;
 import ru.vzotov.accounting.domain.model.TransactionRepository;
+import ru.vzotov.accounting.infrastructure.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
@@ -33,6 +36,7 @@ import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
@@ -84,6 +88,7 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public DealDTO createDeal(LocalDate date, long amount, String currency, String description, String comment,
                               Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases
     ) throws CategoryNotFoundException {
@@ -91,12 +96,18 @@ public class DealsFacadeImpl implements DealsFacade {
         Validate.notNull(operations);
         Validate.notNull(purchases);
 
+        final PersonId currentPerson = SecurityUtils.getCurrentPerson();
+        Validate.notNull(currentPerson, "Unable to find owner");
+
         final BudgetCategoryId budgetCategoryId = new BudgetCategoryId(categoryId);
         final BudgetCategory category = categoryId == null ? null :
                 budgetCategoryRepository.find(budgetCategoryId);
         if (categoryId != null && category == null) throw new CategoryNotFoundException();
 
-        Deal deal = new Deal(DealId.nextId(), date,
+        Deal deal = new Deal(
+                DealId.nextId(),
+                currentPerson,
+                date,
                 Money.ofRaw(amount, Currency.getInstance(currency)),
                 description, comment, budgetCategoryId,
                 receipts.stream().map(ReceiptId::new).collect(Collectors.toSet()),
@@ -118,6 +129,13 @@ public class DealsFacadeImpl implements DealsFacade {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
 
+        return modifyDealSecurely(deal, date, amount, currency, description, comment, categoryId, receipts, operations, purchases);
+    }
+
+    @PreAuthorize("hasAuthority(#deal.owner().value())")
+    private DealDTO modifyDealSecurely(Deal deal, LocalDate date, long amount, String currency, String description,
+                                       String comment, Long categoryId, Collection<String> receipts,
+                                       Collection<String> operations, Collection<String> purchases) throws CategoryNotFoundException {
         final BudgetCategoryId budgetCategoryId = new BudgetCategoryId(categoryId);
         final BudgetCategory category = categoryId == null ? null :
                 budgetCategoryRepository.find(budgetCategoryId);
@@ -141,6 +159,11 @@ public class DealsFacadeImpl implements DealsFacade {
     public DealDTO deleteDeal(String dealId) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
+        return deleteDealSecurely(deal);
+    }
+
+    @PreAuthorize("hasAuthority(#deal.owner().value())")
+    private DealDTO deleteDealSecurely(Deal deal) {
         dealRepository.delete(deal);
         return DealDTOAssembler.toDTO(deal);
     }
@@ -150,6 +173,11 @@ public class DealsFacadeImpl implements DealsFacade {
     public List<DealDTO> splitDeal(String dealId) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
+        return splitDealSecurely(deal);
+    }
+
+    @PreAuthorize("hasAuthority(#deal.owner().value())")
+    private List<DealDTO> splitDealSecurely(Deal deal) {
         final List<Deal> receiptsResult = new ArrayList<>();
         final List<Deal> operationsResult = new ArrayList<>();
 
@@ -166,6 +194,7 @@ public class DealsFacadeImpl implements DealsFacade {
             final QRCode qr = qrCodeRepository.find(receiptId);
             final Deal d = new Deal(
                     DealId.nextId(),
+                    deal.owner(),
                     qr.code().dateTime().value().toLocalDate(),
                     qr.code().totalSum().negate(),
                     qr.code().fiscalSign().toString(),
@@ -186,6 +215,7 @@ public class DealsFacadeImpl implements DealsFacade {
             final Operation operation = operationRepository.find(operationId);
             final Deal d = new Deal(
                     DealId.nextId(),
+                    deal.owner(),
                     operation.date(),
                     OperationType.WITHDRAW.equals(operation.type()) ? operation.amount() : operation.amount().negate(),
                     operation.description(),
@@ -217,53 +247,63 @@ public class DealsFacadeImpl implements DealsFacade {
         }
 
         dealRepository.delete(deal);
-        final List<DealDTO> result = Stream.concat(receiptsResult.stream(), operationsResult.stream())
+
+        return Stream.concat(receiptsResult.stream(), operationsResult.stream())
                 .peek(dealRepository::store)
                 .map(DealDTOAssembler::toDTO)
                 .collect(Collectors.toList());
-
-        return result;
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<DealDTOExpansion> expand) {
         return expandDeals(expand, from, to,
-                () -> dealRepository.findByDate(from, to).stream().map(DealDTOAssembler::toDTO))
+                () -> dealRepository.findByDate(SecurityUtils.getCurrentPerson(), from, to).stream()
+                        .map(DealDTOAssembler::toDTO))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public DealDTO getDeal(String dealId, Set<DealDTOExpansion> expand) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
 
+        return getDealSecurely(deal, expand);
+    }
+
+    @PreAuthorize("hasAuthority(#deal.owner().value())")
+    private DealDTO getDealSecurely(Deal deal, Set<DealDTOExpansion> expand) throws DealNotFoundException {
         return expandDeals(expand, null, null, () -> Stream.of(DealDTOAssembler.toDTO(deal)))
                 .findFirst().orElseThrow(DealNotFoundException::new);
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public LocalDate getMinDealDate() {
-        return dealRepository.findMinDealDate();
+        return dealRepository.findMinDealDate(SecurityUtils.getCurrentPerson());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public LocalDate getMaxDealDate() {
-        return dealRepository.findMaxDealDate();
+        return dealRepository.findMaxDealDate(SecurityUtils.getCurrentPerson());
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public DealDTO mergeDeals(List<String> dealIds) {
         Validate.notNull(dealIds);
         Validate.isTrue(dealIds.size() >= 2);
 
         final LinkedList<Deal> deals = dealIds.stream()
                 .map(DealId::new)
-                .map(dealRepository::find)
+                .map(this::findDealSecurely)
                 .collect(Collectors.toCollection(LinkedList::new));
 
         final Deal earliestDeal = deals.stream().min(comparing(Deal::date))
@@ -315,11 +355,17 @@ public class DealsFacadeImpl implements DealsFacade {
         return DealDTOAssembler.toDTO(target);
     }
 
+    @PostAuthorize("hasAuthority(returnObject.owner().value())")
+    private Deal findDealSecurely(DealId dealId) {
+        return dealRepository.find(dealId);
+    }
+
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<PurchaseDTO> listDealPurchases(String dealId) {
-        PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
-        Deal deal = dealRepository.find(new DealId(dealId));
+        final Deal deal = findDealSecurely(new DealId(dealId));
+        final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
         return deal.purchases().stream()
                 .map(purchaseRepository::find)
                 .map(assembler::toDTO)
@@ -328,14 +374,16 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void movePurchase(PurchaseId purchaseId, DealId sourceId, DealId targetId) {
         Validate.notNull(purchaseId);
         Validate.notNull(sourceId);
         Validate.notNull(targetId);
-        final Deal source = dealRepository.find(sourceId);
+        final Deal source = findDealSecurely(sourceId);
         Validate.notNull(source);
-        final Deal target = dealRepository.find(targetId);
+        final Deal target = findDealSecurely(targetId);
         Validate.notNull(target);
+
         source.movePurchase(purchaseId, target);
         dealRepository.store(source);
         dealRepository.store(target);

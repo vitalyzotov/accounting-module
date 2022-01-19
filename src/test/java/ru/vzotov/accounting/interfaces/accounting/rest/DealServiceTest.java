@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.vzotov.accounting.test.AbstractControllerTest;
 import ru.vzotov.cashreceipt.domain.model.ReceiptOperationType;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.QRCodeDateTime;
@@ -27,7 +28,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 @ActiveProfiles("test")
-public class DealServiceTest {
+public class DealServiceTest extends AbstractControllerTest {
 
     @LocalServerPort
     int port;
@@ -52,6 +53,7 @@ public class DealServiceTest {
         data.put("qrcode", qr.toString());
 
         RestAssured.given()
+                .auth().basic(USER, PASSWORD)
                 .contentType(ContentType.JSON)
                 .body(data).
                 when()

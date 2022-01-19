@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <include file="db.changelog-master.xml" relativeToChangelogFile="true"/>
-    <include file="../../cashreceipt/changelog/db.changelog-tests.xml" relativeToChangelogFile="true"/>
 
     <changeSet id="persons" author="vzotov">
-        <sql>
-            INSERT INTO PERSON_ (PERSON_UID, FIRST_NAME, LAST_NAME, DISPLAY_NAME) VALUES ('vzotov', 'Vitaly', 'Zotov', 'Dad');
-        </sql>
+        <loadData tableName="PERSON_" file="person_.csv" relativeToChangelogFile="true"/>
     </changeSet>
+
+    <include file="../../cashreceipt/changelog/db.changelog-tests.xml" relativeToChangelogFile="true"/>
 
     <changeSet id="test1" author="vzotov">
         <sql>
             INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER)
-            VALUES ('40817810108290123456', 'Зарплатный счет', 'vzotov');
+            VALUES ('40817810108290123456', 'Зарплатный счет', 'c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2');
 
             INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER)
-            VALUES ('40817810418370123456', 'Счет карты ГПБ', 'vzotov');
+            VALUES ('40817810418370123456', 'Счет карты ГПБ', 'c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2');
 
             INSERT INTO ACCOUNT_ALIAS (ACCOUNT_NUMBER, ALIAS) VALUES
             ('40817810418370123456','17416127'),
             ('40817810418370123456','17416128');
 
             INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER, CURRENCY, BANK_ID)
-            VALUES ('40817810000016123456', 'Тинькофф', 'vzotov', 'RUR', '044525974');
+            VALUES ('40817810000016123456', 'Тинькофф', 'c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2', 'RUR', '044525974');
 
             INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER, CURRENCY, BANK_ID)
-            VALUES ('40817810000016123457', 'Тинькофф2', 'vzotov', 'RUR', '044525974');
+            VALUES ('40817810000016123457', 'Тинькофф2', 'c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2', 'RUR', '044525974');
         </sql>
     </changeSet>
 
@@ -140,29 +138,7 @@
     </changeSet>
 
     <changeSet id="test10" author="vzotov">
-        <sql>
-            INSERT INTO SPECIAL_DAY (DAY, LOCATION, NAME, DAY_TYPE)
-            VALUES
-            ('2020-01-01', 'RUS', 'Новогодние каникулы', 'H'),
-            ('2020-01-02', 'RUS', 'Новогодние каникулы', 'H'),
-            ('2020-01-03', 'RUS', 'Новогодние каникулы', 'H'),
-            ('2020-01-04', 'RUS', 'Новогодние каникулы', 'H'),
-            ('2020-01-05', 'RUS', 'Новогодние каникулы', 'H'),
-            ('2020-01-06', 'RUS', 'Новогодние каникулы', 'H'),
-            ('2020-01-07', 'RUS', 'Рождество Христово', 'H'),
-            ('2020-01-08', 'RUS', 'Новогодние каникулы', 'H'),
-            ('2020-02-23', 'RUS', 'День защитника Отечества', 'H'),
-            ('2020-02-24', 'RUS', 'Перенос с воскресенья 23 февраля на понедельник 24 февраля', 'N'),
-            ('2020-03-08', 'RUS', 'Международный женский день', 'H'),
-            ('2020-03-09', 'RUS', 'Перенос с воскресенья 8 марта на понедельник 9 марта', 'N'),
-            ('2020-05-01', 'RUS', 'Праздник Весны и Труда', 'H'),
-            ('2020-05-09', 'RUS', 'День Победы', 'H'),
-            ('2020-05-04', 'RUS', 'Перенос с субботы 4 января на понедельник 4 мая', 'N'),
-            ('2020-05-05', 'RUS', 'Перенос с воскресенья 5 января на вторник 5 мая', 'N'),
-            ('2020-05-11', 'RUS', 'Перенос с субботы 9 мая на понедельник 11 мая', 'N'),
-            ('2020-06-12', 'RUS', 'День России', 'H'),
-            ('2020-11-04', 'RUS', 'День народного единства', 'H');
-        </sql>
+        <loadData tableName="SPECIAL_DAY" file="special_day.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
     <changeSet id="test11" author="vzotov">
@@ -197,24 +173,11 @@
     </changeSet>
 
     <changeSet id="test13" author="vzotov">
-        <sql>
-            INSERT INTO BUDGET_PLAN (CATEGORY_ID, BP_DATE, BP_DIRECTION, BP_UID, RULE_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, AMOUNT, CURRENCY) VALUES
-            (NULL, '2020-02-20', '-', 'BBI-000-000-001', 3, '40817810108290123456', NULL, 150000, 'RUR'),
-            (NULL, '2020-03-20', '-', 'BBI-DEL-000-001', 3, '40817810108290123456', NULL, 150000, 'RUR'),
-            (NULL, '2020-02-20', '-', 'BBI-000-000-011', 8, '40817810108290123456', NULL, 150000, 'RUR'),
-            (NULL, '2020-03-20', '-', 'BBI-DEL-000-011', 8, '40817810108290123456', NULL, 150000, 'RUR')
-            ;
-        </sql>
+        <loadData tableName="BUDGET_PLAN" file="budget_plan.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
     <changeSet id="test14" author="vzotov">
-        <sql>
-            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-1', '2017-07-10', -1000, 'RUR');
-            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-for-remove', '2017-07-11', -2000, 'RUR');
-            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-for-remove-2', '2017-07-11', -2000, 'RUR');
-            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-for-modification', '2021-11-21', -4000, 'RUR');
-            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('deal-2', '2021-11-21', -5000, 'RUR');
-        </sql>
+        <loadData tableName="DEAL_" file="deal_.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
     <changeSet id="test15" author="vzotov">
@@ -225,19 +188,12 @@
         </sql>
     </changeSet>
 
+    <changeSet id="test_qr_code" author="vzotov">
+        <loadData tableName="qr_code" file="qr_code.csv" relativeToChangelogFile="true"/>
+    </changeSet>
+
     <changeSet id="test16" author="vzotov">
         <sql>
-            INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
-            FISCAL_SIGN, OPERATION_TYPE, STATE, LOADING_COUNT, LOADED_AT)
-            VALUES
-            ('test16_receipt_1', '2018-06-16 13:55:00', 65624, 'RUR', '8710000100313204', 110992,
-            2128735202, 1, 'N', 1, '2021-12-10 14:00:00')
-            , ('test16_receipt_2', '2017-12-29 16:53:00', 7734000, 'RUR', '8710000100691108', 1554,
-            2182018037, 1, 'N', 1, '2021-12-12 14:00:00')
-            , ('test16_receipt_3', '2018-07-23 14:20:00', 7150, 'RUR', '9281000100225396', 2736,
-            802663013, 1, 'N', 1, '2021-12-12 14:00:00')
-            ;
-
             INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (1, 'test16_receipt_1');
             INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (2, 'test16_receipt_2');
             INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (3, 'test16_receipt_3');
@@ -252,16 +208,6 @@
             ,('9102dfe0-a0c8-4a83-8283-d1d487a4695c', '2021-12-12', NULL, 2999, 'RUR', '-', '40817810108290123456', 'покупка в магазине 2999', NULL)
             ;
 
-            INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
-                FISCAL_SIGN, OPERATION_TYPE, STATE, LOADING_COUNT, LOADED_AT)
-            VALUES
-                ('0a735210-65e5-4b1d-abf3-7a36f707b050', '2021-12-10 13:55:00', 5000, 'RUR', '8710000100313204', 110992,
-                    1007397674, 1, 'N', 1, '2021-12-10 14:00:00')
-                , ('f4668455-e756-4af8-89dd-d90a7ed6ff15', '2021-12-12 13:55:00', 3000, 'RUR', '8710000100313205', 110993,
-                    1064681188, 1, 'N', 1, '2021-12-12 14:00:00')
-            ;
-
-            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES ('cf7cb2f0-ea2a-4ba4-8732-43544af8bbc8', '2021-12-10', -5000, 'RUR');
             INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID)
                 SELECT ID, '98364d73-c42b-4e5b-93da-a0a6d6018a3b'
                 FROM DEAL_ WHERE DEAL_UID='cf7cb2f0-ea2a-4ba4-8732-43544af8bbc8';
@@ -269,7 +215,6 @@
                 SELECT ID, '0a735210-65e5-4b1d-abf3-7a36f707b050'
                 FROM DEAL_ WHERE DEAL_UID='cf7cb2f0-ea2a-4ba4-8732-43544af8bbc8';
 
-            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY, COMMENT, CATEGORY_ID) VALUES ('c68ad6eb-86af-47f3-8165-a09a9945093f', '2021-12-12', -3000, 'RUR', 'comment a09a9945093f', 781381038049753674);
             INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID)
                 SELECT ID, '9102dfe0-a0c8-4a83-8283-d1d487a4695c'
                 FROM DEAL_ WHERE DEAL_UID='c68ad6eb-86af-47f3-8165-a09a9945093f';
@@ -281,11 +226,6 @@
 
     <changeSet id="DealRepositoryJpaTest.store" author="vzotov">
         <sql>
-            INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
-            FISCAL_SIGN, OPERATION_TYPE, STATE, LOADING_COUNT, LOADED_AT)
-            VALUES
-            ('receipt-d06eeb5c598c', '2018-06-16 13:55:00', 65624, 'RUR', '8710000100313204', 110992,
-            2128735203, 1, 'N', 1, '2021-12-10 14:00:00');
             INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
             ('purchase-0912fc12d100', '2018-06-16 13:55:00', 'purchase 0912fc12d100', 500, 'RUR', 1.500, NULL);
         </sql>
@@ -293,12 +233,6 @@
 
     <changeSet id="DealsControllerTest.modifyDeal" author="vzotov">
         <sql>
-            INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
-            FISCAL_SIGN, OPERATION_TYPE, STATE, LOADING_COUNT, LOADED_AT)
-            VALUES
-            ('receipt-923fe9456109', '2018-06-16 13:55:00', 65624, 'RUR', '8710000100313204', 110992,
-            2128735204, 1, 'N', 1, '2021-12-10 14:00:00');
-
             INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
             ('purchase-5000-1', '2018-06-16 13:55:00', 'purchase-5000-1', 500, 'RUR', 1.500, NULL);
         </sql>
@@ -306,12 +240,6 @@
 
     <changeSet id="DealsControllerTest.createDeal" author="vzotov">
         <sql>
-            INSERT INTO qr_code (CHECK_ID, CHECK_DATETIME, TOTAL_SUM, SUM_CURRENCY, FISCAL_DRIVE, FISCAL_DOC,
-            FISCAL_SIGN, OPERATION_TYPE, STATE, LOADING_COUNT, LOADED_AT)
-            VALUES
-            ('receipt-6380ff16f05e', '2018-06-16 13:55:00', 65624, 'RUR', '8710000100313204', 110992,
-            2128735205, 1, 'N', 1, '2021-12-10 14:00:00');
-
             INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
             ('purchase-3000-1', '2018-06-16 13:55:00', 'purchase-3000-1', 500, 'RUR', 1.500, NULL);
 
@@ -320,9 +248,6 @@
 
     <changeSet id="PurchaseFacadeImplTest.deletePurchaseById" author="vzotov">
         <sql>
-            INSERT INTO DEAL_ (DEAL_UID, DATE, AMOUNT, CURRENCY) VALUES
-                ('deal-61423570595d', '2021-12-10', -223344, 'RUR');
-
             INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
             ('purchase-80ad2d7a1294', '2021-12-10 13:55:00', 'purchase-80ad2d7a1294', 500, 'RUR', 1.500, NULL),
             ('purchase-2d01489c2478', '2021-12-10 13:55:00', 'purchase-2d01489c2478', 500, 'RUR', 1.500, NULL);

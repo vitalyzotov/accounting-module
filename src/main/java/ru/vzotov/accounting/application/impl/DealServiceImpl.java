@@ -8,11 +8,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.application.DealService;
+import ru.vzotov.accounting.domain.model.AccountRepository;
 import ru.vzotov.accounting.domain.model.CardOperationRepository;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.accounting.domain.model.OperationRepository;
+import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.BankingEvents;
 import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.Operation;
@@ -30,6 +32,8 @@ public class DealServiceImpl implements DealService {
 
     private static final Logger log = LoggerFactory.getLogger(DealService.class);
 
+    private final AccountRepository accountRepository;
+
     private final OperationRepository operationRepository;
 
     private final CardOperationRepository cardOperationRepository;
@@ -38,10 +42,12 @@ public class DealServiceImpl implements DealService {
 
     private final DealRepository dealRepository;
 
-    public DealServiceImpl(OperationRepository operationRepository,
+    public DealServiceImpl(AccountRepository accountRepository,
+                           OperationRepository operationRepository,
                            CardOperationRepository cardOperationRepository,
                            QRCodeRepository qrCodeRepository,
                            DealRepository dealRepository) {
+        this.accountRepository = accountRepository;
         this.operationRepository = operationRepository;
         this.cardOperationRepository = cardOperationRepository;
         this.qrCodeRepository = qrCodeRepository;
@@ -136,11 +142,12 @@ public class DealServiceImpl implements DealService {
             default:
                 throw new IllegalArgumentException();
         }
-
+        final Account account = accountRepository.find(operation.account());
         final CardOperation cardOperation = cardOperationRepository.find(operation.operationId());
 
         final Deal deal = new Deal(
                 DealId.nextId(),
+                account.owner(),
                 Optional.ofNullable(cardOperation).map(CardOperation::purchaseDate).orElse(operation.date()),
                 amount,
                 operation.description(),
@@ -187,6 +194,7 @@ public class DealServiceImpl implements DealService {
         }
         final Deal deal = new Deal(
                 DealId.nextId(),
+                qrCode.owner(),
                 qrCode.code().dateTime().value().toLocalDate(),
                 amount,
                 qrCode.code().fiscalSign().toString(),

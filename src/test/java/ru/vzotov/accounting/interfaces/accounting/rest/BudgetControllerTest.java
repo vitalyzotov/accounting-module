@@ -1,42 +1,31 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetRuleDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
 import org.assertj.core.api.Condition;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.accounting.domain.model.BudgetRuleId;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetRuleDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
+import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
-public class BudgetControllerTest {
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Before
-    public void setup() {
-        // PATCH support
-        restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-    }
+public class BudgetControllerTest extends AbstractControllerTest {
 
     @Test
     public void getRule() {
         final String budgetId = "test-budget-1";
-        final ResponseEntity<BudgetRuleDTO> exchange = this.restTemplate.exchange(
+        final ResponseEntity<BudgetRuleDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}/rule/{ruleId}",
                 HttpMethod.GET, new HttpEntity<>(null),
                 BudgetRuleDTO.class,
@@ -50,7 +39,7 @@ public class BudgetControllerTest {
     @Test
     public void replaceRule() {
         final String budgetId = "test-budget-1";
-        final ResponseEntity<BudgetDTO> exchange = this.restTemplate.exchange(
+        final ResponseEntity<BudgetDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}/rule/{ruleId}",
                 HttpMethod.PUT, new HttpEntity<>(new BudgetRuleDTO(
                         "001",
@@ -70,7 +59,7 @@ public class BudgetControllerTest {
 
         assertThat(exchange.getBody().getRules()).isNotEmpty();
 
-        assertThat(this.restTemplate.exchange(
+        assertThat(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}",
                 HttpMethod.GET, new HttpEntity<>(null),
                 BudgetDTO.class, budgetId
@@ -90,7 +79,7 @@ public class BudgetControllerTest {
     @Test
     public void deleteRule() {
         final String budgetId = "test-budget-1";
-        final ResponseEntity<BudgetDTO> exchange = this.restTemplate.exchange(
+        final ResponseEntity<BudgetDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}/rule/{ruleId}",
                 HttpMethod.DELETE, new HttpEntity<>(null),
                 BudgetDTO.class,
@@ -100,7 +89,7 @@ public class BudgetControllerTest {
 
         assertThat(exchange.getBody().getRules()).isNotEmpty();
 
-        assertThat(this.restTemplate.exchange(
+        assertThat(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}",
                 HttpMethod.GET, new HttpEntity<>(null),
                 BudgetDTO.class, budgetId

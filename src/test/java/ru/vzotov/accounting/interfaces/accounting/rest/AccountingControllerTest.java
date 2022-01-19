@@ -3,10 +3,8 @@ package ru.vzotov.accounting.interfaces.accounting.rest;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +20,7 @@ import ru.vzotov.accounting.interfaces.accounting.rest.dto.GetReceiptsResponse;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.ReceiptRegistrationRequest;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.ReceiptRegistrationResponse;
 import ru.vzotov.accounting.interfaces.common.dto.MoneyDTO;
+import ru.vzotov.accounting.test.AbstractControllerTest;
 import ru.vzotov.cashreceipt.application.nalogru2.ReceiptRepositoryNalogru2;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 
@@ -46,17 +45,16 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 @Transactional
-public class AccountingControllerTest {
+public class AccountingControllerTest extends AbstractControllerTest {
 
     @MockBean
     private ReceiptRepositoryNalogru2 nalogru;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
-
     @Test
     public void getReceipts() {
-        GetReceiptsResponse body = this.restTemplate.getForObject("/accounting/receipts/?from=2018-06-16&to=2018-06-17", GetReceiptsResponse.class);
+        GetReceiptsResponse body = this.restTemplate
+                .withBasicAuth(USER, PASSWORD)
+                .getForObject("/accounting/receipts/?from=2018-06-16&to=2018-06-17", GetReceiptsResponse.class);
         assertThat(body.getReceipts()).isNotEmpty();
     }
 
@@ -64,11 +62,14 @@ public class AccountingControllerTest {
     public void getCodes() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("x-api-version", "2");
-        ResponseEntity<QRCodeDTO[]> response = this.restTemplate.exchange(
-                "/accounting/qr/?from=2018-06-16&to=2018-06-17",
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                QRCodeDTO[].class);
+        ResponseEntity<QRCodeDTO[]> response = this.restTemplate
+                .withBasicAuth(USER, PASSWORD)
+                .exchange(
+                        "/accounting/qr/?from=2018-06-16&to=2018-06-17",
+                        HttpMethod.GET,
+                        new HttpEntity<>(headers),
+                        QRCodeDTO[].class
+                );
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody()).isNotEmpty();
         QRCodeDTO expected = new QRCodeDTO(
@@ -90,7 +91,9 @@ public class AccountingControllerTest {
 
     @Test
     public void getReceipt() {
-        GetReceiptResponse body = this.restTemplate.getForObject("/accounting/receipts/2128735201?t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&n=1", GetReceiptResponse.class);
+        GetReceiptResponse body = this.restTemplate
+                .withBasicAuth(USER, PASSWORD)
+                .getForObject("/accounting/receipts/2128735201?t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&n=1", GetReceiptResponse.class);
         assertThat(body.getReceipt().getItems()).hasSize(2);
     }
 
@@ -106,7 +109,9 @@ public class AccountingControllerTest {
 
             ReceiptRegistrationRequest request = new ReceiptRegistrationRequest();
             request.setQrcode("t=20180717T1655&s=1350.00&fn=9288000100080483&i=944&fp=2361761706&n=1");
-            ReceiptRegistrationResponse response = this.restTemplate.postForObject("/accounting/receipts/", request, ReceiptRegistrationResponse.class);
+            ReceiptRegistrationResponse response = this.restTemplate
+                    .withBasicAuth(USER, PASSWORD)
+                    .postForObject("/accounting/receipts/", request, ReceiptRegistrationResponse.class);
             assertThat(response).isNotNull();
             assertThat(response.getId()).isNotNull();
             verify(this.nalogru, times(0)).findByQRCodeData(any(QRCodeData.class));

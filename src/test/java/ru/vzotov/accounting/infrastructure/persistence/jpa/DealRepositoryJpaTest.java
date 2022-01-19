@@ -18,6 +18,7 @@ import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import javax.transaction.Transactional;
@@ -35,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DealRepositoryJpaTest {
     private static final Logger log = LoggerFactory.getLogger(DealRepositoryJpaTest.class);
     private static final String RECEIPT_ID_1 = "test16_receipt_1";
+    private static final PersonId PERSON_ID = new PersonId("c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2");
 
     @Autowired
     private DealRepository dealRepository;
@@ -97,7 +99,10 @@ public class DealRepositoryJpaTest {
     @Rollback(false) // we need flush for element collections
     public void store() {
         Deal deal = new Deal(
-                DealId.nextId(), LocalDate.of(2021, 11, 21), Money.kopecks(123456),
+                DealId.nextId(),
+                PERSON_ID,
+                LocalDate.of(2021, 11, 21),
+                Money.kopecks(123456),
                 "description", "comment",
                 new BudgetCategoryId(781381038049753674L),
                 Collections.singleton(new ReceiptId("receipt-d06eeb5c598c")),
@@ -115,8 +120,8 @@ public class DealRepositoryJpaTest {
 
     @Test
     public void findMinMaxDates() {
-        LocalDate min = dealRepository.findMinDealDate();
-        LocalDate max = dealRepository.findMaxDealDate();
+        LocalDate min = dealRepository.findMinDealDate(PERSON_ID);
+        LocalDate max = dealRepository.findMaxDealDate(PERSON_ID);
         assertThat(min).isNotNull().isEqualTo(LocalDate.of(2017, 07, 10));
         assertThat(max).isNotNull().isAfter(min);
     }

@@ -1,11 +1,5 @@
 package ru.vzotov.accounting.application.impl;
 
-import org.springframework.transaction.annotation.Transactional;
-import ru.vzotov.cashreceipt.domain.model.ReceiptId;
-import ru.vzotov.cashreceipt.domain.model.QRCodeData;
-import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
-import ru.vzotov.cashreceipt.application.ReceiptRegistrationService;
-import ru.vzotov.cashreceipt.application.nalogru2.ReceiptRepositoryNalogru2;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -14,6 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+import ru.vzotov.WithMockPersonUser;
+import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
+import ru.vzotov.cashreceipt.application.ReceiptRegistrationService;
+import ru.vzotov.cashreceipt.application.nalogru2.ReceiptRepositoryNalogru2;
+import ru.vzotov.cashreceipt.domain.model.QRCodeData;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 @Transactional
 public class ReceiptRegistrationServiceImplTest {
     private static final Logger log = LoggerFactory.getLogger(ReceiptRegistrationServiceImplTest.class);
+    private static final String PERSON_ID = "c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2";
 
     @MockBean
     private ReceiptRepositoryNalogru2 nalogru;
@@ -37,6 +39,7 @@ public class ReceiptRegistrationServiceImplTest {
     @Autowired
     private ReceiptRegistrationService service;
 
+    @WithMockPersonUser(person = PERSON_ID)
     @Test
     public void registerReceipt() throws ReceiptNotFoundException, IOException {
         final QRCodeData qr = new QRCodeData("t=20180629T002100&s=1109.00&fn=9286000100174236&i=6079&fp=3461764748&n=1");

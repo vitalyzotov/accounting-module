@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(
         scanBasePackages = {
+                "ru.vzotov.accounting.test",
                 "ru.vzotov.accounting.interfaces",
                 "ru.vzotov.accounting.application",
                 "ru.vzotov.accounting.application.impl",
