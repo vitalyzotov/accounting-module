@@ -477,8 +477,9 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<BudgetCategoryDTO> listCategories() {
-        return budgetCategoryRepository.findAll()
+        return budgetCategoryRepository.findAll(SecurityUtils.getCurrentPerson())
                 .stream()
                 .map(BudgetCategoryDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -486,27 +487,36 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public BudgetCategoryDTO getCategory(long id) {
-        return BudgetCategoryDTOAssembler.toDTO(budgetCategoryRepository.find(new BudgetCategoryId(id)));
+        return BudgetCategoryDTOAssembler.toDTO(findBudgetCategorySecurely(id));
+    }
+
+    @PostAuthorize("hasAuthority(returnObject.owner().value())")
+    private BudgetCategory findBudgetCategorySecurely(long id) {
+        return budgetCategoryRepository.find(new BudgetCategoryId(id));
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public BudgetCategoryDTO createCategory(String name, String color, String icon) {
-        BudgetCategory category = new BudgetCategory(BudgetCategoryId.of(name), name, decodeColor(color), icon);
+        BudgetCategory category = new BudgetCategory(BudgetCategoryId.of(name), SecurityUtils.getCurrentPerson(),
+                name, decodeColor(color), icon);
         budgetCategoryRepository.store(category);
         return BudgetCategoryDTOAssembler.toDTO(category);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public BudgetCategoryDTO modifyCategory(long id, String newName, String color, String icon) throws CategoryNotFoundException {
-        final BudgetCategory category = budgetCategoryRepository.find(new BudgetCategoryId(id));
+        final BudgetCategory category = findBudgetCategorySecurely(id);
         if (category == null) {
             throw new CategoryNotFoundException();
         }
 
-        final BudgetCategory other = budgetCategoryRepository.find(newName);
+        final BudgetCategory other = budgetCategoryRepository.find(category.owner(), newName);
         if (other != null) {
             throw new IllegalArgumentException();
         }
@@ -522,8 +532,9 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void deleteCategory(long id) throws CategoryNotFoundException {
-        BudgetCategory category = budgetCategoryRepository.find(new BudgetCategoryId(id));
+        BudgetCategory category = findBudgetCategorySecurely(id);
         if (category == null) {
             throw new CategoryNotFoundException();
         }

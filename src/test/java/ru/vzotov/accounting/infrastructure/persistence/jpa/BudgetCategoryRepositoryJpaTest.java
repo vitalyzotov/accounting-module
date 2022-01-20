@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.banking.domain.model.BudgetCategory;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -28,12 +29,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BudgetCategoryRepositoryJpaTest {
     private static final Logger log = LoggerFactory.getLogger(BudgetCategoryRepositoryJpaTest.class);
 
+    private static final PersonId PERSON_ID = new PersonId("c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2");
+
     @Autowired
     private BudgetCategoryRepository repository;
 
     @Test
     public void find() {
-        BudgetCategory category = repository.find("Прочие расходы");
+        BudgetCategory category = repository.find(PERSON_ID, "Прочие расходы");
         log.info("Category loaded {}", category);
         assertThat(category).isNotNull();
     }
@@ -50,20 +53,20 @@ public class BudgetCategoryRepositoryJpaTest {
 
     @Test
     public void findNotExistent() {
-        BudgetCategory category = repository.find("Несуществующая категория");
+        BudgetCategory category = repository.find(PERSON_ID, "Несуществующая категория");
         assertThat(category).isNull();
     }
 
     @Test
     public void findAll() {
-        List<BudgetCategory> all = repository.findAll();
+        List<BudgetCategory> all = repository.findAll(PERSON_ID);
         assertThat(all).isNotNull();
         assertThat(all).isNotEmpty();
     }
 
     @Test
     public void store() {
-        BudgetCategory category = new BudgetCategory(BudgetCategoryId.of("Транспорт"), "Транспорт");
+        BudgetCategory category = new BudgetCategory(BudgetCategoryId.of("Транспорт"), PERSON_ID, "Транспорт");
         repository.store(category);
     }
 

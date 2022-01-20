@@ -3,6 +3,7 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa;
 import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
 import ru.vzotov.banking.domain.model.BudgetCategory;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -20,9 +21,10 @@ public class BudgetCategoryRepositoryJpa extends JpaRepository implements Budget
     }
 
     @Override
-    public BudgetCategory find(String categoryName) {
+    public BudgetCategory find(PersonId owner, String categoryName) {
         try {
-            return em.createQuery("from BudgetCategory where name = :name", BudgetCategory.class)
+            return em.createQuery("from BudgetCategory where owner=:owner and name = :name", BudgetCategory.class)
+                    .setParameter("owner", owner)
                     .setParameter("name", categoryName)
                     .getSingleResult();
         } catch (NoResultException e) {
@@ -31,8 +33,10 @@ public class BudgetCategoryRepositoryJpa extends JpaRepository implements Budget
     }
 
     @Override
-    public List<BudgetCategory> findAll() {
-        return em.createQuery("from BudgetCategory", BudgetCategory.class).getResultList();
+    public List<BudgetCategory> findAll(PersonId owner) {
+        return em.createQuery("from BudgetCategory where owner=:owner", BudgetCategory.class)
+                .setParameter("owner", owner)
+                .getResultList();
     }
 
     @Override

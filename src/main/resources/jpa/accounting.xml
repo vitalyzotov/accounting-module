@@ -401,6 +401,11 @@
             <basic name="icon">
                 <column name="ICON" nullable="true"/>
             </basic>
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="OWNER"/>
+                </attribute-override>
+            </embedded>
         </attributes>
     </entity>
 

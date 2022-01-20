@@ -35,4 +35,19 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="acc-77" author="vzotov">
+        <addColumn tableName="BUDGET_CATEGORY_">
+            <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
+                <constraints nullable="false" foreignKeyName="FK_BC_OWNER" references="PERSON_(PERSON_UID)"/>
+            </column>
+        </addColumn>
+        <sql dbms="mysql">ALTER TABLE BUDGET_CATEGORY_ DROP INDEX `NAME`</sql>
+
+        <sql dbms="h2">
+            ALTER TABLE BUDGET_CATEGORY_ DROP INDEX CONSTRAINT_B;
+       </sql>
+
+        <addUniqueConstraint tableName="BUDGET_CATEGORY_" columnNames="NAME, OWNER" constraintName="UNQ_BC_NAME"/>
+    </changeSet>
+
 </databaseChangeLog>
