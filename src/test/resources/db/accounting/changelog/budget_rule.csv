@@ -1,0 +1,10 @@
+RULE_UID,RULE_TYPE,CATEGORY_ID,SOURCE_ACCOUNT,TARGET_ACCOUNT,NAME,RECURRENCE,AMOUNT,CURRENCY,CALC_EXPRESSION,BUDGET_ID
+001,+,NULL,NULL,40817810108290123456,Заработная плата,M2020-01-01(1)[7],2800000,RUR,"value.amount().doubleValue() * (calendar.workdaysBetween(prevMonth.atDay(16), prevMonth.atEndOfMonth()) / calendar.workdaysBetween(prevMonth.atDay(1), prevMonth.atEndOfMonth()));",1
+002,+,NULL,NULL,40817810108290123456,Аванс,M2020-01-01(1)[22],2800000,RUR,"value.amount().doubleValue() * (calendar.workdaysBetween(month.atDay(1), month.atDay(16)) / calendar.workdaysBetween(month.atDay(1), month.atEndOfMonth()));",1
+003,-,NULL,40817810108290123456,NULL,Гипермаркет,W2020-01-01(1)[1],150000,RUR,NULL,1
+004,-,781381038049753674,40817810000016123456,NULL,Покупка чего-то важного,T(1)2020-03-05[1],200000,RUR,NULL,1
+005,-,NULL,NULL,NULL,Гипермаркет,W2020-01-01(1)[1],150000,RUR,NULL,2
+011,+,NULL,NULL,40817810108290123456,Заработная плата,M2020-01-01(1)[7],2800000,RUR,"value.amount().doubleValue() * (calendar.workdaysBetween(prevMonth.atDay(16), prevMonth.atEndOfMonth()) / calendar.workdaysBetween(prevMonth.atDay(1), prevMonth.atEndOfMonth()));",3
+012,+,NULL,NULL,40817810108290123456,Аванс,M2020-01-01(1)[22],2800000,RUR,"value.amount().doubleValue() * (calendar.workdaysBetween(month.atDay(1), month.atDay(16)) / calendar.workdaysBetween(month.atDay(1), month.atEndOfMonth()));",3
+013,-,NULL,40817810108290123456,NULL,Гипермаркет,W2020-01-01(1)[1],150000,RUR,NULL,3
+014,-,781381038049753674,40817810000016123456,NULL,Покупка чего-то важного,T(1)2020-03-05[1],200000,RUR,NULL,3

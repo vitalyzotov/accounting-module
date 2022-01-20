@@ -1,0 +1,14 @@
+ID,DATE,CATEGORY_ID,AMOUNT,CURRENCY,OP_TYPE,ACCOUNT_ID,DESCRIPTION,COMMENT
+test-operation-1,2017-07-10,781381038049753674,1000,RUR,-,40817810108290123456,тестовая операция,NULL
+will-be-removed,2017-07-10,781381038049753674,1020,RUR,-,40817810108290123456,тестовая операция для удаления,NULL
+long-description,2017-07-10,781381038049753674,1020,RUR,-,40817810108290123456,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus blandit tellus, et posuere turpis pulvinar quis. Mauris sodales semper orci vel malesuada. Sed at iaculis felis. Nulla vitae nisl dapibus, egestas nulla porta, consequat dolor. Duis ac tellus in diam elementum sagittis. Cras bibendum mauris et aliquet ultricies. Nullam vitae lacus sed magna ornare pellentesque quis et ipsum. Maecenas condimentum sit amet urna quis gravida. Fusce rhoncus convallis rhoncus. Cras ac lacinia tellus cras amet.",NULL
+tx-operation-1,2018-08-01,NULL,3000,RUR,-,40817810108290123456,перевод на ГПБ,NULL
+tx-operation-2,2018-08-02,NULL,3000,RUR,+,40817810418370123456,поступление средств,NULL
+tx-operation-3,2019-08-01,NULL,5000,RUR,-,40817810108290123456,перевод на ГПБ,NULL
+tx-operation-4,2019-08-10,NULL,5000,RUR,+,40817810418370123456,поступление средств,NULL
+deal-operation-1,2021-11-21,NULL,3000,RUR,-,40817810108290123456,покупка в магазине,NULL
+deal-operation-2,2021-11-21,NULL,4000,RUR,-,40817810108290123456,покупка в магазине 2,NULL
+deal-operation-3,2021-11-21,NULL,5000,RUR,-,40817810108290123456,покупка в магазине 3,NULL
+deal-operation-4,2021-11-21,NULL,6000,RUR,-,40817810108290123456,покупка в магазине 4,NULL
+98364d73-c42b-4e5b-93da-a0a6d6018a3b,2021-12-10,NULL,4999,RUR,-,40817810108290123456,покупка в магазине 4999,NULL
+9102dfe0-a0c8-4a83-8283-d1d487a4695c,2021-12-12,NULL,2999,RUR,-,40817810108290123456,покупка в магазине 2999,NULL

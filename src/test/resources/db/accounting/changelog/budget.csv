@@ -1,0 +1,4 @@
+BUDGET_UID,NAME,LOCALE_,CURRENCY
+test-budget-1,default1,US,RUR
+removed-budget-2,default2,US,RUR
+test-budget-2,default3,US,RUR

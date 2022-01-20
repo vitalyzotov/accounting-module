@@ -13,201 +13,37 @@
     <include file="../../cashreceipt/changelog/db.changelog-tests.xml" relativeToChangelogFile="true"/>
 
     <changeSet id="test1" author="vzotov">
-        <sql>
-            INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER)
-            VALUES ('40817810108290123456', 'Зарплатный счет', 'c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2');
-
-            INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER)
-            VALUES ('40817810418370123456', 'Счет карты ГПБ', 'c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2');
-
-            INSERT INTO ACCOUNT_ALIAS (ACCOUNT_NUMBER, ALIAS) VALUES
-            ('40817810418370123456','17416127'),
-            ('40817810418370123456','17416128');
-
-            INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER, CURRENCY, BANK_ID)
-            VALUES ('40817810000016123456', 'Тинькофф', 'c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2', 'RUR', '044525974');
-
-            INSERT INTO ACCOUNT_ (ACCOUNT_NUMBER, NAME, ACCOUNT_OWNER, CURRENCY, BANK_ID)
-            VALUES ('40817810000016123457', 'Тинькофф2', 'c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2', 'RUR', '044525974');
-        </sql>
-    </changeSet>
-
-    <changeSet id="test2" author="vzotov">
-        <sql>
-            INSERT INTO BUDGET_CATEGORY_ (ID, NAME, COLOR,ICON)
-            VALUES (781381038049753674, 'Прочие расходы', '#FF000000', 'MyIcon');
-            INSERT INTO BUDGET_CATEGORY_ (ID, NAME, COLOR,ICON)
-            VALUES (1000, 'Для переименования', NULL, NULL);
-        </sql>
-    </changeSet>
-
-    <changeSet id="test3" author="vzotov">
-        <sql>
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('test-operation-1', '2017-07-10', 781381038049753674, 1000, 'RUR', '-', '40817810108290123456',
-            'тестовая операция', NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('will-be-removed', '2017-07-10', 781381038049753674, 1020, 'RUR', '-', '40817810108290123456',
-            'тестовая операция для удаления', NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('long-description', '2017-07-10', 781381038049753674, 1020, 'RUR', '-', '40817810108290123456',
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus blandit tellus, et posuere turpis pulvinar quis. Mauris sodales semper orci vel malesuada. Sed at iaculis felis. Nulla vitae nisl dapibus, egestas nulla porta, consequat dolor. Duis ac tellus in diam elementum sagittis. Cras bibendum mauris et aliquet ultricies. Nullam vitae lacus sed magna ornare pellentesque quis et ipsum. Maecenas condimentum sit amet urna quis gravida. Fusce rhoncus convallis rhoncus. Cras ac lacinia tellus cras amet.'
-            , NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('tx-operation-1', '2018-08-01', NULL, 3000, 'RUR', '-', '40817810108290123456', 'перевод на ГПБ',
-            NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('tx-operation-2', '2018-08-02', NULL, 3000, 'RUR', '+', '40817810418370123456', 'поступление
-            средств', NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('tx-operation-3', '2019-08-01', NULL, 5000, 'RUR', '-', '40817810108290123456', 'перевод на ГПБ',
-            NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('tx-operation-4', '2019-08-10', NULL, 5000, 'RUR', '+', '40817810418370123456', 'поступление
-            средств', NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('deal-operation-1', '2021-11-21', NULL, 3000, 'RUR', '-', '40817810108290123456', 'покупка в магазине', NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('deal-operation-2', '2021-11-21', NULL, 4000, 'RUR', '-', '40817810108290123456', 'покупка в магазине 2', NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('deal-operation-3', '2021-11-21', NULL, 5000, 'RUR', '-', '40817810108290123456', 'покупка в магазине 3', NULL);
-
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('deal-operation-4', '2021-11-21', NULL, 6000, 'RUR', '-', '40817810108290123456', 'покупка в магазине 4', NULL);
-        </sql>
-    </changeSet>
-
-    <changeSet id="test4" author="vzotov">
-        <sql>
-            INSERT INTO CARD_OPERATION_ (ID, CARD_NUMBER, POS_ID, POS_COUNTRY, POS_CITY, POS_STREET, POS_MERCHANT,
-            AUTHORIZATION_DATE, PURCHASE_DATE, AMOUNT, CURRENCY, MCC)
-            VALUES ('test-operation-1', '555957++++++1234', '10705017','RUS','MOSCOW','1 YA T','ROSTELECOM',
-            '2018-07-10', '2018-07-07', 50000, 'RUR', '4812');
-        </sql>
-    </changeSet>
-
-    <changeSet id="test5" author="vzotov">
-        <sql>
-            INSERT INTO TX_ (PRIMARY_OP, SECONDARY_OP)
-            VALUES ('tx-operation-3', 'tx-operation-4');
-        </sql>
-    </changeSet>
-
-    <changeSet id="test6" author="vzotov">
-        <sql>
-            INSERT INTO REMAIN_ (REMAIN_ID, DATE, ACCOUNT_NUMBER, AMOUNT, CURRENCY)
-            VALUES ('40817810418370123456_20190802', '2019-08-02', '40817810418370123456', 30000, 'RUR');
-        </sql>
-    </changeSet>
-
-    <changeSet id="test7" author="vzotov">
-        <sql>
-            INSERT INTO HOLD_ (HOLD_ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('5c249510-2c7f-11eb-b9c4-6631261b2cd8', '2020-02-27', NULL, 116600, 'RUR', '-', '40817810108290123456', '20603703 RU IP FEJZULLAEVA O.B.>Sar 20.02.27 20.02.27 1166.00 RUR 555957++++++1234 (Android Pay-9313)', NULL);
-
-            INSERT INTO HOLD_ (HOLD_ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES ('1183cfd8-2c84-11eb-b9c4-6631261b2cd8','2020-02-29', NULL, 58000, 'RUR', '-', '40817810108290123456', '11276718 RU MAGNIT MM ANTROPOS.>Sar 20.02.28 20.02.28 580.00 RUR 555957++++++1234', NULL);
-        </sql>
-    </changeSet>
-
-    <changeSet id="test8" author="vzotov">
-        <sql>
-            INSERT INTO BANK_ (BANK_ID,NAME,NAME_SHORT,NAME_LONG)
-            VALUES ('044525593','Альфа-банк','АО "АЛЬФА-БАНК"','АКЦИОНЕРНОЕ ОБЩЕСТВО "АЛЬФА-БАНК"');
-        </sql>
+        <loadData tableName="ACCOUNT_" file="account_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="ACCOUNT_ALIAS" file="account_alias.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="BUDGET_CATEGORY_" file="budget_category_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="OPERATION_" file="operation_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="CARD_OPERATION_" file="card_operation_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="TX_" file="tx_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="REMAIN_" file="remain_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="HOLD_" file="hold_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="BANK_" file="bank_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="SPECIAL_DAY" file="special_day.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="CARD_" file="card_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="BUDGET" file="budget.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="BUDGET_RULE" file="budget_rule.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="BUDGET_PLAN" file="budget_plan.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="DEAL_" file="deal_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="DEAL_OPERATIONS" file="deal_operations.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="QR_CODE" file="qr_code.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="DEAL_RECEIPTS" file="deal_receipts.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="PURCHASE_" file="purchase_.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
     <changeSet id="test9" author="vzotov">
         <sql>
-            INSERT INTO CARD_ (CARD_NUMBER, VALID_THRU, BANK_ID)
-            VALUES ('4154822022031234','2024-02-29','044525593');
-
             INSERT INTO CARD_ACCOUNT(CARD_ID,ACCOUNT_NUMBER,DATE_FROM,DATE_TO)
             VALUES((SELECT ID FROM CARD_ WHERE CARD_NUMBER='4154822022031234'), '40817810108290123456', '2020-01-02',
             '2020-01-10');
         </sql>
     </changeSet>
 
-    <changeSet id="test10" author="vzotov">
-        <loadData tableName="SPECIAL_DAY" file="special_day.csv" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="test11" author="vzotov">
-        <sql>
-            INSERT INTO BUDGET (BUDGET_UID, NAME, LOCALE_, CURRENCY) VALUES ('test-budget-1', 'default1', 'US', 'RUR');
-            INSERT INTO BUDGET (BUDGET_UID, NAME, LOCALE_, CURRENCY) VALUES ('removed-budget-2', 'default2', 'US', 'RUR');
-            INSERT INTO BUDGET (BUDGET_UID, NAME, LOCALE_, CURRENCY) VALUES ('test-budget-2', 'default3', 'US', 'RUR');
-        </sql>
-    </changeSet>
-
-    <changeSet id="test12" author="vzotov">
-        <sql>
-            INSERT INTO BUDGET_RULE (RULE_UID, RULE_TYPE, CATEGORY_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, NAME, RECURRENCE, AMOUNT, CURRENCY, CALC_EXPRESSION, BUDGET_ID) VALUES
-            ('001', '+', NULL, NULL, '40817810108290123456', 'Заработная плата', 'M2020-01-01(1)[7]', 2800000, 'RUR', 'value.amount().doubleValue() * (calendar.workdaysBetween(prevMonth.atDay(16), prevMonth.atEndOfMonth()) /
-            calendar.workdaysBetween(prevMonth.atDay(1), prevMonth.atEndOfMonth()));', 1),
-            ('002', '+', NULL, NULL, '40817810108290123456', 'Аванс', 'M2020-01-01(1)[22]', 2800000, 'RUR', 'value.amount().doubleValue() * (calendar.workdaysBetween(month.atDay(1), month.atDay(16)) / calendar.workdaysBetween(month.atDay(1),
-            month.atEndOfMonth()));', 1),
-            ('003', '-', NULL, '40817810108290123456', NULL, 'Гипермаркет', 'W2020-01-01(1)[1]', 150000, 'RUR', NULL, 1),
-            ('004', '-', 781381038049753674, '40817810000016123456', NULL, 'Покупка чего-то важного', 'T(1)2020-03-05[1]', 200000, 'RUR', NULL, 1);
-
-            INSERT INTO BUDGET_RULE (RULE_UID, RULE_TYPE, CATEGORY_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, NAME, RECURRENCE, AMOUNT, CURRENCY, CALC_EXPRESSION, BUDGET_ID) VALUES
-            ('005', '-', NULL, NULL, NULL, 'Гипермаркет', 'W2020-01-01(1)[1]', 150000, 'RUR', NULL, 2);
-
-            INSERT INTO BUDGET_RULE (RULE_UID, RULE_TYPE, CATEGORY_ID, SOURCE_ACCOUNT, TARGET_ACCOUNT, NAME, RECURRENCE, AMOUNT, CURRENCY, CALC_EXPRESSION, BUDGET_ID) VALUES
-            ('011', '+', NULL, NULL, '40817810108290123456', 'Заработная плата', 'M2020-01-01(1)[7]', 2800000, 'RUR', 'value.amount().doubleValue() * (calendar.workdaysBetween(prevMonth.atDay(16), prevMonth.atEndOfMonth()) /
-            calendar.workdaysBetween(prevMonth.atDay(1), prevMonth.atEndOfMonth()));', 3),
-            ('012', '+', NULL, NULL, '40817810108290123456', 'Аванс', 'M2020-01-01(1)[22]', 2800000, 'RUR', 'value.amount().doubleValue() * (calendar.workdaysBetween(month.atDay(1), month.atDay(16)) / calendar.workdaysBetween(month.atDay(1),
-            month.atEndOfMonth()));', 3),
-            ('013', '-', NULL, '40817810108290123456', NULL, 'Гипермаркет', 'W2020-01-01(1)[1]', 150000, 'RUR', NULL, 3),
-            ('014', '-', 781381038049753674, '40817810000016123456', NULL, 'Покупка чего-то важного', 'T(1)2020-03-05[1]', 200000, 'RUR', NULL, 3);
-        </sql>
-    </changeSet>
-
-    <changeSet id="test13" author="vzotov">
-        <loadData tableName="BUDGET_PLAN" file="budget_plan.csv" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="test14" author="vzotov">
-        <loadData tableName="DEAL_" file="deal_.csv" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="test15" author="vzotov">
-        <sql>
-            INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID) VALUES (1, 'test-operation-1');
-            INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID) VALUES (2, 'long-description');
-            INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID) VALUES (3, 'deal-operation-2');
-        </sql>
-    </changeSet>
-
-    <changeSet id="test_qr_code" author="vzotov">
-        <loadData tableName="qr_code" file="qr_code.csv" relativeToChangelogFile="true"/>
-    </changeSet>
-
-    <changeSet id="test16" author="vzotov">
-        <sql>
-            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (1, 'test16_receipt_1');
-            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (2, 'test16_receipt_2');
-            INSERT INTO DEAL_RECEIPTS (DEAL_ID, RECEIPT_ID) VALUES (3, 'test16_receipt_3');
-        </sql>
-    </changeSet>
-
     <changeSet id="test17" author="vzotov">
         <sql>
-            INSERT INTO OPERATION_ (ID, DATE, CATEGORY_ID, AMOUNT, CURRENCY, OP_TYPE, ACCOUNT_ID, DESCRIPTION, COMMENT)
-            VALUES
-            ('98364d73-c42b-4e5b-93da-a0a6d6018a3b', '2021-12-10', NULL, 4999, 'RUR', '-', '40817810108290123456', 'покупка в магазине 4999', NULL)
-            ,('9102dfe0-a0c8-4a83-8283-d1d487a4695c', '2021-12-12', NULL, 2999, 'RUR', '-', '40817810108290123456', 'покупка в магазине 2999', NULL)
-            ;
-
             INSERT INTO DEAL_OPERATIONS (DEAL_ID, OPERATION_ID)
                 SELECT ID, '98364d73-c42b-4e5b-93da-a0a6d6018a3b'
                 FROM DEAL_ WHERE DEAL_UID='cf7cb2f0-ea2a-4ba4-8732-43544af8bbc8';
@@ -224,38 +60,12 @@
         </sql>
     </changeSet>
 
-    <changeSet id="DealRepositoryJpaTest.store" author="vzotov">
-        <sql>
-            INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
-            ('purchase-0912fc12d100', '2018-06-16 13:55:00', 'purchase 0912fc12d100', 500, 'RUR', 1.500, NULL);
-        </sql>
-    </changeSet>
-
-    <changeSet id="DealsControllerTest.modifyDeal" author="vzotov">
-        <sql>
-            INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
-            ('purchase-5000-1', '2018-06-16 13:55:00', 'purchase-5000-1', 500, 'RUR', 1.500, NULL);
-        </sql>
-    </changeSet>
-
-    <changeSet id="DealsControllerTest.createDeal" author="vzotov">
-        <sql>
-            INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
-            ('purchase-3000-1', '2018-06-16 13:55:00', 'purchase-3000-1', 500, 'RUR', 1.500, NULL);
-
-        </sql>
-    </changeSet>
-
     <changeSet id="PurchaseFacadeImplTest.deletePurchaseById" author="vzotov">
         <sql>
-            INSERT INTO PURCHASE_ (PURCHASE_ID, DATE_TIME, NAME, PRICE,PRICE_CUR, QUANTITY, CATEGORY_ID) VALUES
-            ('purchase-80ad2d7a1294', '2021-12-10 13:55:00', 'purchase-80ad2d7a1294', 500, 'RUR', 1.500, NULL),
-            ('purchase-2d01489c2478', '2021-12-10 13:55:00', 'purchase-2d01489c2478', 500, 'RUR', 1.500, NULL);
-
             INSERT INTO DEAL_PURCHASES (DEAL_ID, PURCHASE_ID, PURCHASE_ORDER)
-            SELECT ID, 'purchase-80ad2d7a1294', 0 FROM DEAL_ WHERE DEAL_UID='deal-61423570595d';
+                SELECT ID, 'purchase-80ad2d7a1294', 0 FROM DEAL_ WHERE DEAL_UID='deal-61423570595d';
             INSERT INTO DEAL_PURCHASES (DEAL_ID, PURCHASE_ID, PURCHASE_ORDER)
-            SELECT ID, 'purchase-2d01489c2478', 1 FROM DEAL_ WHERE DEAL_UID='deal-61423570595d';
+                SELECT ID, 'purchase-2d01489c2478', 1 FROM DEAL_ WHERE DEAL_UID='deal-61423570595d';
         </sql>
     </changeSet>
 </databaseChangeLog>
