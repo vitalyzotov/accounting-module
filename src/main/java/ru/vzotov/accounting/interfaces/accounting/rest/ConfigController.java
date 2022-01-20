@@ -23,6 +23,7 @@ public class ConfigController {
 
     @PutMapping("/nalog-auth")
     public void authenticateNalogRu(@RequestBody NalogPreAuthRequest auth) {
+        //fixme: rework, use any multi-user solution
         Validate.notNull(auth);
         Validate.notNull(auth.getSessionId());
         Validate.notNull(auth.getRefreshToken());

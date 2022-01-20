@@ -14,6 +14,7 @@ import ru.vzotov.person.domain.model.PersonId;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class SecurityUtils {
 
@@ -26,6 +27,16 @@ public class SecurityUtils {
                 .findFirst()
                 .map(PersonId::fromAuthority)
                 .orElse(null);
+    }
+
+    public static Collection<PersonId> getAuthorizedPersons() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(PersonId::isValidAuthority)
+                .map(PersonId::fromAuthority)
+                .collect(Collectors.toList());
     }
 
     public static void grantPermission(MutableAclService aclService, Authentication authentication,

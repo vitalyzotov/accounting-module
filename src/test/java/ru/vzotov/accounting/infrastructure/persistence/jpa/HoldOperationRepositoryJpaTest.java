@@ -16,6 +16,7 @@ import ru.vzotov.banking.domain.model.HoldId;
 import ru.vzotov.banking.domain.model.HoldOperation;
 import ru.vzotov.banking.domain.model.OperationType;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class HoldOperationRepositoryJpaTest {
     private static final Logger log = LoggerFactory.getLogger(HoldOperationRepositoryJpaTest.class);
+    private static final PersonId PERSON_ID = new PersonId("c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2");
 
     @Autowired
     private HoldOperationRepository repository;

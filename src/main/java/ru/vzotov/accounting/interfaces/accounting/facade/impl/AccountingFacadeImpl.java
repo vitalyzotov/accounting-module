@@ -6,7 +6,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.application.AccountingService;
@@ -114,9 +113,14 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    @PostAuthorize("hasAuthority(returnObject.owner)")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public AccountDTO getAccount(String number) {
-        return AccountDtoAssembler.assemble(accountRepository.find(new AccountNumber(number)));
+        return AccountDtoAssembler.assemble(findAccountSecurely(new AccountNumber(number)));
+    }
+
+    @PostAuthorize("hasAuthority(returnObject.owner().value())")
+    private Account findAccountSecurely(AccountNumber number) {
+        return accountRepository.find(number);
     }
 
     @Override
@@ -139,7 +143,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     public void modifyAccount(String number, String name, String bankId, String currency, List<String> aliases) {
-        Account account = accountRepository.find(new AccountNumber(number));
+        Account account = findAccountSecurely(new AccountNumber(number));
         modifyAccountSecurely(account, name, bankId, currency, aliases);
     }
 
@@ -249,7 +253,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
         final OperationType type = OperationType.of(operationType);
         final AccountNumber accountNumber = new AccountNumber(accountNumberValue);
-        final Account account = accountRepository.find(accountNumber);
+        final Account account = findAccountSecurely(accountNumber);
         Validate.notNull(account, "Account not found");
 
         final Money money = new Money(amount, Currency.getInstance(currency));
@@ -320,8 +324,10 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<HoldOperationDTO> listHolds(String accountNumber, LocalDate from, LocalDate to) {
-        return holdOperationRepository.findByAccountAndDate(new AccountNumber(accountNumber), from, to)
+        final Account account = findAccountSecurely(new AccountNumber(accountNumber));
+        return holdOperationRepository.findByAccountAndDate(account.accountNumber(), from, to)
                 .stream()
                 .map(OperationDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -329,10 +335,12 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<HoldOperationDTO> listHolds(OperationType type, LocalDate from, LocalDate to) {
         Validate.notNull(from);
         Validate.notNull(to);
-        return (type == null ? holdOperationRepository.findByDate(from, to) : holdOperationRepository.findByTypeAndDate(type, from, to))
+        return (type == null ? holdOperationRepository.findByDate(SecurityUtils.getAuthorizedPersons(), from, to)
+                : holdOperationRepository.findByTypeAndDate(SecurityUtils.getAuthorizedPersons(), type, from, to))
                 .stream()
                 .map(OperationDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -340,25 +348,33 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void deleteHold(String holdId) throws OperationNotFoundException {
-        HoldOperation operation = holdOperationRepository.find(new HoldId(holdId));
+        final HoldOperation operation = holdOperationRepository.find(new HoldId(holdId));
         if (operation == null) {
             throw new OperationNotFoundException();
         }
+        final Account account = findAccountSecurely(operation.account());
+        Validate.notNull(account, "Account not found");
         accountingService.deleteHoldOperation(operation);
     }
 
     @Override
+    @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public HoldOperationDTO getHold(String holdId) throws OperationNotFoundException {
-        HoldOperation operation = holdOperationRepository.find(new HoldId(holdId));
+        final HoldOperation operation = holdOperationRepository.find(new HoldId(holdId));
         if (operation == null) {
             throw new OperationNotFoundException();
         }
+        final Account account = findAccountSecurely(operation.account());
+        Validate.notNull(account, "Account not found");
         return OperationDTOAssembler.toDTO(operation);
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<BankDTO> listBanks() {
         return bankRepository.findAll()
                 .stream()
@@ -368,6 +384,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public BankDTO getBank(BankId bankId) {
         return BankDTOAssembler.toDTO(bankRepository.find(bankId));
     }

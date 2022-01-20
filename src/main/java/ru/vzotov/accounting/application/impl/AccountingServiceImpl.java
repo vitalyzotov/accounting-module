@@ -155,6 +155,9 @@ public class AccountingServiceImpl implements AccountingService {
         Operation operation = operationRepository.find(operationId);
         Validate.notNull(operation);
 
+        Account account = accountRepository.find(operation.account());
+        Validate.notNull(account);
+
         CardOperation cardOperation = cardOperationRepository.find(operationId);
         log.debug("Card operation is {}", cardOperation);
 
@@ -170,6 +173,7 @@ public class AccountingServiceImpl implements AccountingService {
         LocalDate from = dates.stream().min(LocalDate::compareTo).orElse(operation.date());
         LocalDate to = dates.stream().max(LocalDate::compareTo).orElse(operation.date());
         log.debug("Search holds from {} to {}", from, to);
+
 
         List<HoldOperation> holds = holdOperationRepository.findByAccountAndDate(operation.account(), from, to);
         log.debug("There are {} holds found", holds.size());
