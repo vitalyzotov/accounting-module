@@ -16,6 +16,7 @@ import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.BankId;
 import ru.vzotov.banking.domain.model.Card;
 import ru.vzotov.banking.domain.model.CardNumber;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -33,13 +34,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CardRepositoryJpaTest {
     private static final Logger log = LoggerFactory.getLogger(CardRepositoryJpaTest.class);
 
+    private static final PersonId PERSON_ID = new PersonId("c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2");
+
     @Autowired
     private CardRepository cardRepository;
 
     @Test
     public void testConstruct() {
         Card card = new Card(
-                new CardNumber("5559572051681234"), YearMonth.of(2021, Month.FEBRUARY),
+                new CardNumber("5559572051681234"),
+                PERSON_ID,
+                YearMonth.of(2021, Month.FEBRUARY),
                 new BankId("044525593"));
         card.bindToAccount(new AccountNumber("40817810108290123456"), LocalDate.of(2017, Month.JANUARY, 1), card.validThru().atEndOfMonth());
         cardRepository.store(card);
@@ -47,8 +52,9 @@ public class CardRepositoryJpaTest {
 
     @Test
     public void testFind() {
-        List<Card> cards = cardRepository.findByBank(new BankId("044525593"));
-        assertThat(cards).isNotEmpty().contains(new Card(new CardNumber("4154822022031234"), YearMonth.now(), new BankId("044525593")));
+        List<Card> cards = cardRepository.findByBank(PERSON_ID, new BankId("044525593"));
+        assertThat(cards).isNotEmpty()
+                .contains(new Card(new CardNumber("4154822022031234"), PERSON_ID, YearMonth.now(), new BankId("044525593")));
     }
 
     @Test

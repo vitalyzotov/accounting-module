@@ -33,7 +33,7 @@ public class CardsController {
     }
 
     @GetMapping("{cardNumber}")
-    public CardDTO getBank(@PathVariable String cardNumber) {
+    public CardDTO getCard(@PathVariable String cardNumber) {
         return accountingFacade.getCard(new CardNumber(cardNumber));
     }
 
@@ -48,7 +48,7 @@ public class CardsController {
     }
 
     @DeleteMapping("{cardNumber}")
-    public CardStoreResponse modifyBank(@PathVariable String cardNumber) {
+    public CardStoreResponse deleteCard(@PathVariable String cardNumber) {
         CardNumber id = accountingFacade.deleteCard(new CardNumber(cardNumber));
         return new CardStoreResponse(id.value());
     }

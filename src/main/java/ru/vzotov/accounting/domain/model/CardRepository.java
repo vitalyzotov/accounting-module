@@ -3,6 +3,7 @@ package ru.vzotov.accounting.domain.model;
 import ru.vzotov.banking.domain.model.BankId;
 import ru.vzotov.banking.domain.model.Card;
 import ru.vzotov.banking.domain.model.CardNumber;
+import ru.vzotov.person.domain.model.PersonId;
 
 import java.util.List;
 
@@ -23,7 +24,9 @@ public interface CardRepository {
 
     List<Card> findAll();
 
-    List<Card> findByBank(BankId bankId);
+    List<Card> find(PersonId owner);
+
+    List<Card> findByBank(PersonId owner, BankId bankId);
 
     void store(Card card);
 

@@ -341,6 +341,11 @@
             </one-to-many>
             <embedded name="cardNumber"/>
             <embedded name="issuer"/>
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="OWNER"/>
+                </attribute-override>
+            </embedded>
         </attributes>
     </entity>
 

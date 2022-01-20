@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.application.AccountingService;
@@ -19,6 +20,7 @@ import ru.vzotov.accounting.domain.model.Remain;
 import ru.vzotov.accounting.domain.model.RemainId;
 import ru.vzotov.accounting.domain.model.RemainRepository;
 import ru.vzotov.accounting.domain.model.TransactionRepository;
+import ru.vzotov.accounting.infrastructure.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
@@ -389,10 +391,17 @@ public class AccountingFacadeImpl implements AccountingFacade {
         return bankId;
     }
 
+    @PostFilter("hasAuthority(filterObject.owner().value())")
+    private List<Card> filterSecurely(List<Card> cards) {
+        return cards;
+    }
+
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<CardDTO> listCards(BankId issuer) {
-        return (issuer == null ? cardRepository.findAll() : cardRepository.findByBank(issuer))
+        final PersonId currentPerson = SecurityUtils.getCurrentPerson();
+        return filterSecurely(issuer == null ? cardRepository.find(currentPerson) : cardRepository.findByBank(currentPerson, issuer))
                 .stream()
                 .map(CardDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -400,21 +409,29 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public CardDTO getCard(CardNumber cardNumber) {
-        return CardDTOAssembler.toDTO(cardRepository.find(cardNumber));
+        return CardDTOAssembler.toDTO(findCardSecurely(cardNumber));
+    }
+
+    @PostAuthorize("hasAuthority(returnObject.owner().value())")
+    private Card findCardSecurely(CardNumber cardNumber) {
+        return cardRepository.find(cardNumber);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public CardNumber createCard(CardNumber number, YearMonth validThru, BankId issuer) {
-        cardRepository.store(new Card(number, validThru, issuer));
+        cardRepository.store(new Card(number, SecurityUtils.getCurrentPerson(), validThru, issuer));
         return number;
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public CardNumber deleteCard(CardNumber number) {
-        Card card = cardRepository.find(number);
+        Card card = findCardSecurely(number);
         if (card == null) return null;
         cardRepository.delete(card);
         return number;
