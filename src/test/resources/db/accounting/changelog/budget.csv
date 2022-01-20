@@ -1,4 +1,4 @@
-BUDGET_UID,NAME,LOCALE_,CURRENCY
-test-budget-1,default1,US,RUR
-removed-budget-2,default2,US,RUR
-test-budget-2,default3,US,RUR
+BUDGET_UID,NAME,LOCALE_,CURRENCY,OWNER
+test-budget-1,default1,US,RUR,c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2
+removed-budget-2,default2,US,RUR,c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2
+test-budget-2,default3,US,RUR,c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2

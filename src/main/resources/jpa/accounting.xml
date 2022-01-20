@@ -187,6 +187,11 @@
             </one-to-many>
 
             <embedded name="budgetId"/>
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="OWNER"/>
+                </attribute-override>
+            </embedded>
         </attributes>
     </entity>
 

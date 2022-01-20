@@ -23,6 +23,7 @@ import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.calendar.domain.model.Recurrence;
 import ru.vzotov.calendar.domain.model.RecurrenceUnit;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -39,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class BudgetRepositoryJpaTest {
     private static final Logger log = LoggerFactory.getLogger(BudgetRepositoryJpaTest.class);
+    private static final PersonId PERSON_ID = new PersonId("c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2");
 
     @Autowired
     private BudgetRepository budgetRepository;
@@ -85,7 +87,7 @@ public class BudgetRepositoryJpaTest {
                 Money.rubles(1500.0d)
         ));
 
-        Budget budget = new Budget(BudgetId.nextId(), "default", rules);
+        Budget budget = new Budget(BudgetId.nextId(), PERSON_ID, "default", rules);
         budgetRepository.store(budget);
     }
 
@@ -102,6 +104,12 @@ public class BudgetRepositoryJpaTest {
                     }
                 })
         ;
+    }
+
+    @Test
+    public void testFindForRule() {
+        final Budget budget = budgetRepository.findForRule(new BudgetRuleId("003"));
+        assertThat(budget).isNotNull().hasFieldOrPropertyWithValue("budgetId", new BudgetId("test-budget-1"));
     }
 
     @Test

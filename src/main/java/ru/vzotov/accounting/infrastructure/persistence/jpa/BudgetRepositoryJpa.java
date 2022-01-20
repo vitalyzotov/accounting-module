@@ -5,6 +5,7 @@ import ru.vzotov.accounting.domain.model.Budget;
 import ru.vzotov.accounting.domain.model.BudgetId;
 import ru.vzotov.accounting.domain.model.BudgetRule;
 import ru.vzotov.accounting.domain.model.BudgetRuleId;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -28,6 +29,17 @@ public class BudgetRepositoryJpa extends JpaRepository implements BudgetReposito
     }
 
     @Override
+    public Budget findForRule(BudgetRuleId ruleId) {
+        try {
+            return em.createQuery("from Budget where (select rule from BudgetRule rule where ruleId=:ruleId) member of rules", Budget.class)
+                    .setParameter("ruleId", ruleId)
+                    .getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
     public Budget find(BudgetId budgetId) {
         try {
             return em.createQuery("from Budget where budgetId.value = :budgetId", Budget.class)
@@ -36,6 +48,13 @@ public class BudgetRepositoryJpa extends JpaRepository implements BudgetReposito
         } catch (NoResultException ex) {
             return null;
         }
+    }
+
+    @Override
+    public List<Budget> find(PersonId owner) {
+        return em.createQuery("from Budget where owner = :owner", Budget.class)
+                .setParameter("owner", owner)
+                .getResultList();
     }
 
     @Override
