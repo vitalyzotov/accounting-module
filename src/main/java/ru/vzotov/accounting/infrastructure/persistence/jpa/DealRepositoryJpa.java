@@ -11,6 +11,7 @@ import ru.vzotov.purchase.domain.model.PurchaseId;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public class DealRepositoryJpa extends JpaRepository implements DealRepository {
@@ -39,9 +40,9 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     }
 
     @Override
-    public List<Deal> findByDate(PersonId owner, LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("from Deal where owner=:owner and date >= :dateFrom and date <= :dateTo", Deal.class)
-                .setParameter("owner", owner)
+    public List<Deal> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate) {
+        return em.createQuery("from Deal where owner in (:owners) and date >= :dateFrom and date <= :dateTo", Deal.class)
+                .setParameter("owners", owners)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
                 .getResultList();

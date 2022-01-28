@@ -6,6 +6,7 @@ import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface DealRepository {
@@ -13,7 +14,7 @@ public interface DealRepository {
 
     List<Deal> findByDate(LocalDate fromDate, LocalDate toDate);
 
-    List<Deal> findByDate(PersonId owner, LocalDate fromDate, LocalDate toDate);
+    List<Deal> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate);
 
     Deal findByOperation(OperationId operation);
 

@@ -1,5 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
+import ru.vzotov.accounting.application.AccountNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BankDTO;
@@ -67,9 +68,9 @@ public interface AccountingFacade {
 
     List<AccountOperationDTO> listOperations(OperationType type, LocalDate from, LocalDate to);
 
-    List<AccountOperationDTO> listOperations(String accountNumber, LocalDate from, LocalDate to);
+    List<AccountOperationDTO> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException;
 
-    AccountOperationDTO getOperation(String operationId) throws OperationNotFoundException;
+    AccountOperationDTO getOperation(String operationId) throws OperationNotFoundException, AccountNotFoundException;
 
     AccountOperationDTO createOperation(String account,
                                         LocalDate date,

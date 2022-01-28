@@ -32,9 +32,9 @@ import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.Operation;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.OperationType;
-import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.Purchase;
@@ -258,8 +258,9 @@ public class DealsFacadeImpl implements DealsFacade {
     @Transactional(value = "accounting-tx", readOnly = true)
     @PreAuthorize("hasRole('ROLE_USER')")
     public List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<DealDTOExpansion> expand) {
-        return expandDeals(expand, from, to,
-                () -> dealRepository.findByDate(SecurityUtils.getCurrentPerson(), from, to).stream()
+        final Collection<PersonId> owners = SecurityUtils.getAuthorizedPersons();
+        return expandDeals(owners, expand, from, to,
+                () -> dealRepository.findByDate(owners, from, to).stream()
                         .map(DealDTOAssembler::toDTO))
                 .collect(Collectors.toList());
     }
@@ -276,8 +277,9 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @PreAuthorize("hasAuthority(#deal.owner().value())")
     private DealDTO getDealSecurely(Deal deal, Set<DealDTOExpansion> expand) throws DealNotFoundException {
-        return expandDeals(expand, null, null, () -> Stream.of(DealDTOAssembler.toDTO(deal)))
-                .findFirst().orElseThrow(DealNotFoundException::new);
+        return expandDeals(Collections.emptySet(), expand, null, null, () -> Stream.of(DealDTOAssembler.toDTO(deal)))
+                .findFirst()
+                .orElseThrow(DealNotFoundException::new);
     }
 
     @Override
@@ -389,7 +391,7 @@ public class DealsFacadeImpl implements DealsFacade {
         dealRepository.store(target);
     }
 
-    private Stream<DealDTO> expandDeals(Set<DealDTOExpansion> expand, LocalDate cacheFrom, LocalDate cacheTo, Supplier<Stream<DealDTO>> request) {
+    private Stream<DealDTO> expandDeals(Collection<PersonId> owners, Set<DealDTOExpansion> expand, LocalDate cacheFrom, LocalDate cacheTo, Supplier<Stream<DealDTO>> request) {
         Validate.notNull(expand);
         final boolean expandReceipts = expand.contains(DealDTOExpansion.RECEIPTS);
         final boolean expandOperations = expand.contains(DealDTOExpansion.OPERATIONS);
@@ -398,7 +400,7 @@ public class DealsFacadeImpl implements DealsFacade {
         final boolean cache = cacheFrom != null && cacheTo != null;
 
         final List<Operation> operations = cache && expandOperations ?
-                operationRepository.findByDate(cacheFrom, cacheTo) : emptyList();
+                operationRepository.findByDate(owners, cacheFrom, cacheTo) : emptyList();
         final List<CardOperation> cardOperations = cache && expandCardOperations ?
                 cardOperationRepository.findByDate(cacheFrom, cacheTo) : emptyList();
         final List<QRCode> receipts = cache && expandReceipts ?

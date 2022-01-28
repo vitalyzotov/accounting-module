@@ -1,5 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import ru.vzotov.accounting.application.AccountNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
@@ -41,7 +42,7 @@ public class OperationsController {
     }
 
     @GetMapping("{operationId}")
-    public AccountOperationDTO getOperation(@PathVariable String operationId) throws OperationNotFoundException {
+    public AccountOperationDTO getOperation(@PathVariable String operationId) throws OperationNotFoundException, AccountNotFoundException {
         return accountingFacade.getOperation(operationId);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.vzotov.accounting.application.AccountNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
@@ -58,7 +59,7 @@ public class AccountsController {
     @GetMapping("{accountNumber}/operations")
     public List<AccountOperationDTO> listOperations(@PathVariable String accountNumber,
                                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) throws AccountNotFoundException {
         return accountingFacade.listOperations(accountNumber, from, to);
     }
 

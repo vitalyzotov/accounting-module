@@ -20,10 +20,12 @@ import ru.vzotov.banking.domain.model.Operation;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.OperationType;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +38,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 public class OperationRepositoryJpaTest {
     private static final Logger log = LoggerFactory.getLogger(OperationRepositoryJpaTest.class);
+
+    private static final PersonId PERSON_ID = new PersonId("c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2");
 
     @Autowired
     private BudgetCategoryRepository categoryRepository;
@@ -63,6 +67,7 @@ public class OperationRepositoryJpaTest {
     @Test
     public void findByDateAndAmount() {
         final List<Operation> operations = repository.findByDateAndAmount(
+                Collections.singleton(PERSON_ID),
                 LocalDate.of(2017, 7, 10),
                 LocalDate.of(2017, 7, 10),
                 Money.rubles(10d));
@@ -80,6 +85,7 @@ public class OperationRepositoryJpaTest {
     @Test
     public void findByDate() {
         final List<Operation> operations = repository.findByDate(
+                Collections.singleton(PERSON_ID),
                 LocalDate.of(2017, 7, 10),
                 LocalDate.of(2017, 7, 10));
         assertThat(operations).isNotEmpty();

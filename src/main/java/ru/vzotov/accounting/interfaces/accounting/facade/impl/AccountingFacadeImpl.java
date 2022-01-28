@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.vzotov.accounting.application.AccountNotFoundException;
 import ru.vzotov.accounting.application.AccountingService;
 import ru.vzotov.accounting.domain.model.AccountRepository;
 import ru.vzotov.accounting.domain.model.BankRepository;
@@ -62,6 +63,7 @@ import ru.vzotov.person.domain.model.PersonId;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
@@ -211,10 +213,12 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<AccountOperationDTO> listOperations(OperationType type, LocalDate from, LocalDate to) {
         Validate.notNull(from);
         Validate.notNull(to);
-        return (type == null ? operationRepository.findByDate(from, to) : operationRepository.findByTypeAndDate(type, from, to))
+        final Collection<PersonId> owners = SecurityUtils.getAuthorizedPersons();
+        return (type == null ? operationRepository.findByDate(owners, from, to) : operationRepository.findByTypeAndDate(owners, type, from, to))
                 .stream()
                 .map(OperationDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -222,8 +226,14 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    public List<AccountOperationDTO> listOperations(String accountNumber, LocalDate from, LocalDate to) {
-        return operationRepository.findByAccountAndDate(new AccountNumber(accountNumber), from, to)
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public List<AccountOperationDTO> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException {
+        final AccountNumber number = new AccountNumber(accountNumber);
+        Account account = findAccountSecurely(number);
+        if(account == null) {
+            throw new AccountNotFoundException();
+        }
+        return operationRepository.findByAccountAndDate(number, from, to)
                 .stream()
                 .map(OperationDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -231,16 +241,23 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    public AccountOperationDTO getOperation(String operationId) throws OperationNotFoundException {
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public AccountOperationDTO getOperation(String operationId) throws OperationNotFoundException, AccountNotFoundException {
         Operation operation = operationRepository.find(new OperationId(operationId));
         if (operation == null) {
             throw new OperationNotFoundException();
         }
+        Account account = findAccountSecurely(operation.account());
+        if(account == null) {
+            throw new AccountNotFoundException();
+        }
+
         return OperationDTOAssembler.toDTO(operation);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public AccountOperationDTO createOperation(String accountNumberValue, LocalDate date, LocalDate authorizationDate,
                                                String transactionReference, char operationType,
                                                double amount, String currency,
@@ -275,22 +292,30 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public AccountOperationDTO deleteOperation(String operationId) throws OperationNotFoundException {
         Operation operation = operationRepository.find(new OperationId(operationId));
         if (operation == null) {
             throw new OperationNotFoundException();
         }
+        final Account account = findAccountSecurely(operation.account());
+        Validate.notNull(account, "Account not found");
+
         operationRepository.delete(operation);
         return OperationDTOAssembler.toDTO(operation);
     }
 
     @Override
     @Transactional("accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public AccountOperationDTO assignCategoryToOperation(String operationId, long categoryId) throws OperationNotFoundException, CategoryNotFoundException {
         Operation operation = operationRepository.find(new OperationId(operationId));
         if (operation == null) {
             throw new OperationNotFoundException();
         }
+
+        final Account account = findAccountSecurely(operation.account());
+        Validate.notNull(account, "Account not found");
 
         final BudgetCategoryId id = new BudgetCategoryId(categoryId);
         BudgetCategory category = budgetCategoryRepository.find(id);
@@ -306,11 +331,15 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional("accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public AccountOperationDTO modifyComment(String operationId, String comment) throws OperationNotFoundException {
         Operation operation = operationRepository.find(new OperationId(operationId));
         if (operation == null) {
             throw new OperationNotFoundException();
         }
+
+        final Account account = findAccountSecurely(operation.account());
+        Validate.notNull(account, "Account not found");
 
         return modifyOperationComment(comment, operation);
     }
@@ -457,17 +486,17 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     public List<TransactionDTO> listTransactions(LocalDate from, LocalDate to, Integer threshold) {
-        final List<Operation> operations = threshold == null ?
-                Collections.emptyList() :
-                operationRepository.findByDate(from, to);
-
-        final List<Transaction> transactions = threshold == null ?
-                Collections.emptyList() :
-                Transaction.matchOperations(operations, threshold, null);
+//        final List<Operation> operations = threshold == null ?
+//                Collections.emptyList() :
+//                operationRepository.findByDate(from, to);
+//
+//        final List<Transaction> transactions = threshold == null ?
+//                Collections.emptyList() :
+//                Transaction.matchOperations(operations, threshold, null);
 
         final List<Transaction> knownTransactions = transactionRepository.findByDate(from, to);
-        return Stream.concat(knownTransactions.stream(), transactions.stream())
-                .distinct()
+        return knownTransactions.stream()//, transactions.stream())
+                //.distinct()
                 .map(TransactionDTOAssembler::toDTO)
                 .collect(Collectors.toList());
     }

@@ -6,10 +6,12 @@ import ru.vzotov.banking.domain.model.Operation;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.OperationType;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public class OperationRepositoryJpa extends JpaRepository implements OperationRepository {
@@ -30,7 +32,7 @@ public class OperationRepositoryJpa extends JpaRepository implements OperationRe
     }
 
     @Override
-    public List<Operation> findByDateAndAmount(LocalDate fromDateInclusive, LocalDate toDateInclusive, Money amount) {
+    public List<Operation> findByDateAndAmount(Collection<PersonId> owners, LocalDate fromDateInclusive, LocalDate toDateInclusive, Money amount) {
         return em.createQuery("from Operation where date >= :dateFrom and date <= :dateTo and amount = :amount", Operation.class)
                 .setParameter("dateFrom", fromDateInclusive)
                 .setParameter("dateTo", toDateInclusive)
@@ -39,7 +41,7 @@ public class OperationRepositoryJpa extends JpaRepository implements OperationRe
     }
 
     @Override
-    public List<Operation> findByDate(LocalDate fromDate, LocalDate toDate) {
+    public List<Operation> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate) {
         return em.createQuery("from Operation where date >= :dateFrom and date <= :dateTo", Operation.class)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
@@ -56,7 +58,7 @@ public class OperationRepositoryJpa extends JpaRepository implements OperationRe
     }
 
     @Override
-    public List<Operation> findByTypeAndDate(OperationType type, LocalDate fromDate, LocalDate toDate) {
+    public List<Operation> findByTypeAndDate(Collection<PersonId> owners, OperationType type, LocalDate fromDate, LocalDate toDate) {
         return em.createQuery("from Operation where type = :type and date >= :dateFrom and date <= :dateTo", Operation.class)
                 .setParameter("type", type)
                 .setParameter("dateFrom", fromDate)

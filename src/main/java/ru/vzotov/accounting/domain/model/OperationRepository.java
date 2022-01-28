@@ -5,36 +5,44 @@ import ru.vzotov.banking.domain.model.Operation;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.OperationType;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.person.domain.model.PersonId;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface OperationRepository {
 
+    /**
+     * Search operation by ID
+     * @param id operation ID
+     * @return operation; <code>null</code> if not found
+     */
     Operation find(OperationId id);
 
     /**
-     * Поиск операций по дате и сумме
+     * Search operations by date and amount
      *
-     * @param fromDate начало периода для поиска
-     * @param toDate   окончание периода для поиска
-     * @param amount   сумма операции
-     * @return список найденных операций
+     * @param owners operation owners
+     * @param fromDate start of date range (inclusive)
+     * @param toDate   end of date range (inclusive)
+     * @param amount   amount of operation
+     * @return list of operations
      */
-    List<Operation> findByDateAndAmount(LocalDate fromDate, LocalDate toDate, Money amount);
+    List<Operation> findByDateAndAmount(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate, Money amount);
 
     /**
-     * Поиск операций по дате
+     * Search operations by date
      *
-     * @param fromDate начало периода для поиска
-     * @param toDate   окончание периода для поиска
-     * @return список найденных операций
+     * @param fromDate start of date range (inclusive)
+     * @param toDate   end of date range (inclusive)
+     * @return list of operations
      */
-    List<Operation> findByDate(LocalDate fromDate, LocalDate toDate);
+    List<Operation> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate);
 
     List<Operation> findByAccountAndDate(AccountNumber accountNumber, LocalDate fromDate, LocalDate toDate);
 
-    List<Operation> findByTypeAndDate(OperationType type, LocalDate fromDate, LocalDate toDate);
+    List<Operation> findByTypeAndDate(Collection<PersonId> owners, OperationType type, LocalDate fromDate, LocalDate toDate);
 
     void store(Operation operation);
 
