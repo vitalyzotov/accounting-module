@@ -155,7 +155,7 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
         if (receipt == null) {
             throw new ReceiptNotFoundException();
         }
-        //todo: sync with owner of receipt
+        //fixme: sync with owner of receipt
         PurchaseCategory newCat = purchaseCategoryGuard.accessing(categoryRepository
                 .findByName(SecurityUtils.getCurrentPerson(), newCategory));
 

@@ -69,13 +69,13 @@ public interface ReceiptsFacade {
     ReceiptDTO loadReceiptDetails(QRCodeData qrCodeData);
 
     /**
-     * Назначение категории для позиции чека
+     * Assign category to receipt item
      *
-     * @param receiptId     суррогатный идентификатор чека
-     * @param itemIndex   номер позиции
-     * @param newCategory категория, которую нужно назначить позиции
-     * @throws ReceiptNotFoundException     если чек не найден
-     * @throws ReceiptItemNotFoundException если позиция в чеке не найдена
+     * @param receiptId   ID of receipt
+     * @param itemIndex   index of item
+     * @param newCategory new category
+     * @throws ReceiptNotFoundException     if receipt was not found
+     * @throws ReceiptItemNotFoundException if receipt item was not found
      */
     void assignCategoryToItem(ReceiptId receiptId,
                               Integer itemIndex,
