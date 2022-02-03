@@ -2,6 +2,7 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
 import org.assertj.core.api.Assertions;
 import org.springframework.transaction.annotation.Transactional;
+import ru.vzotov.WithMockPersonUser;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
@@ -28,6 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 public class ReceiptsFacadeImplTest {
+
+    private static final String PERSON_ID = "c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2";
 
     @Autowired
     private ReceiptsFacade facade;
@@ -73,6 +76,7 @@ public class ReceiptsFacadeImplTest {
     }
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void assignCategoryToItem() throws ReceiptNotFoundException, ReceiptItemNotFoundException {
         facade.assignCategoryToItem(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"), 1, "Табак");
         ReceiptDTO receipt = facade.getReceipt("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
@@ -80,18 +84,21 @@ public class ReceiptsFacadeImplTest {
     }
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void getAllCategories() {
         List<PurchaseCategoryDTO> categories = facade.getAllCategories();
         Assertions.assertThat(categories).isNotEmpty();
     }
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void getCategory() {
         PurchaseCategoryDTO category = facade.getCategory(new PurchaseCategoryId("id-Табак"));
         assertThat(category.getName()).isEqualTo("Табак");
     }
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void createNewCategory() {
         PurchaseCategoryDTO newCategory = facade.createNewCategory("Алкоголь");
         assertThat(newCategory).isNotNull();
@@ -101,6 +108,7 @@ public class ReceiptsFacadeImplTest {
     }
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void renameCategory() throws ReceiptNotFoundException, ReceiptItemNotFoundException {
         PurchaseCategoryDTO category = facade.getCategory(new PurchaseCategoryId("id-12345678901234567890"));
         facade.assignCategoryToItem(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"), 0, category.getName());

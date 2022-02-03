@@ -149,12 +149,7 @@
     </changeSet>
 
     <changeSet id="test-4" author="vzotov">
-        <sql>
-            INSERT INTO PURCHASE_CATEGORY (CATEGORY_ID, NAME) VALUES
-            ('id-12345678901234567890', 'Пакеты'),
-            ('id-Табак', 'Табак')
-            ;
-        </sql>
+        <loadData tableName="PURCHASE_CATEGORY" file="purchase_category.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
     <changeSet id="test-5" author="vzotov">

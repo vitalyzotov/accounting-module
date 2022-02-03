@@ -82,34 +82,34 @@ public interface ReceiptsFacade {
                               String newCategory) throws ReceiptNotFoundException, ReceiptItemNotFoundException;
 
     /**
-     * Получение списка категорий
+     * Get list of purchase categories
      *
-     * @return список категорий
+     * @return list of purchase categories
      */
     List<PurchaseCategoryDTO> getAllCategories();
 
     /**
-     * Получение категории
+     * Get purchase category by ID
      *
-     * @param id идентификатор категории
-     * @return категория
+     * @param id category ID
+     * @return category DTO
      */
     PurchaseCategoryDTO getCategory(PurchaseCategoryId id);
 
     /**
-     * Создание новой категории
+     * Create new purchase category
      *
-     * @param name название категории
-     * @return категория
+     * @param name category name
+     * @return category DTO
      */
     PurchaseCategoryDTO createNewCategory(String name);
 
     /**
-     * Переименование категории
+     * Rename purchase category
      *
-     * @param id идентификатор
-     * @param newName новое название
-     * @return категория
+     * @param id category ID
+     * @param newName new category name
+     * @return category DTO
      */
     PurchaseCategoryDTO renameCategory(PurchaseCategoryId id, String newName);
 }

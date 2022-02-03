@@ -35,6 +35,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AccountsControllerTest extends AbstractControllerTest {
 
     @Test
+    public void getAccount() {
+        ResponseEntity<AccountDTO> exchange = this.restTemplate
+                .withBasicAuth(USER, PASSWORD)
+                .exchange(
+                        "/accounting/accounts/40817810108290123456",
+                        HttpMethod.GET, new HttpEntity<>(null),
+                        AccountDTO.class
+                );
+        assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(exchange.getBody())
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("number", "40817810108290123456");
+    }
+
+    @Test
     public void listAccounts() {
         ResponseEntity<List<AccountDTO>> exchange = this.restTemplate
                 .withBasicAuth(USER, PASSWORD)

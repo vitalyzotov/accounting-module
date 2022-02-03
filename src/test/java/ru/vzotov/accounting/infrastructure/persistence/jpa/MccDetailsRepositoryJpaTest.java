@@ -46,7 +46,9 @@ public class MccDetailsRepositoryJpaTest {
     public void findDetailsByCode() {
         MccDetails details = mccDetailsRepository.find(new MccCode("0742"));
         assertThat(details).isNotNull()
-                .isEqualToComparingFieldByField(new MccDetails(new MccCode("0742"), "Ветеринарные услуги",
+                .usingRecursiveComparison()
+                .ignoringFields("group.id")
+                .isEqualTo(new MccDetails(new MccCode("0742"), "Ветеринарные услуги",
                         new MccGroup(new MccGroupId("4fce2602-d6d3-4bec-a7ff-df70cb767c2d"), "Контрактные услуги")));
     }
 

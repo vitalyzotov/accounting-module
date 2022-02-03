@@ -5,10 +5,12 @@ import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.BankId;
 import ru.vzotov.banking.domain.model.CardNumber;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Currency;
 import java.util.List;
 
@@ -37,8 +39,10 @@ public class AccountRepositoryJpa extends JpaRepository implements AccountReposi
     }
 
     @Override
-    public List<Account> findAll() {
-        return em.createQuery("from Account", Account.class).getResultList();
+    public List<Account> findAll(Collection<PersonId> owners) {
+        return em.createQuery("from Account where owner in (:owners)", Account.class)
+                .setParameter("owners", owners)
+                .getResultList();
     }
 
     @Override
@@ -64,7 +68,7 @@ public class AccountRepositoryJpa extends JpaRepository implements AccountReposi
     @Override
     public void create(Account account) {
         Account a = this.find(account.accountNumber());
-        if(a == null) {
+        if (a == null) {
             em.persist(account);
         } else {
             throw new IllegalStateException("Unable to create account " + account.accountNumber());

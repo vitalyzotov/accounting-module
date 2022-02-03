@@ -19,6 +19,7 @@ import java.util.List;
 @RequestMapping("/accounting/purchase-categories")
 @CrossOrigin
 public class PurchaseCategoriesController {
+
     private final ReceiptsFacade receiptsFacade;
 
     @Autowired

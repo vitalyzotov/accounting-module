@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategory;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import java.lang.reflect.Field;
 import java.util.List;
 
 public class PurchaseCategoryRepositoryJpa extends JpaRepository implements PurchaseCategoryRepository {
@@ -31,9 +31,10 @@ public class PurchaseCategoryRepositoryJpa extends JpaRepository implements Purc
     }
 
     @Override
-    public PurchaseCategory findByName(String name) {
+    public PurchaseCategory findByName(PersonId owner, String name) {
         try {
-            return em.createQuery("from PurchaseCategory where name = :name", PurchaseCategory.class)
+            return em.createQuery("from PurchaseCategory where owner=:owner and name = :name", PurchaseCategory.class)
+                    .setParameter("owner", owner)
                     .setParameter("name", name)
                     .getSingleResult();
         } catch (NoResultException e) {
@@ -42,24 +43,19 @@ public class PurchaseCategoryRepositoryJpa extends JpaRepository implements Purc
     }
 
     @Override
-    public List<PurchaseCategory> findAll() {
-        return em.createQuery("from PurchaseCategory", PurchaseCategory.class).getResultList();
+    public List<PurchaseCategory> findAll(PersonId owner) {
+        return em.createQuery("from PurchaseCategory where owner=:owner", PurchaseCategory.class)
+                .setParameter("owner", owner)
+                .getResultList();
     }
 
     @Override
     public void store(PurchaseCategory category) {
-        try {
-            Field f = PurchaseCategory.class.getDeclaredField("id");
-            f.setAccessible(true);
-            Object val = f.get(category);
-            if (val != null) {
-                em.merge(category);
-                em.flush();
-            } else {
-                em.persist(category);
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            log.error("error", e);
+        if (hasId(category, "id")) {
+            em.merge(category);
+            em.flush();
+        } else {
+            em.persist(category);
         }
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 )
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Import({AccountingModule.class})
 public class TestApplication {
     public static void main(String[] args) {

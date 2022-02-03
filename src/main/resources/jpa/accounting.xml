@@ -671,6 +671,11 @@
             <basic name="name">
                 <column name="NAME" unique="true"/>
             </basic>
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="OWNER"/>
+                </attribute-override>
+            </embedded>
             <embedded name="categoryId"/>
             <embedded name="parentId">
                 <attribute-override name="value">

@@ -19,6 +19,7 @@ import ru.vzotov.cashreceipt.domain.model.PurchaseCategory;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
+import ru.vzotov.person.domain.model.PersonId;
 
 
 @RunWith(SpringRunner.class)
@@ -29,6 +30,8 @@ import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 public class ReceiptRepositoryJpaTest {
 
     private static final Logger log = LoggerFactory.getLogger(ReceiptRepositoryJpaTest.class);
+
+    private static final String PERSON_ID = "c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2";
 
     @Autowired
     private ReceiptRepository receiptRepository;
@@ -49,7 +52,7 @@ public class ReceiptRepositoryJpaTest {
         log.info("Receipt loaded {}", receipt);
         Assert.assertNotNull(receipt);
 
-        PurchaseCategory cat = categoryRepository.findByName("Пакеты");
+        PurchaseCategory cat = categoryRepository.findByName(new PersonId(PERSON_ID), "Пакеты");
         log.info("Category loaded {}", cat);
         Assert.assertNotNull(cat);
 

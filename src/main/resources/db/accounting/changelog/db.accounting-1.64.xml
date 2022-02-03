@@ -50,4 +50,19 @@
         <addUniqueConstraint tableName="BUDGET_CATEGORY_" columnNames="NAME, OWNER" constraintName="UNQ_BC_NAME"/>
     </changeSet>
 
+    <changeSet id="acc-78" author="vzotov">
+        <addColumn tableName="PURCHASE_CATEGORY">
+            <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
+                <constraints nullable="false" foreignKeyName="FK_PC_OWNER" references="PERSON_(PERSON_UID)"/>
+            </column>
+        </addColumn>
+        <sql dbms="mysql">ALTER TABLE PURCHASE_CATEGORY DROP INDEX `NAME`</sql>
+
+        <sql dbms="h2">
+            ALTER TABLE PURCHASE_CATEGORY DROP INDEX CONSTRAINT_C;
+        </sql>
+
+        <addUniqueConstraint tableName="PURCHASE_CATEGORY" columnNames="NAME, OWNER" constraintName="UNQ_PC_NAME"/>
+    </changeSet>
+
 </databaseChangeLog>

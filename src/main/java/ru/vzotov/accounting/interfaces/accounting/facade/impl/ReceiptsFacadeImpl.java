@@ -1,32 +1,34 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
-import ru.vzotov.cashreceipt.domain.model.Receipt;
-import ru.vzotov.cashreceipt.domain.model.ReceiptId;
-import ru.vzotov.cashreceipt.domain.model.QRCode;
-import ru.vzotov.cashreceipt.domain.model.PurchaseCategory;
-import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
-import ru.vzotov.cashreceipt.domain.model.QRCodeData;
-import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
-import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
-import ru.vzotov.cashreceipt.application.ReceiptRegistrationService;
-import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
-import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
-import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
-import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimePeriodDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptDTOAssembler;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.PurchaseCategoryAssembler;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.QRCodeDTOAssembler;
-import ru.vzotov.accounting.interfaces.common.assembler.Assembler;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.vzotov.accounting.infrastructure.SecurityUtils;
+import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimePeriodDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.PurchaseCategoryAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.QRCodeDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptDTOAssembler;
+import ru.vzotov.accounting.interfaces.common.assembler.Assembler;
+import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
+import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
+import ru.vzotov.cashreceipt.application.ReceiptRegistrationService;
+import ru.vzotov.cashreceipt.domain.model.PurchaseCategory;
+import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
+import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
+import ru.vzotov.cashreceipt.domain.model.QRCode;
+import ru.vzotov.cashreceipt.domain.model.QRCodeData;
+import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -47,14 +49,18 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
 
     private final ReceiptRegistrationService receiptRegistrationService;
 
+    private final PurchaseCategoryGuard purchaseCategoryGuard;
+
     public ReceiptsFacadeImpl(ReceiptRepository receiptRepository,
                               PurchaseCategoryRepository categoryRepository,
                               QRCodeRepository codeRepository,
-                              ReceiptRegistrationService receiptRegistrationService) {
+                              ReceiptRegistrationService receiptRegistrationService,
+                              PurchaseCategoryGuard purchaseCategoryGuard) {
         this.receiptRepository = receiptRepository;
         this.categoryRepository = categoryRepository;
         this.codeRepository = codeRepository;
         this.receiptRegistrationService = receiptRegistrationService;
+        this.purchaseCategoryGuard = purchaseCategoryGuard;
     }
 
     /**
@@ -142,13 +148,16 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
     public void assignCategoryToItem(ReceiptId receiptId, Integer itemIndex, String newCategory)
             throws ReceiptNotFoundException, ReceiptItemNotFoundException {
         Receipt receipt = receiptRepository.find(receiptId);
         if (receipt == null) {
             throw new ReceiptNotFoundException();
         }
-        PurchaseCategory newCat = categoryRepository.findByName(newCategory);
+        //todo: sync with owner of receipt
+        PurchaseCategory newCat = purchaseCategoryGuard.accessing(categoryRepository
+                .findByName(SecurityUtils.getCurrentPerson(), newCategory));
 
         if (receipt.products().items().stream().filter(item -> item.index().equals(itemIndex)).count() != 1) {
             throw new ReceiptItemNotFoundException();
@@ -160,32 +169,36 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public List<PurchaseCategoryDTO> getAllCategories() {
         Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
-        return assembler.toDTOList(categoryRepository.findAll());
+        return assembler.toDTOList(categoryRepository.findAll(SecurityUtils.getCurrentPerson()));
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public PurchaseCategoryDTO getCategory(PurchaseCategoryId id) {
         Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
-        return assembler.toDTO(categoryRepository.findById(id));
+        return assembler.toDTO(purchaseCategoryGuard.accessing(categoryRepository.findById(id)));
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
     public PurchaseCategoryDTO createNewCategory(String name) {
         Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
-        PurchaseCategory category = new PurchaseCategory(PurchaseCategoryId.nextId(), name);
+        PurchaseCategory category = new PurchaseCategory(PurchaseCategoryId.nextId(), SecurityUtils.getCurrentPerson(), name);
         categoryRepository.store(category);
         return assembler.toDTO(category);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
     public PurchaseCategoryDTO renameCategory(PurchaseCategoryId id, String newName) {
-        Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
-        PurchaseCategory category = categoryRepository.findById(id);
+        final Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
+        final PurchaseCategory category = purchaseCategoryGuard.accessing(categoryRepository.findById(id));
         category.rename(newName);
         categoryRepository.store(category);
         return assembler.toDTO(category);

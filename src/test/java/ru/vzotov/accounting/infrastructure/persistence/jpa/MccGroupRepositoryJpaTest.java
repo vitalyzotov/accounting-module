@@ -37,7 +37,10 @@ public class MccGroupRepositoryJpaTest {
     @Test
     public void findGroupById() {
         MccGroup group = mccGroupRepository.find(new MccGroupId("af7853df-3104-433a-86a3-5950273a7380"));
-        assertThat(group).isEqualToIgnoringGivenFields(new MccGroup("af7853df-3104-433a-86a3-5950273a7380", "Авиалинии, авиакомпании"), "id");
+        assertThat(group)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(new MccGroup("af7853df-3104-433a-86a3-5950273a7380", "Авиалинии, авиакомпании"));
     }
 
 }

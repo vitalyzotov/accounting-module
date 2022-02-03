@@ -20,6 +20,7 @@ import ru.vzotov.person.domain.model.PersonId;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
@@ -35,6 +36,8 @@ public class AccountRepositoryJpaTest {
 
     private static final Logger log = LoggerFactory.getLogger(AccountRepositoryJpaTest.class);
 
+    private static final String PERSON_ID = "c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2";
+
     @Autowired
     private AccountRepository accountRepository;
 
@@ -47,7 +50,7 @@ public class AccountRepositoryJpaTest {
 
     @Test
     public void findAll() {
-        List<Account> all = accountRepository.findAll();
+        List<Account> all = accountRepository.findAll(Collections.singleton(new PersonId(PERSON_ID)));
         assertThat(all).isNotNull();
         assertThat(all).isNotEmpty();
         assertThat(all.size()).isEqualTo((int) all.stream().map(Account::accountNumber).map(AccountNumber::number).distinct().count());
