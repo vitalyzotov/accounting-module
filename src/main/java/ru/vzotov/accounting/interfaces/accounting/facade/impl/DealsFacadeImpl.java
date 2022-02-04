@@ -404,7 +404,7 @@ public class DealsFacadeImpl implements DealsFacade {
         final List<CardOperation> cardOperations = cache && expandCardOperations ?
                 cardOperationRepository.findByDate(cacheFrom, cacheTo) : emptyList();
         final List<QRCode> receipts = cache && expandReceipts ?
-                qrCodeRepository.findByDate(cacheFrom, cacheTo) : emptyList();
+                qrCodeRepository.findByDate(owners, cacheFrom, cacheTo) : emptyList();
         final List<Purchase> purchases = cache && expandPurchases ?
                 purchaseRepository.findByDate(cacheFrom.atStartOfDay(), cacheTo.plusDays(1).atStartOfDay()) : emptyList();
 

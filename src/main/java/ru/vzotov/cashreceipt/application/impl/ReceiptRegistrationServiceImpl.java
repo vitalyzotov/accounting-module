@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,7 +82,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
 
     @Override
     @Transactional("accounting-tx")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Secured({"ROLE_USER"})
     public ReceiptId register(QRCodeData qrCodeData) throws ReceiptNotFoundException, IOException {
         log.debug("Try registering receipt {}", qrCodeData);
 
@@ -122,7 +123,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
                     throw new ReceiptNotFoundException();
                 }
 
-                receipt = receiptParsingService.parse(receiptData);
+                receipt = receiptParsingService.parse(qrCode.owner(), receiptData);
                 if (receipt == null) {
                     throw new ReceiptNotFoundException();
                 }

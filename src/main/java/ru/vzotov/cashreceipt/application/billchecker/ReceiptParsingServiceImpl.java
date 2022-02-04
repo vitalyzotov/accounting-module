@@ -6,17 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import ru.vzotov.cashreceipt.application.ReceiptParsingService;
 import ru.vzotov.cashreceipt.domain.model.Address;
-import ru.vzotov.cashreceipt.domain.model.Receipt;
-import ru.vzotov.cashreceipt.domain.model.ReceiptOperationType;
 import ru.vzotov.cashreceipt.domain.model.FiscalInfo;
 import ru.vzotov.cashreceipt.domain.model.Marketing;
 import ru.vzotov.cashreceipt.domain.model.PaymentInfo;
 import ru.vzotov.cashreceipt.domain.model.Products;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptOperationType;
 import ru.vzotov.cashreceipt.domain.model.RetailPlace;
 import ru.vzotov.cashreceipt.domain.model.ShiftInfo;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.fiscal.FiscalSign;
 import ru.vzotov.fiscal.Inn;
+import ru.vzotov.person.domain.model.PersonId;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,19 +31,20 @@ import java.util.stream.IntStream;
 
 public class ReceiptParsingServiceImpl implements ReceiptParsingService {
 
-    public Receipt parse(InputStream in) throws IOException {
+    @Override
+    public Receipt parse(PersonId owner, InputStream in) throws IOException {
         ObjectMapper mapper = createMapper();
         ReceiptDTO receipt = mapper.readValue(in, ReceiptDTO.class);
 
-        return parse(receipt);
+        return parse(owner, receipt);
     }
 
     @Override
-    public Receipt parse(String data) throws IOException {
+    public Receipt parse(PersonId owner, String data) throws IOException {
         ObjectMapper mapper = createMapper();
         ReceiptDTO receipt = mapper.readValue(data, ReceiptDTO.class);
 
-        return parse(receipt);
+        return parse(owner, receipt);
     }
 
     private ObjectMapper createMapper() {
@@ -53,8 +55,8 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
         return mapper;
     }
 
-    private Receipt parse(ReceiptDTO receipt) {
-        final ZoneId utcZone = ZoneId.of("GMT");//TODO: почему GMT?
+    private Receipt parse(PersonId owner, ReceiptDTO receipt) {
+        final ZoneId utcZone = ZoneId.of("GMT");//TODO: why GMT?
 
         Function<List<ItemDTO>, List<ru.vzotov.cashreceipt.domain.model.Item>> itemsMapper =
                 (items) -> IntStream.range(0, items.size()).mapToObj((index) -> {
@@ -63,6 +65,7 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
                 }).collect(Collectors.toList());
 
         return new Receipt(
+                owner,
                 receipt.dateTime.atZone(utcZone).toLocalDateTime(),
                 ReceiptOperationType.of(receipt.operationType),
                 receipt.requestNumber,

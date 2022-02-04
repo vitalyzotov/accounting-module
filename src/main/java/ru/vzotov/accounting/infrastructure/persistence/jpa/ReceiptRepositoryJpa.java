@@ -4,10 +4,12 @@ import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptRepository {
@@ -62,8 +64,9 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
     }
 
     @Override
-    public List<Receipt> findByDate(LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("from Receipt where dateTime >= :fromDate AND dateTime < :toDatePlusOneDay", Receipt.class)
+    public List<Receipt> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate) {
+        return em.createQuery("from Receipt where owner in (:owners) and dateTime >= :fromDate and dateTime < :toDatePlusOneDay", Receipt.class)
+                .setParameter("owners", owners)
                 .setParameter("fromDate", fromDate.atStartOfDay())
                 .setParameter("toDatePlusOneDay", toDate.plusDays(1).atStartOfDay())
                 .getResultList();

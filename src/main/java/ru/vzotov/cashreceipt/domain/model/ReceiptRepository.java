@@ -1,6 +1,9 @@
 package ru.vzotov.cashreceipt.domain.model;
 
+import ru.vzotov.person.domain.model.PersonId;
+
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface ReceiptRepository {
@@ -10,7 +13,7 @@ public interface ReceiptRepository {
 
     void store(Receipt receipt);
 
-    List<Receipt> findByDate(LocalDate fromDate, LocalDate toDate);
+    List<Receipt> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate);
     long countByDate(LocalDate fromDate, LocalDate toDate);
 
     Receipt findOldest();

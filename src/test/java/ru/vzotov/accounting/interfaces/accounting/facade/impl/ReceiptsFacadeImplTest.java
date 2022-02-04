@@ -36,6 +36,7 @@ public class ReceiptsFacadeImplTest {
     private ReceiptsFacade facade;
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void listAllReceipts() {
         List<ReceiptDTO> receipts = facade.listAllReceipts(
                 LocalDate.of(2018, Month.JUNE, 16), LocalDate.of(2018, Month.JUNE, 17));
@@ -43,6 +44,7 @@ public class ReceiptsFacadeImplTest {
     }
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void getReceipt() {
         ReceiptDTO receipt = facade.getReceipt("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
         assertThat(receipt).isNotNull();
@@ -56,12 +58,14 @@ public class ReceiptsFacadeImplTest {
     }
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void getNotExistingReceipt() {
         ReceiptDTO receipt = facade.getReceipt("t=20180618T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
         assertThat(receipt).isNull();
     }
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void listAllCodes() {
         List<QRCodeDTO> codes = facade.listAllCodes(
                 LocalDate.of(2018, Month.JUNE, 16), LocalDate.of(2018, Month.JUNE, 17));

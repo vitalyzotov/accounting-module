@@ -3,7 +3,6 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 import org.apache.commons.lang.Validate;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.application.AccountNotFoundException;
@@ -38,6 +37,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.CardDTO
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.OperationDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.RemainDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.TransactionDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.guards.OwnedGuard;
 import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountAliases;
 import ru.vzotov.banking.domain.model.AccountNumber;
@@ -89,11 +89,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     private final ApplicationEventPublisher eventPublisher;
 
-    private final AccountGuard accountGuard;
-
-    private final CardGuard cardGuard;
-
-    private final BudgetCategoryGuard budgetCategoryGuard;
+    private final OwnedGuard ownedGuard;
 
     public AccountingFacadeImpl(AccountingService accountingService,
                                 AccountRepository accountRepository,
@@ -105,9 +101,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
                                 CardRepository cardRepository,
                                 TransactionRepository transactionRepository,
                                 ApplicationEventPublisher eventPublisher,
-                                AccountGuard accountGuard,
-                                CardGuard cardGuard,
-                                BudgetCategoryGuard budgetCategoryGuard) {
+                                OwnedGuard ownedGuard) {
         this.accountingService = accountingService;
         this.accountRepository = accountRepository;
         this.remainRepository = remainRepository;
@@ -118,9 +112,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
         this.cardRepository = cardRepository;
         this.transactionRepository = transactionRepository;
         this.eventPublisher = eventPublisher;
-        this.accountGuard = accountGuard;
-        this.cardGuard = cardGuard;
-        this.budgetCategoryGuard = budgetCategoryGuard;
+        this.ownedGuard = ownedGuard;
     }
 
     @Override
@@ -137,7 +129,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
     public AccountDTO getAccount(String number) {
-        return AccountDtoAssembler.assemble(accountGuard.accessing(
+        return AccountDtoAssembler.assemble(ownedGuard.accessing(
                 accountRepository.find(new AccountNumber(number))
         ));
     }
@@ -163,7 +155,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
     public void modifyAccount(String number, String name, String bankId, String currency, List<String> aliases) {
-        Account account = accountGuard.accessing(accountRepository.find(new AccountNumber(number)));
+        Account account = ownedGuard.accessing(accountRepository.find(new AccountNumber(number)));
         account.rename(name);
         account.setBankId(new BankId(bankId));
         account.setCurrency(currency == null ? null : Currency.getInstance(currency));
@@ -237,7 +229,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Secured({"ROLE_USER"})
     public List<AccountOperationDTO> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException {
         final AccountNumber number = new AccountNumber(accountNumber);
-        Account account = accountGuard.accessing(accountRepository.find(number));
+        Account account = ownedGuard.accessing(accountRepository.find(number));
         if(account == null) {
             throw new AccountNotFoundException();
         }
@@ -255,7 +247,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
         if (operation == null) {
             throw new OperationNotFoundException();
         }
-        final Account account = accountGuard.accessing(accountRepository.find(operation.account()));
+        final Account account = ownedGuard.accessing(accountRepository.find(operation.account()));
         if(account == null) {
             throw new AccountNotFoundException();
         }
@@ -278,7 +270,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
         final OperationType type = OperationType.of(operationType);
         final AccountNumber accountNumber = new AccountNumber(accountNumberValue);
-        final Account account = accountGuard.accessing(accountRepository.find(accountNumber));
+        final Account account = ownedGuard.accessing(accountRepository.find(accountNumber));
         Validate.notNull(account, "Account not found");
 
         final Money money = new Money(amount, Currency.getInstance(currency));
@@ -306,7 +298,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
         if (operation == null) {
             throw new OperationNotFoundException();
         }
-        final Account account = accountGuard.accessing(accountRepository.find(operation.account()));
+        final Account account = ownedGuard.accessing(accountRepository.find(operation.account()));
         Validate.notNull(account, "Account not found");
 
         operationRepository.delete(operation);
@@ -322,7 +314,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
             throw new OperationNotFoundException();
         }
 
-        final Account account = accountGuard.accessing(accountRepository.find(operation.account()));
+        final Account account = ownedGuard.accessing(accountRepository.find(operation.account()));
         Validate.notNull(account, "Account not found");
 
         final BudgetCategoryId id = new BudgetCategoryId(categoryId);
@@ -346,7 +338,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
             throw new OperationNotFoundException();
         }
 
-        final Account account = accountGuard.accessing(accountRepository.find(operation.account()));
+        final Account account = ownedGuard.accessing(accountRepository.find(operation.account()));
         Validate.notNull(account, "Account not found");
 
         return modifyOperationComment(comment, operation);
@@ -363,7 +355,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
     public List<HoldOperationDTO> listHolds(String accountNumber, LocalDate from, LocalDate to) {
-        final Account account = accountGuard.accessing(accountRepository.find(new AccountNumber(accountNumber)));
+        final Account account = ownedGuard.accessing(accountRepository.find(new AccountNumber(accountNumber)));
         return holdOperationRepository.findByAccountAndDate(account.accountNumber(), from, to)
                 .stream()
                 .map(OperationDTOAssembler::toDTO)
@@ -391,7 +383,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
         if (operation == null) {
             throw new OperationNotFoundException();
         }
-        final Account account = accountGuard.accessing(accountRepository.find(operation.account()));
+        final Account account = ownedGuard.accessing(accountRepository.find(operation.account()));
         Validate.notNull(account, "Account not found");
         accountingService.deleteHoldOperation(operation);
     }
@@ -404,7 +396,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
         if (operation == null) {
             throw new OperationNotFoundException();
         }
-        final Account account = accountGuard.accessing(accountRepository.find(operation.account()));
+        final Account account = ownedGuard.accessing(accountRepository.find(operation.account()));
         Validate.notNull(account, "Account not found");
         return OperationDTOAssembler.toDTO(operation);
     }
@@ -450,7 +442,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Secured({"ROLE_USER"})
     public List<CardDTO> listCards(BankId issuer) {
         final PersonId currentPerson = SecurityUtils.getCurrentPerson();
-        return cardGuard.filter(issuer == null ? cardRepository.find(currentPerson) : cardRepository.findByBank(currentPerson, issuer))
+        return ownedGuard.filter(issuer == null ? cardRepository.find(currentPerson) : cardRepository.findByBank(currentPerson, issuer))
                 .stream()
                 .map(CardDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -460,7 +452,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
     public CardDTO getCard(CardNumber cardNumber) {
-        return CardDTOAssembler.toDTO(cardGuard.accessing(cardRepository.find(cardNumber)));
+        return CardDTOAssembler.toDTO(ownedGuard.accessing(cardRepository.find(cardNumber)));
     }
 
     @Override
@@ -475,7 +467,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
     public CardNumber deleteCard(CardNumber number) {
-        final Card card = cardGuard.accessing(cardRepository.find(number));
+        final Card card = ownedGuard.accessing(cardRepository.find(number));
         if (card == null) return null;
         cardRepository.delete(card);
         return number;
@@ -534,7 +526,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Secured({"ROLE_USER"})
     public BudgetCategoryDTO getCategory(long id) {
         return BudgetCategoryDTOAssembler.toDTO(
-                budgetCategoryGuard.accessing(budgetCategoryRepository.find(new BudgetCategoryId(id)))
+                ownedGuard.accessing(budgetCategoryRepository.find(new BudgetCategoryId(id)))
         );
     }
 
@@ -552,7 +544,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
     public BudgetCategoryDTO modifyCategory(long id, String newName, String color, String icon) throws CategoryNotFoundException {
-        final BudgetCategory category = budgetCategoryGuard.accessing(budgetCategoryRepository.find(new BudgetCategoryId(id)));
+        final BudgetCategory category = ownedGuard.accessing(budgetCategoryRepository.find(new BudgetCategoryId(id)));
         if (category == null) {
             throw new CategoryNotFoundException();
         }
@@ -575,7 +567,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
     public void deleteCategory(long id) throws CategoryNotFoundException {
-        BudgetCategory category = budgetCategoryGuard.accessing(budgetCategoryRepository.find(new BudgetCategoryId(id)));
+        BudgetCategory category = ownedGuard.accessing(budgetCategoryRepository.find(new BudgetCategoryId(id)));
         if (category == null) {
             throw new CategoryNotFoundException();
         }

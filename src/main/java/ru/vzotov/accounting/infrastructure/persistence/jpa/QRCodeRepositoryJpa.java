@@ -6,11 +6,13 @@ import ru.vzotov.cashreceipt.domain.model.ReceiptState;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.cashreceipt.domain.model.QRCodeDateTime;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collection;
 import java.util.List;
 
 public class QRCodeRepositoryJpa extends JpaRepository implements QRCodeRepository {
@@ -60,9 +62,9 @@ public class QRCodeRepositoryJpa extends JpaRepository implements QRCodeReposito
     }
 
     @Override
-    public List<QRCode> findByDate(LocalDate fromDate, LocalDate toDate) {
-        final ZoneId zoneId = ZoneId.systemDefault().normalized();
-        return em.createQuery("from QRCode where data.dateTime >= :fromDate AND data.dateTime < :toDatePlusOneDay", QRCode.class)
+    public List<QRCode> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate) {
+        return em.createQuery("from QRCode where owner in (:owners) and data.dateTime >= :fromDate AND data.dateTime < :toDatePlusOneDay", QRCode.class)
+                .setParameter("owners", owners)
                 .setParameter("fromDate", new QRCodeDateTime(fromDate.atStartOfDay()))
                 .setParameter("toDatePlusOneDay", new QRCodeDateTime(toDate.plusDays(1).atStartOfDay()))
                 .getResultList();

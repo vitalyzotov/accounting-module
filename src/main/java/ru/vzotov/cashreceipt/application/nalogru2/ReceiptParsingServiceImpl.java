@@ -19,6 +19,7 @@ import ru.vzotov.accounting.infrastructure.json.OffsetDateTimeDeserializer;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.fiscal.FiscalSign;
 import ru.vzotov.fiscal.Inn;
+import ru.vzotov.person.domain.model.PersonId;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +40,7 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
     private static final ZoneId MOSCOW_ZONE = ZoneId.of(MOSCOW_ZONE_ID);
 
     @Override
-    public Receipt parse(InputStream in) throws IOException {
+    public Receipt parse(PersonId owner, InputStream in) throws IOException {
         ObjectMapper mapper = createMapper();
         TicketInfo root = mapper.readValue(in, TicketInfo.class);
 
@@ -49,11 +50,11 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
                                 root.ticket.document == null ? null :
                                         root.ticket.document.receipt;
 
-        return parse(receipt);
+        return parse(owner, receipt);
     }
 
     @Override
-    public Receipt parse(String data) throws IOException {
+    public Receipt parse(PersonId owner, String data) throws IOException {
         ObjectMapper mapper = createMapper();
         TicketInfo root = mapper.readValue(data, TicketInfo.class);
         ru.vzotov.cashreceipt.application.nalogru2.Receipt receipt =
@@ -62,11 +63,11 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
                                 root.ticket.document == null ? null :
                                         root.ticket.document.receipt;
 
-        return parse(receipt);
+        return parse(owner, receipt);
 
     }
 
-    private Receipt parse(ru.vzotov.cashreceipt.application.nalogru2.Receipt receipt) {
+    private Receipt parse(PersonId owner, ru.vzotov.cashreceipt.application.nalogru2.Receipt receipt) {
         if(receipt == null) return null;
 
         Function<List<Item>, List<ru.vzotov.cashreceipt.domain.model.Item>> itemsMapper =
@@ -96,6 +97,7 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
                 receipt.taxationType
         );
         return new Receipt(
+                owner,
                 receipt.dateTime.atZone(MOSCOW_ZONE).toLocalDateTime(),
                 ReceiptOperationType.of(receipt.operationType),
                 receipt.requestNumber,

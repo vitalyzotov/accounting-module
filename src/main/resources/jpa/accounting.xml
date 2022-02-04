@@ -617,6 +617,11 @@
                     <column name="CHECK_ID" nullable="false" unique="true"/>
                 </attribute-override>
             </embedded>
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="OWNER"/>
+                </attribute-override>
+            </embedded>
         </attributes>
     </entity>
 

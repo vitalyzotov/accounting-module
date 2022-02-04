@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,7 +74,8 @@ public class QRCodeRepositoryJpaTest {
 
     @Test
     public void findByDate() {
-        List<QRCode> list = repository.findByDate(LocalDate.of(2018, Month.JUNE, 16), LocalDate.of(2018, Month.JUNE, 16));
+        List<QRCode> list = repository.findByDate(Collections.singleton(PERSON_ID),
+                LocalDate.of(2018, Month.JUNE, 16), LocalDate.of(2018, Month.JUNE, 16));
         assertThat(list).isNotEmpty();
     }
 

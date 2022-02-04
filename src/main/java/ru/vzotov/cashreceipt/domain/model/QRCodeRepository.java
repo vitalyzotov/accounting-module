@@ -1,6 +1,9 @@
 package ru.vzotov.cashreceipt.domain.model;
 
+import ru.vzotov.person.domain.model.PersonId;
+
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface QRCodeRepository {
@@ -10,7 +13,7 @@ public interface QRCodeRepository {
 
     void store(QRCode qrCode);
 
-    List<QRCode> findByDate(LocalDate fromDate, LocalDate toDate);
+    List<QRCode> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate);
 
     List<QRCode> findAllInState(ReceiptState state);
 

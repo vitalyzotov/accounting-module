@@ -10,7 +10,9 @@
         <loadData tableName="PERSON_" file="person_.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
-    <include file="../../cashreceipt/changelog/db.changelog-tests.xml" relativeToChangelogFile="true"/>
+    <changeSet id="qr_codes" author="vzotov">
+        <loadData tableName="QR_CODE" file="qr_code.csv" relativeToChangelogFile="true"/>
+    </changeSet>
 
     <changeSet id="test1" author="vzotov">
         <loadData tableName="ACCOUNT_" file="account_.csv" relativeToChangelogFile="true"/>
@@ -29,8 +31,11 @@
         <loadData tableName="BUDGET_PLAN" file="budget_plan.csv" relativeToChangelogFile="true"/>
         <loadData tableName="DEAL_" file="deal_.csv" relativeToChangelogFile="true"/>
         <loadData tableName="DEAL_OPERATIONS" file="deal_operations.csv" relativeToChangelogFile="true"/>
-        <loadData tableName="QR_CODE" file="qr_code.csv" relativeToChangelogFile="true"/>
         <loadData tableName="DEAL_RECEIPTS" file="deal_receipts.csv" relativeToChangelogFile="true"/>
+
+        <loadData tableName="CHECK_" file="receipt.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="CHECK_ITEM" file="receipt_item.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="PURCHASE_CATEGORY" file="purchase_category.csv" relativeToChangelogFile="true"/>
         <loadData tableName="PURCHASE_" file="purchase_.csv" relativeToChangelogFile="true"/>
     </changeSet>
 

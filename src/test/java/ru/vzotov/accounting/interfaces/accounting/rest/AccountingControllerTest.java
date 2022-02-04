@@ -86,7 +86,9 @@ public class AccountingControllerTest extends AbstractControllerTest {
                 1L,
                 OffsetDateTime.of(LocalDateTime.of(2018, JUNE, 16, 14, 0, 0), ZoneOffset.UTC)
         );
-        assertThat(response.getBody()[0]).isEqualToComparingFieldByFieldRecursively(expected);
+        assertThat(response.getBody())
+                .usingRecursiveFieldByFieldElementComparator()
+                .contains(expected);
     }
 
     @Test

@@ -16,6 +16,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.PurchaseCategoryAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.QRCodeDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.guards.OwnedGuard;
 import ru.vzotov.accounting.interfaces.common.assembler.Assembler;
 import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
@@ -49,18 +50,18 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
 
     private final ReceiptRegistrationService receiptRegistrationService;
 
-    private final PurchaseCategoryGuard purchaseCategoryGuard;
+    private final OwnedGuard ownedGuard;
 
     public ReceiptsFacadeImpl(ReceiptRepository receiptRepository,
                               PurchaseCategoryRepository categoryRepository,
                               QRCodeRepository codeRepository,
                               ReceiptRegistrationService receiptRegistrationService,
-                              PurchaseCategoryGuard purchaseCategoryGuard) {
+                              OwnedGuard ownedGuard) {
         this.receiptRepository = receiptRepository;
         this.categoryRepository = categoryRepository;
         this.codeRepository = codeRepository;
         this.receiptRegistrationService = receiptRegistrationService;
-        this.purchaseCategoryGuard = purchaseCategoryGuard;
+        this.ownedGuard = ownedGuard;
     }
 
     /**
@@ -68,22 +69,25 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
      */
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public List<ReceiptDTO> listAllReceipts(LocalDate fromDate, LocalDate toDate) {
-        List<Receipt> receipts = receiptRepository.findByDate(fromDate, toDate);
+        List<Receipt> receipts = receiptRepository.findByDate(SecurityUtils.getAuthorizedPersons(), fromDate, toDate);
         return receipts.stream().map(receipt -> new ReceiptDTOAssembler().toDTO(receipt)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public List<QRCodeDTO> listAllCodes(LocalDate fromDate, LocalDate toDate) {
-        List<QRCode> codes = codeRepository.findByDate(fromDate, toDate);
+        List<QRCode> codes = codeRepository.findByDate(SecurityUtils.getAuthorizedPersons(), fromDate, toDate);
         return codes.stream().map(code -> new QRCodeDTOAssembler().toDTO(code)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public QRCodeDTO getCode(String receiptId) {
-        QRCode code = codeRepository.find(new ReceiptId(receiptId));
+        QRCode code = ownedGuard.accessing(codeRepository.find(new ReceiptId(receiptId)));
         return new QRCodeDTOAssembler().toDTO(code);
     }
 
@@ -128,18 +132,21 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public ReceiptDTO getReceipt(String qrCodeData) {
-        Receipt receipt = receiptRepository.findByQRCodeData(new QRCodeData(qrCodeData));
-        return receipt == null ? null : new ReceiptDTOAssembler().toDTO(receipt);
+        Receipt receipt = ownedGuard.accessing(receiptRepository.findByQRCodeData(new QRCodeData(qrCodeData)));
+        return new ReceiptDTOAssembler().toDTO(receipt);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
     public ReceiptDTO loadReceiptDetails(QRCodeData qrCodeData) {
         Validate.notNull(qrCodeData);
         try {
+            ownedGuard.accessing(codeRepository.findByQRCodeData(qrCodeData));
             ReceiptId receiptId = receiptRegistrationService.loadDetails(qrCodeData);
-            return new ReceiptDTOAssembler().toDTO(receiptRepository.find(receiptId));
+            return new ReceiptDTOAssembler().toDTO(ownedGuard.accessing(receiptRepository.find(receiptId)));
         } catch (ReceiptNotFoundException | IOException e) {
             log.error("Unable to load receipt details", e);
         }
@@ -156,7 +163,7 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
             throw new ReceiptNotFoundException();
         }
         //fixme: sync with owner of receipt
-        PurchaseCategory newCat = purchaseCategoryGuard.accessing(categoryRepository
+        PurchaseCategory newCat = ownedGuard.accessing(categoryRepository
                 .findByName(SecurityUtils.getCurrentPerson(), newCategory));
 
         if (receipt.products().items().stream().filter(item -> item.index().equals(itemIndex)).count() != 1) {
@@ -180,7 +187,7 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
     @Secured({"ROLE_USER"})
     public PurchaseCategoryDTO getCategory(PurchaseCategoryId id) {
         Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
-        return assembler.toDTO(purchaseCategoryGuard.accessing(categoryRepository.findById(id)));
+        return assembler.toDTO(ownedGuard.accessing(categoryRepository.findById(id)));
     }
 
     @Override
@@ -198,7 +205,7 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
     @Secured({"ROLE_USER"})
     public PurchaseCategoryDTO renameCategory(PurchaseCategoryId id, String newName) {
         final Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
-        final PurchaseCategory category = purchaseCategoryGuard.accessing(categoryRepository.findById(id));
+        final PurchaseCategory category = ownedGuard.accessing(categoryRepository.findById(id));
         category.rename(newName);
         categoryRepository.store(category);
         return assembler.toDTO(category);

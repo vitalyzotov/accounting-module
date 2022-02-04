@@ -18,6 +18,7 @@ import ru.vzotov.cashreceipt.domain.model.ShiftInfo;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.fiscal.FiscalSign;
 import ru.vzotov.fiscal.Inn;
+import ru.vzotov.person.domain.model.PersonId;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,24 +32,25 @@ import java.util.stream.IntStream;
 
 public class ReceiptParsingServiceImpl implements ReceiptParsingService {
 
-    public Receipt parse(InputStream in) throws IOException {
+    @Override
+    public Receipt parse(PersonId owner, InputStream in) throws IOException {
         ObjectMapper mapper = createMapper();
         NalogRuRoot root = mapper.readValue(in, NalogRuRoot.class);
         ru.vzotov.cashreceipt.application.nalogru.Receipt receipt = root.document.receipt;
 
-        return parse(receipt);
+        return parse(owner, receipt);
     }
 
     @Override
-    public Receipt parse(String data) throws IOException {
+    public Receipt parse(PersonId owner, String data) throws IOException {
         ObjectMapper mapper = createMapper();
         NalogRuRoot root = mapper.readValue(data, NalogRuRoot.class);
         ru.vzotov.cashreceipt.application.nalogru.Receipt receipt = root.document.receipt;
 
-        return parse(receipt);
+        return parse(owner, receipt);
     }
 
-    private Receipt parse(ru.vzotov.cashreceipt.application.nalogru.Receipt receipt) {
+    private Receipt parse(PersonId owner, ru.vzotov.cashreceipt.application.nalogru.Receipt receipt) {
         final ZoneId moscowZone = ZoneId.systemDefault();
 
         Function<List<Item>, List<ru.vzotov.cashreceipt.domain.model.Item>> itemsMapper =
@@ -78,6 +80,7 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
                 receipt.taxationType
         );
         return new Receipt(
+                owner,
                 receipt.dateTime.atZone(moscowZone).toLocalDateTime(),
                 ReceiptOperationType.of(receipt.operationType),
                 receipt.requestNumber,

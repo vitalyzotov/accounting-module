@@ -8,20 +8,20 @@ import java.io.IOException;
 public interface ReceiptRegistrationService {
 
     /**
-     * Регистрация чека в системе
+     * Register receipt
      *
-     * @param qrCodeData сведения QR-кода
-     * @return идентификатор QR кода
+     * @param qrCodeData QR data of receipt
+     * @return receipt ID
      */
     ReceiptId register(QRCodeData qrCodeData) throws ReceiptNotFoundException, IOException;
 
     /**
-     * Инициирует сбор информации о чеке из внешних систем, например, из налоговой службы.
+     * Performs loading of receipt details from external systems
      *
-     * @param qrCodeData сведения из QR-кода
-     * @return идентификатор чека
-     * @throws ReceiptNotFoundException если чек не был найден
-     * @throws IOException            при ошибках ввода-вывода
+     * @param qrCodeData QR data of the receipt
+     * @return receipt ID
+     * @throws ReceiptNotFoundException if receipt was not found
+     * @throws IOException            in case of I/O errors when loading receipt details
      */
     ReceiptId loadDetails(QRCodeData qrCodeData) throws ReceiptNotFoundException, IOException;
 

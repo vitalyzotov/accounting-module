@@ -64,13 +64,13 @@ public class ReceiptRepositoryJpaTest {
 
     @Test
     public void store() {
-        Receipt receipt = new ReceiptFactory().createReceiptSimple();
+        Receipt receipt = new ReceiptFactory().createReceiptSimple(new PersonId(PERSON_ID));
         receiptRepository.store(receipt);
     }
 
     @Test
     public void storeLongUser() {
-        Receipt receipt = new ReceiptFactory().createReceiptWithLongUser();
+        Receipt receipt = new ReceiptFactory().createReceiptWithLongUser(new PersonId(PERSON_ID));
         receiptRepository.store(receipt);
     }
 

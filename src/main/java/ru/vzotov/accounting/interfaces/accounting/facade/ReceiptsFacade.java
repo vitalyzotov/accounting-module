@@ -16,23 +16,28 @@ import java.util.List;
 public interface ReceiptsFacade {
 
     /**
-     * Получение всех чеков в заданном интервале дат
+     * Get list of all cash receipts within date range
      *
-     * @param fromDate начальная дата (включается в интервал)
-     * @param toDate   конечная дата (включается в интервал)
-     * @return список чеков
+     * @param fromDate start date (inclusive)
+     * @param toDate   end date (inclusive)
+     * @return list of cash receipts
      */
     List<ReceiptDTO> listAllReceipts(LocalDate fromDate, LocalDate toDate);
 
     /**
-     * Получение всех зарегистрированных кодов чеков в заданном интервале дат
+     * Get list of all QR codes within date range
      *
-     * @param fromDate начальная дата чека (включительно)
-     * @param toDate   конечная дата чека (включительно)
-     * @return список кодов чеков
+     * @param fromDate start date (inclusive)
+     * @param toDate   end date (inclusive)
+     * @return list of all QR codes
      */
     List<QRCodeDTO> listAllCodes(LocalDate fromDate, LocalDate toDate);
 
+    /**
+     * Get QR code by cash receipt ID
+     * @param receiptId ID of cash receipt
+     * @return QR code
+     */
     QRCodeDTO getCode(String receiptId);
 
     /**
@@ -57,14 +62,15 @@ public interface ReceiptsFacade {
      * Get receipt from persistent storage
      *
      * @param qrCodeData QR code
-     * @return receipt
+     * @return cash receipt
      */
     ReceiptDTO getReceipt(String qrCodeData);
 
     /**
-     * Попытаться загрузить чек из внешних систем
-     * @param qrCodeData
-     * @return
+     * Try loading cash receipt from external systems
+     *
+     * @param qrCodeData QR data to identify the receipt
+     * @return cash receipt if loaded successfully, <code>null</code> otherwise
      */
     ReceiptDTO loadReceiptDetails(QRCodeData qrCodeData);
 
