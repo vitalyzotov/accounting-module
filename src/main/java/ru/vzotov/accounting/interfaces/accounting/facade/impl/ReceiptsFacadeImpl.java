@@ -30,10 +30,12 @@ import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
+import ru.vzotov.person.domain.model.PersonId;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,11 +95,13 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public TimelineDTO getTimeline() {
         final TimelineDTO result = new TimelineDTO();
         final ZoneId zoneId = ZoneId.systemDefault().normalized();
         final LocalDate today = LocalDate.now();
-        final Receipt oldest = receiptRepository.findOldest();
+        final Collection<PersonId> authorizedPersons = SecurityUtils.getAuthorizedPersons();
+        final Receipt oldest = receiptRepository.findOldest(authorizedPersons);
 
         if (oldest != null) {
             LocalDate startOfMonth = oldest.dateTime().atZone(zoneId).toLocalDate().withDayOfMonth(1);
@@ -107,7 +111,7 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
 
                 log.debug("Count receipts from {} to {}", startOfMonth, endOfMonth);
 
-                final long count = receiptRepository.countByDate(startOfMonth, endOfMonth);
+                final long count = receiptRepository.countByDate(authorizedPersons, startOfMonth, endOfMonth);
                 final TimePeriodDTO period = new TimePeriodDTO(
                         startOfMonth,
                         endOfMonth,

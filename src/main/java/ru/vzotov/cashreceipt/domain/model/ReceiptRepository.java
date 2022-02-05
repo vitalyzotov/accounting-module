@@ -14,7 +14,7 @@ public interface ReceiptRepository {
     void store(Receipt receipt);
 
     List<Receipt> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate);
-    long countByDate(LocalDate fromDate, LocalDate toDate);
+    long countByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate);
 
-    Receipt findOldest();
+    Receipt findOldest(Collection<PersonId> owners);
 }

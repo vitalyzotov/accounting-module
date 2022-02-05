@@ -41,10 +41,10 @@ public interface ReceiptsFacade {
     QRCodeDTO getCode(String receiptId);
 
     /**
-     * Формирование актуального таймлайна.
-     * Система подсчитывает количество чеков за каждый месяц, возвращает все месяцы где есть чеки и количество чеков.
+     * Calculate timeline.
+     * Application counts number of cash receipts for each month, returns all months having cash receipts.
      *
-     * @return таймлайн
+     * @return timeline data
      */
     TimelineDTO getTimeline();
 

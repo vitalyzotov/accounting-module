@@ -73,16 +73,20 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
     }
 
     @Override
-    public long countByDate(LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("select count(c) from Receipt c where c.dateTime >= :fromDate AND c.dateTime < :toDatePlusOneDay", Long.class)
+    public long countByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate) {
+        return em.createQuery("select count(c) from Receipt c where c.owner in (:owners) and c.dateTime >= :fromDate AND c.dateTime < :toDatePlusOneDay", Long.class)
+                .setParameter("owners", owners)
                 .setParameter("fromDate", fromDate.atStartOfDay())
                 .setParameter("toDatePlusOneDay", toDate.plusDays(1).atStartOfDay())
                 .getSingleResult();
     }
 
-    public Receipt findOldest() {
+    public Receipt findOldest(Collection<PersonId> owners) {
         try {
-            return em.createQuery("from Receipt order by dateTime asc", Receipt.class).setMaxResults(1).getSingleResult();
+            return em.createQuery("from Receipt where owner in (:owners) order by dateTime asc", Receipt.class)
+                    .setParameter("owners", owners)
+                    .setMaxResults(1)
+                    .getSingleResult();
         } catch (NoResultException ex) {
             return null;
         }

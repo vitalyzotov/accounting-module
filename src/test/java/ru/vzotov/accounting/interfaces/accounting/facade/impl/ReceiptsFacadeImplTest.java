@@ -73,6 +73,7 @@ public class ReceiptsFacadeImplTest {
     }
 
     @Test
+    @WithMockPersonUser(person = PERSON_ID)
     public void getTimeline() {
         TimelineDTO timeline = facade.getTimeline();
         assertThat(timeline).isNotNull();
