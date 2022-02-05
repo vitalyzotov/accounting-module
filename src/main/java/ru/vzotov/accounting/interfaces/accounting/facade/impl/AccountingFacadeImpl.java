@@ -165,9 +165,9 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public List<RemainDTO> listRemains(LocalDate from, LocalDate to) {
-        //fixme: provide remains for own accounts only
-        return remainRepository.findByDate(from, to)
+        return remainRepository.findByDate(SecurityUtils.getAuthorizedPersons(), from, to)
                 .stream()
                 .map(RemainDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -175,9 +175,11 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public List<RemainDTO> listRemains(String accountNumber) {
-        //fixme: provide remains for own accounts only
-        return remainRepository.findByAccountNumber(new AccountNumber(accountNumber))
+        final AccountNumber account = new AccountNumber(accountNumber);
+        ownedGuard.accessing(accountRepository.find(account));
+        return remainRepository.findByAccountNumber(account)
                 .stream()
                 .map(RemainDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -185,18 +187,20 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public RemainDTO getRemain(String remainId) {
-        //fixme: provide remains for own accounts only
-        return RemainDTOAssembler.toDTO(remainRepository.find(new RemainId(remainId)));
+        final Remain remain = remainRepository.find(new RemainId(remainId));
+        ownedGuard.accessing(accountRepository.find(remain.account()));
+        return RemainDTOAssembler.toDTO(remain);
     }
 
     @Override
     @Transactional("accounting-tx")
+    @Secured({"ROLE_USER"})
     public String createRemain(String accountNumber, LocalDate date, MoneyDTO value) {
-        //fixme: create remains for own accounts only
-        Remain remain = new Remain(
-                new AccountNumber(accountNumber),
-                date,
+        final AccountNumber account = new AccountNumber(accountNumber);
+        ownedGuard.accessing(accountRepository.find(account));
+        Remain remain = new Remain(account, date,
                 Money.ofRaw(value.getAmount(), Currency.getInstance(value.getCurrency()))
         );
         remainRepository.store(remain);
@@ -205,9 +209,11 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional("accounting-tx")
+    @Secured({"ROLE_USER"})
     public void deleteRemain(String remainId) {
-        //fixme: provide remains for own accounts only
         Remain remain = remainRepository.find(new RemainId(remainId));
+        Validate.notNull(remain, "Remain not found");
+        ownedGuard.accessing(accountRepository.find(remain.account()));
         remainRepository.delete(remain);
     }
 
@@ -230,7 +236,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     public List<AccountOperationDTO> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException {
         final AccountNumber number = new AccountNumber(accountNumber);
         Account account = ownedGuard.accessing(accountRepository.find(number));
-        if(account == null) {
+        if (account == null) {
             throw new AccountNotFoundException();
         }
         return operationRepository.findByAccountAndDate(number, from, to)
@@ -248,7 +254,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
             throw new OperationNotFoundException();
         }
         final Account account = ownedGuard.accessing(accountRepository.find(operation.account()));
-        if(account == null) {
+        if (account == null) {
             throw new AccountNotFoundException();
         }
 

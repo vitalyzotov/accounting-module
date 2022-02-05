@@ -16,10 +16,12 @@ import ru.vzotov.accounting.domain.model.Remain;
 import ru.vzotov.accounting.domain.model.RemainId;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.domain.model.Money;
+import ru.vzotov.person.domain.model.PersonId;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +32,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import({DatasourceConfig.class, JpaConfig.class})
 @Transactional
 public class RemainRepositoryJpaTest {
+
     private static final Logger log = LoggerFactory.getLogger(RemainRepositoryJpaTest.class);
+
+    private static final String PERSON_ID = "c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2";
 
     @Autowired
     private RemainRepository remainRepository;
@@ -44,6 +49,7 @@ public class RemainRepositoryJpaTest {
     @Test
     public void testFindByDate() {
         List<Remain> remains = remainRepository.findByDate(
+                Collections.singleton(new PersonId(PERSON_ID)),
                 LocalDate.of(2019, Month.AUGUST, 1),
                 LocalDate.of(2019, Month.AUGUST, 3));
         assertThat(remains).isNotEmpty();
