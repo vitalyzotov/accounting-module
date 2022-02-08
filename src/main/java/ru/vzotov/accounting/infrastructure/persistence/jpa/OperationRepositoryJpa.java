@@ -33,7 +33,8 @@ public class OperationRepositoryJpa extends JpaRepository implements OperationRe
 
     @Override
     public List<Operation> findByDateAndAmount(Collection<PersonId> owners, LocalDate fromDateInclusive, LocalDate toDateInclusive, Money amount) {
-        return em.createQuery("from Operation where date >= :dateFrom and date <= :dateTo and amount = :amount", Operation.class)
+        return em.createQuery("select op from Operation op, Account a where a.accountNumber=op.account and a.owner in (:owners) and op.date >= :dateFrom and op.date <= :dateTo and op.amount = :amount", Operation.class)
+                .setParameter("owners", owners)
                 .setParameter("dateFrom", fromDateInclusive)
                 .setParameter("dateTo", toDateInclusive)
                 .setParameter("amount", amount)
@@ -42,7 +43,9 @@ public class OperationRepositoryJpa extends JpaRepository implements OperationRe
 
     @Override
     public List<Operation> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("from Operation where date >= :dateFrom and date <= :dateTo", Operation.class)
+        //fixme: implement security
+        return em.createQuery("select op from Operation op, Account a where a.accountNumber=op.account and a.owner in (:owners) and op.date >= :dateFrom and op.date <= :dateTo", Operation.class)
+                .setParameter("owners", owners)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
                 .getResultList();
@@ -50,16 +53,17 @@ public class OperationRepositoryJpa extends JpaRepository implements OperationRe
 
     @Override
     public List<Operation> findByAccountAndDate(AccountNumber accountNumber, LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("from Operation where account.number = :accountNumber and date >= :dateFrom and date <= :dateTo", Operation.class)
+        return em.createQuery("from Operation where account = :accountNumber and date >= :dateFrom and date <= :dateTo", Operation.class)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
-                .setParameter("accountNumber", accountNumber.number())
+                .setParameter("accountNumber", accountNumber)
                 .getResultList();
     }
 
     @Override
     public List<Operation> findByTypeAndDate(Collection<PersonId> owners, OperationType type, LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("from Operation where type = :type and date >= :dateFrom and date <= :dateTo", Operation.class)
+        return em.createQuery("select op from Operation op, Account a where a.accountNumber=op.account and a.owner in (:owners) and op.type = :type and op.date >= :dateFrom and op.date <= :dateTo", Operation.class)
+                .setParameter("owners", owners)
                 .setParameter("type", type)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)

@@ -1,18 +1,19 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import ru.vzotov.accounting.config.DatasourceConfig;
-import ru.vzotov.accounting.domain.model.AccountRepository;
-import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
-import ru.vzotov.accounting.domain.model.OperationRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.vzotov.accounting.config.DatasourceConfig;
+import ru.vzotov.accounting.domain.model.AccountRepository;
+import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
+import ru.vzotov.accounting.domain.model.OperationRepository;
+import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.BudgetCategory;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
@@ -71,15 +72,19 @@ public class OperationRepositoryJpaTest {
                 LocalDate.of(2017, 7, 10),
                 LocalDate.of(2017, 7, 10),
                 Money.rubles(10d));
-        assertThat(operations).isNotEmpty();
+        assertThat(operations)
+                .isNotEmpty()
+                .allSatisfy(operation -> {
+                    assertThat(operation).isNotNull();
+                    assertThat(operation.operationId()).isNotNull();
+                    assertThat(operation.date()).isEqualTo(LocalDate.of(2017, 7, 10));
+                    assertThat(operation.amount()).isEqualTo(Money.rubles(10d));
 
-        final Operation operation = operations.get(0);
-
-        log.info("Operation loaded {}", operation);
-        assertThat(operation).isNotNull();
-        assertThat(operation.operationId()).isNotNull();
-        assertThat(operation.date()).isEqualTo(LocalDate.of(2017, 7, 10));
-        assertThat(operation.amount()).isEqualTo(Money.rubles(10d));
+                    final Account account = accountRepository.find(operation.account());
+                    assertThat(account.owner())
+                            .as("Wrong owner of operation %s", operation)
+                            .isEqualTo(PERSON_ID);
+                });
     }
 
     @Test
@@ -88,32 +93,35 @@ public class OperationRepositoryJpaTest {
                 Collections.singleton(PERSON_ID),
                 LocalDate.of(2017, 7, 10),
                 LocalDate.of(2017, 7, 10));
-        assertThat(operations).isNotEmpty();
+        assertThat(operations)
+                .isNotEmpty()
+                .allSatisfy(operation -> {
+                    assertThat(operation.operationId()).isNotNull();
+                    assertThat(operation.date()).isEqualTo(LocalDate.of(2017, 7, 10));
 
-        final Operation operation = operations.get(0);
-
-        log.info("Operation loaded {}", operation);
-        assertThat(operation).isNotNull();
-        assertThat(operation.operationId()).isNotNull();
-        assertThat(operation.date()).isEqualTo(LocalDate.of(2017, 7, 10));
-        assertThat(operation.amount()).isEqualTo(Money.rubles(10d));
+                    final Account account = accountRepository.find(operation.account());
+                    assertThat(account.owner())
+                            .as("Wrong owner of operation %s", operation)
+                            .isEqualTo(PERSON_ID);
+                });
     }
 
     @Test
     public void findByAccountAndDate() {
+        final AccountNumber accountNumber = new AccountNumber("40817810108290123456");
         final List<Operation> operations = repository.findByAccountAndDate(
-                new AccountNumber("40817810108290123456"),
+                accountNumber,
                 LocalDate.of(2017, 7, 10),
                 LocalDate.of(2017, 7, 10));
-        assertThat(operations).isNotEmpty();
 
-        final Operation operation = operations.get(0);
-
-        log.info("Operation loaded {}", operation);
-        assertThat(operation).isNotNull();
-        assertThat(operation.operationId()).isNotNull();
-        assertThat(operation.date()).isEqualTo(LocalDate.of(2017, 7, 10));
-        assertThat(operation.amount()).isEqualTo(Money.rubles(10d));
+        assertThat(operations)
+                .isNotEmpty()
+                .allSatisfy(operation -> {
+                    assertThat(operation).isNotNull();
+                    assertThat(operation.operationId()).isNotNull();
+                    assertThat(operation.date()).isEqualTo(LocalDate.of(2017, 7, 10));
+                    assertThat(operation.account()).isEqualTo(accountNumber);
+                });
     }
 
     @Test

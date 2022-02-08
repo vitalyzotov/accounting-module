@@ -481,6 +481,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
     public List<TransactionDTO> listTransactions(LocalDate from, LocalDate to, Integer threshold) {
 //        final List<Operation> operations = threshold == null ?
 //                Collections.emptyList() :
@@ -490,7 +491,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
 //                Collections.emptyList() :
 //                Transaction.matchOperations(operations, threshold, null);
 
-        final List<Transaction> knownTransactions = transactionRepository.findByDate(from, to);
+        final List<Transaction> knownTransactions = transactionRepository.findByDate(SecurityUtils.getAuthorizedPersons(), from, to);
         return knownTransactions.stream()//, transactions.stream())
                 //.distinct()
                 .map(TransactionDTOAssembler::toDTO)
@@ -499,11 +500,15 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
     public TransactionDTO makeTransaction(OperationId primaryId, OperationId secondaryId) {
         Operation primary = operationRepository.find(primaryId);
         Validate.notNull(primary);
+        Validate.notNull(ownedGuard.accessing(accountRepository.find(primary.account())), "Primary account not found");
+
         Operation secondary = operationRepository.find(secondaryId);
         Validate.notNull(secondary);
+        Validate.notNull(ownedGuard.accessing(accountRepository.find(secondary.account())), "Secondary account not found");
 
         Validate.isTrue(primary.amount().equals(secondary.amount()), "Should have same amount");
         //can have same accounts
