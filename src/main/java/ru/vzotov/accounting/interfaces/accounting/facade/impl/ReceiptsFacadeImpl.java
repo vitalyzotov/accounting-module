@@ -16,7 +16,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.PurchaseCategoryAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.QRCodeDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptDTOAssembler;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.guards.OwnedGuard;
+import ru.vzotov.accounting.interfaces.common.guards.OwnedGuard;
 import ru.vzotov.accounting.interfaces.common.assembler.Assembler;
 import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;

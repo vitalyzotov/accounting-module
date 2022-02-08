@@ -1,4 +1,4 @@
-package ru.vzotov.accounting.interfaces.accounting.facade.impl.guards;
+package ru.vzotov.accounting.interfaces.common.guards;
 
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;

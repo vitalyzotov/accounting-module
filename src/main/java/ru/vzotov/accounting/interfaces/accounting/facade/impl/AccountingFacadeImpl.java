@@ -37,7 +37,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.CardDTO
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.OperationDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.RemainDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.TransactionDTOAssembler;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.guards.OwnedGuard;
+import ru.vzotov.accounting.interfaces.common.guards.OwnedGuard;
 import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountAliases;
 import ru.vzotov.banking.domain.model.AccountNumber;

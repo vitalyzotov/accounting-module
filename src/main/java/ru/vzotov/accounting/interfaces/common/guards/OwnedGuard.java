@@ -1,4 +1,4 @@
-package ru.vzotov.accounting.interfaces.accounting.facade.impl.guards;
+package ru.vzotov.accounting.interfaces.common.guards;
 
 import ru.vzotov.person.domain.model.Owned;
 
