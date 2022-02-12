@@ -2,8 +2,7 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
@@ -24,6 +23,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.CardOper
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.OperationEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.PurchaseEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.ReceiptEnricher;
+import ru.vzotov.accounting.interfaces.common.guards.OwnedGuard;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
 import ru.vzotov.banking.domain.model.BudgetCategory;
@@ -68,6 +68,7 @@ public class DealsFacadeImpl implements DealsFacade {
     private final BudgetCategoryRepository budgetCategoryRepository;
     private final QRCodeRepository qrCodeRepository;
     private final TransactionRepository transactionRepository;
+    private final OwnedGuard ownedGuard;
 
     public DealsFacadeImpl(
             DealRepository dealRepository,
@@ -76,7 +77,8 @@ public class DealsFacadeImpl implements DealsFacade {
             PurchaseRepository purchaseRepository,
             BudgetCategoryRepository budgetCategoryRepository,
             QRCodeRepository qrCodeRepository,
-            TransactionRepository transactionRepository) {
+            TransactionRepository transactionRepository,
+            OwnedGuard ownedGuard) {
         this.dealRepository = dealRepository;
         this.operationRepository = operationRepository;
         this.cardOperationRepository = cardOperationRepository;
@@ -84,11 +86,12 @@ public class DealsFacadeImpl implements DealsFacade {
         this.budgetCategoryRepository = budgetCategoryRepository;
         this.qrCodeRepository = qrCodeRepository;
         this.transactionRepository = transactionRepository;
+        this.ownedGuard = ownedGuard;
     }
 
     @Override
     @Transactional(value = "accounting-tx")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Secured({"ROLE_USER"})
     public DealDTO createDeal(LocalDate date, long amount, String currency, String description, String comment,
                               Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases
     ) throws CategoryNotFoundException {
@@ -122,20 +125,15 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
     public DealDTO modifyDeal(String dealId, LocalDate date, long amount, String currency,
                               String description, String comment, Long categoryId,
                               Collection<String> receipts, Collection<String> operations, Collection<String> purchases
     ) throws DealNotFoundException, CategoryNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
+        ownedGuard.accessing(deal);
 
-        return modifyDealSecurely(deal, date, amount, currency, description, comment, categoryId, receipts, operations, purchases);
-    }
-
-    @PreAuthorize("hasAuthority(#deal.owner().value())")
-    private DealDTO modifyDealSecurely(Deal deal, LocalDate date, long amount, String currency, String description,
-                                       String comment, Long categoryId, Collection<String> receipts,
-                                       Collection<String> operations, Collection<String> purchases) throws CategoryNotFoundException {
         final BudgetCategoryId budgetCategoryId = new BudgetCategoryId(categoryId);
         final BudgetCategory category = categoryId == null ? null :
                 budgetCategoryRepository.find(budgetCategoryId);
@@ -156,28 +154,23 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
     public DealDTO deleteDeal(String dealId) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
-        return deleteDealSecurely(deal);
-    }
+        ownedGuard.accessing(deal);
 
-    @PreAuthorize("hasAuthority(#deal.owner().value())")
-    private DealDTO deleteDealSecurely(Deal deal) {
         dealRepository.delete(deal);
         return DealDTOAssembler.toDTO(deal);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
     public List<DealDTO> splitDeal(String dealId) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
-        return splitDealSecurely(deal);
-    }
-
-    @PreAuthorize("hasAuthority(#deal.owner().value())")
-    private List<DealDTO> splitDealSecurely(Deal deal) {
+        ownedGuard.accessing(deal);
         final List<Deal> receiptsResult = new ArrayList<>();
         final List<Deal> operationsResult = new ArrayList<>();
 
@@ -256,7 +249,7 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Secured({"ROLE_USER"})
     public List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<DealDTOExpansion> expand) {
         final Collection<PersonId> owners = SecurityUtils.getAuthorizedPersons();
         return expandDeals(owners, expand, from, to,
@@ -267,16 +260,11 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Secured({"ROLE_USER"})
     public DealDTO getDeal(String dealId, Set<DealDTOExpansion> expand) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
-
-        return getDealSecurely(deal, expand);
-    }
-
-    @PreAuthorize("hasAuthority(#deal.owner().value())")
-    private DealDTO getDealSecurely(Deal deal, Set<DealDTOExpansion> expand) throws DealNotFoundException {
+        ownedGuard.accessing(deal);
         return expandDeals(Collections.emptySet(), expand, null, null, () -> Stream.of(DealDTOAssembler.toDTO(deal)))
                 .findFirst()
                 .orElseThrow(DealNotFoundException::new);
@@ -284,21 +272,23 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Secured({"ROLE_USER"})
     public LocalDate getMinDealDate() {
+        //todo: allow multiple owners
         return dealRepository.findMinDealDate(SecurityUtils.getCurrentPerson());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Secured({"ROLE_USER"})
     public LocalDate getMaxDealDate() {
+        //todo: allow multiple owners
         return dealRepository.findMaxDealDate(SecurityUtils.getCurrentPerson());
     }
 
     @Override
     @Transactional(value = "accounting-tx")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Secured({"ROLE_USER"})
     public DealDTO mergeDeals(List<String> dealIds) {
         Validate.notNull(dealIds);
         Validate.isTrue(dealIds.size() >= 2);
@@ -357,14 +347,13 @@ public class DealsFacadeImpl implements DealsFacade {
         return DealDTOAssembler.toDTO(target);
     }
 
-    @PostAuthorize("hasAuthority(returnObject.owner().value())")
     private Deal findDealSecurely(DealId dealId) {
-        return dealRepository.find(dealId);
+        return ownedGuard.accessing(dealRepository.find(dealId));
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Secured({"ROLE_USER"})
     public List<PurchaseDTO> listDealPurchases(String dealId) {
         final Deal deal = findDealSecurely(new DealId(dealId));
         final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
@@ -376,7 +365,7 @@ public class DealsFacadeImpl implements DealsFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Secured({"ROLE_USER"})
     public void movePurchase(PurchaseId purchaseId, DealId sourceId, DealId targetId) {
         Validate.notNull(purchaseId);
         Validate.notNull(sourceId);
@@ -406,7 +395,7 @@ public class DealsFacadeImpl implements DealsFacade {
         final List<QRCode> receipts = cache && expandReceipts ?
                 qrCodeRepository.findByDate(owners, cacheFrom, cacheTo) : emptyList();
         final List<Purchase> purchases = cache && expandPurchases ?
-                purchaseRepository.findByDate(cacheFrom.atStartOfDay(), cacheTo.plusDays(1).atStartOfDay()) : emptyList();
+                purchaseRepository.findByDate(owners, cacheFrom.atStartOfDay(), cacheTo.plusDays(1).atStartOfDay()) : emptyList();
 
         final OperationEnricher operationEnricher = new OperationEnricher(operationRepository, operations);
         final CardOperationEnricher cardOperationEnricher = new CardOperationEnricher(cardOperationRepository, cardOperations);

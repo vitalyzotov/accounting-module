@@ -2,6 +2,7 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
@@ -9,6 +10,7 @@ import ru.vzotov.purchases.domain.model.PurchaseRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 public class PurchaseRepositoryJpa extends JpaRepository implements PurchaseRepository {
@@ -44,8 +46,9 @@ public class PurchaseRepositoryJpa extends JpaRepository implements PurchaseRepo
     }
 
     @Override
-    public List<Purchase> findByDate(LocalDateTime fromDateTime, LocalDateTime toDateTime) {
-        return em.createQuery("from Purchase where dateTime >= :fromDate AND dateTime < :toDate", Purchase.class)
+    public List<Purchase> findByDate(Collection<PersonId> owners, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+        return em.createQuery("from Purchase where owner in (:owners) AND dateTime >= :fromDate AND dateTime < :toDate", Purchase.class)
+                .setParameter("owners", owners)
                 .setParameter("fromDate", fromDateTime)
                 .setParameter("toDate", toDateTime)
                 .getResultList();

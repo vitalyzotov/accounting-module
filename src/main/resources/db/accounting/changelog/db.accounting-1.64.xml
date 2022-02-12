@@ -73,4 +73,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="acc-80" author="vzotov">
+        <addColumn tableName="PURCHASE_">
+            <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
+                <constraints nullable="false" foreignKeyName="FK_PURCHASE_OWNER" references="PERSON_(PERSON_UID)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
