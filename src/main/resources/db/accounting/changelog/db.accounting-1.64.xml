@@ -6,46 +6,67 @@
     <changeSet id="acc-73" author="vzotov">
         <addColumn tableName="DEAL_">
             <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
-                <constraints nullable="false" foreignKeyName="FK_DEAL_OWNER" references="PERSON_(PERSON_UID)"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
+
+        <addForeignKeyConstraint baseTableName="DEAL_" baseColumnNames="OWNER"
+                                 constraintName="FK_DEAL_OWNER"
+                                 referencedTableName="PERSON_"
+                                 referencedColumnNames="PERSON_UID"/>
     </changeSet>
 
     <changeSet id="acc-74" author="vzotov">
         <addColumn tableName="QR_CODE">
             <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
-                <constraints nullable="false" foreignKeyName="FK_QR_OWNER" references="PERSON_(PERSON_UID)"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
+
+        <addForeignKeyConstraint baseTableName="QR_CODE" baseColumnNames="OWNER"
+                                 constraintName="FK_QR_OWNER"
+                                 referencedTableName="PERSON_" referencedColumnNames="PERSON_UID"/>
     </changeSet>
 
     <changeSet id="acc-75" author="vzotov">
         <addColumn tableName="BUDGET">
             <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
-                <constraints nullable="false" foreignKeyName="FK_BUDGET_OWNER" references="PERSON_(PERSON_UID)"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
+
+        <addForeignKeyConstraint baseTableName="BUDGET" baseColumnNames="OWNER"
+                                 constraintName="FK_BUDGET_OWNER"
+                                 referencedTableName="PERSON_" referencedColumnNames="PERSON_UID"/>
     </changeSet>
 
     <changeSet id="acc-76" author="vzotov">
         <addColumn tableName="CARD_">
             <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
-                <constraints nullable="false" foreignKeyName="FK_CARD_OWNER" references="PERSON_(PERSON_UID)"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
+
+        <addForeignKeyConstraint baseTableName="CARD_" baseColumnNames="OWNER"
+                                 constraintName="FK_CARD_OWNER"
+                                 referencedTableName="PERSON_" referencedColumnNames="PERSON_UID"/>
     </changeSet>
 
     <changeSet id="acc-77" author="vzotov">
         <addColumn tableName="BUDGET_CATEGORY_">
             <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
-                <constraints nullable="false" foreignKeyName="FK_BC_OWNER" references="PERSON_(PERSON_UID)"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
         <sql dbms="mysql">ALTER TABLE BUDGET_CATEGORY_ DROP INDEX `NAME`</sql>
 
         <sql dbms="h2">
             ALTER TABLE BUDGET_CATEGORY_ DROP INDEX CONSTRAINT_B;
-       </sql>
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="BUDGET_CATEGORY_" baseColumnNames="OWNER"
+                                 constraintName="FK_BC_OWNER"
+                                 referencedTableName="PERSON_" referencedColumnNames="PERSON_UID"/>
 
         <addUniqueConstraint tableName="BUDGET_CATEGORY_" columnNames="NAME, OWNER" constraintName="UNQ_BC_NAME"/>
     </changeSet>
@@ -53,7 +74,7 @@
     <changeSet id="acc-78" author="vzotov">
         <addColumn tableName="PURCHASE_CATEGORY">
             <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
-                <constraints nullable="false" foreignKeyName="FK_PC_OWNER" references="PERSON_(PERSON_UID)"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
         <sql dbms="mysql">ALTER TABLE PURCHASE_CATEGORY DROP INDEX `NAME`</sql>
@@ -62,23 +83,35 @@
             ALTER TABLE PURCHASE_CATEGORY DROP INDEX CONSTRAINT_C;
         </sql>
 
+        <addForeignKeyConstraint baseTableName="PURCHASE_CATEGORY" baseColumnNames="OWNER"
+                                 constraintName="FK_PC_OWNER"
+                                 referencedTableName="PERSON_" referencedColumnNames="PERSON_UID"/>
+
         <addUniqueConstraint tableName="PURCHASE_CATEGORY" columnNames="NAME, OWNER" constraintName="UNQ_PC_NAME"/>
     </changeSet>
 
     <changeSet id="acc-79" author="vzotov">
         <addColumn tableName="CHECK_">
             <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
-                <constraints nullable="false" foreignKeyName="FK_RECEIPT_OWNER" references="PERSON_(PERSON_UID)"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
+
+        <addForeignKeyConstraint baseTableName="CHECK_" baseColumnNames="OWNER"
+                                 constraintName="FK_RECEIPT_OWNER"
+                                 referencedTableName="PERSON_" referencedColumnNames="PERSON_UID"/>
     </changeSet>
 
     <changeSet id="acc-80" author="vzotov">
         <addColumn tableName="PURCHASE_">
             <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
-                <constraints nullable="false" foreignKeyName="FK_PURCHASE_OWNER" references="PERSON_(PERSON_UID)"/>
+                <constraints nullable="false"/>
             </column>
         </addColumn>
+
+        <addForeignKeyConstraint baseTableName="PURCHASE_" baseColumnNames="OWNER"
+                                 constraintName="FK_PURCHASE_OWNER"
+                                 referencedTableName="PERSON_" referencedColumnNames="PERSON_UID"/>
     </changeSet>
 
 </databaseChangeLog>
