@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.infrastructure;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.MutableAcl;
@@ -18,9 +20,14 @@ import java.util.stream.Collectors;
 
 public class SecurityUtils {
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityUtils.class);
+
     public static PersonId getCurrentPerson() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        log.trace("Current authorities: {}", authorities);
+
         return authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(PersonId::isValidAuthority)
@@ -32,6 +39,9 @@ public class SecurityUtils {
     public static Collection<PersonId> getAuthorizedPersons() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        log.trace("Current authorities: {}", authorities);
+
         return authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(PersonId::isValidAuthority)
@@ -41,6 +51,8 @@ public class SecurityUtils {
 
     public static void grantPermission(MutableAclService aclService, Authentication authentication,
                                        Class<?> clazz, Serializable identifier, Permission... permissions) {
+        log.info("Grant permissions {} for {} to {} of class {}", permissions, authentication, identifier, clazz);
+
         final ObjectIdentity oi = new ObjectIdentityImpl(clazz, identifier);
         final PrincipalSid sid = new PrincipalSid(authentication);
         // Create or update the relevant ACL
