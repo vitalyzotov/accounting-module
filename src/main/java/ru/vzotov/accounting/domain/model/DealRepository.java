@@ -26,7 +26,9 @@ public interface DealRepository {
 
     void delete(Deal deal);
 
-    LocalDate findMinDealDate(PersonId owner);
+    LocalDate findMinDealDate(Collection<PersonId> owners);
 
-    LocalDate findMaxDealDate(PersonId owner);
+    LocalDate findMaxDealDate(Collection<PersonId> owners);
+
+    LocalDate[] findMinMaxDealDates(Collection<PersonId> owners);
 }

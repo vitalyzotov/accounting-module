@@ -274,16 +274,21 @@ public class DealsFacadeImpl implements DealsFacade {
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
     public LocalDate getMinDealDate() {
-        //todo: allow multiple owners
-        return dealRepository.findMinDealDate(SecurityUtils.getCurrentPerson());
+        return dealRepository.findMinDealDate(SecurityUtils.getAuthorizedPersons());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
     public LocalDate getMaxDealDate() {
-        //todo: allow multiple owners
-        return dealRepository.findMaxDealDate(SecurityUtils.getCurrentPerson());
+        return dealRepository.findMaxDealDate(SecurityUtils.getAuthorizedPersons());
+    }
+
+    @Override
+    @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
+    public LocalDate[] getMinMaxDealDates() {
+        return dealRepository.findMinMaxDealDates(SecurityUtils.getAuthorizedPersons());
     }
 
     @Override

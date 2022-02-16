@@ -96,10 +96,10 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     }
 
     @Override
-    public LocalDate findMinDealDate(PersonId owner) {
+    public LocalDate findMinDealDate(Collection<PersonId> owners) {
         try {
-            return em.createQuery("select min(date) from Deal where owner=:owner", LocalDate.class)
-                    .setParameter("owner", owner)
+            return em.createQuery("select min(date) from Deal where owner in (:owners)", LocalDate.class)
+                    .setParameter("owners", owners)
                     .getSingleResult();
         } catch (NoResultException ex) {
             return null;
@@ -107,11 +107,25 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     }
 
     @Override
-    public LocalDate findMaxDealDate(PersonId owner) {
+    public LocalDate findMaxDealDate(Collection<PersonId> owners) {
         try {
-            return em.createQuery("select max(date) from Deal where owner=:owner", LocalDate.class)
-                    .setParameter("owner", owner)
+            return em.createQuery("select max(date) from Deal where owner in (:owners)", LocalDate.class)
+                    .setParameter("owners", owners)
                     .getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public LocalDate[] findMinMaxDealDates(Collection<PersonId> owners) {
+        try {
+            Object[] result = (Object[]) em.createQuery("select min(date), max(date) from Deal where owner in (:owners)")
+                    .setParameter("owners", owners)
+                    .getSingleResult();
+            return new LocalDate[] {
+                    (LocalDate) result[0], (LocalDate) result[1]
+            };
         } catch (NoResultException ex) {
             return null;
         }

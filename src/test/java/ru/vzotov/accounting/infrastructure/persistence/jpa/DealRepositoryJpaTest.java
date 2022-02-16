@@ -120,9 +120,15 @@ public class DealRepositoryJpaTest {
 
     @Test
     public void findMinMaxDates() {
-        LocalDate min = dealRepository.findMinDealDate(PERSON_ID);
-        LocalDate max = dealRepository.findMaxDealDate(PERSON_ID);
-        assertThat(min).isNotNull().isEqualTo(LocalDate.of(2017, 07, 10));
+        LocalDate min = dealRepository.findMinDealDate(Collections.singleton(PERSON_ID));
+        LocalDate max = dealRepository.findMaxDealDate(Collections.singleton(PERSON_ID));
+        assertThat(min).isNotNull().isEqualTo(LocalDate.of(2017, 7, 10));
         assertThat(max).isNotNull().isAfter(min);
+
+        LocalDate[] minmax = dealRepository.findMinMaxDealDates(Collections.singleton(PERSON_ID));
+        assertThat(minmax).isNotNull().hasSize(2);
+        assertThat(minmax[0]).isNotNull().isEqualTo(LocalDate.of(2017, 7, 10));
+        assertThat(minmax[1]).isNotNull().isAfter(min);
+
     }
 }

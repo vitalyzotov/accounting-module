@@ -51,10 +51,8 @@ public class DealsController {
 
     @GetMapping("metadata")
     public DealsMetadataResponse getDealsMeta() {
-        return new DealsMetadataResponse(
-                dealsFacade.getMinDealDate(),
-                dealsFacade.getMaxDealDate()
-        );
+        final LocalDate[] dates = dealsFacade.getMinMaxDealDates();
+        return new DealsMetadataResponse(dates[0], dates[1]);
     }
 
     @GetMapping("{dealId}")
