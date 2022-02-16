@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vzotov.accounting.infrastructure.SecurityUtils;
+import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;

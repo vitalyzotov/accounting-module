@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
-import ru.vzotov.accounting.infrastructure.SecurityUtils;
+import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.common.guards.OwnedGuard;
 import ru.vzotov.accounting.interfaces.purchases.facade.PurchasesFacade;

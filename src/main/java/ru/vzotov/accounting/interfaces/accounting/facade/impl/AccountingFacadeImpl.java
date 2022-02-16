@@ -17,7 +17,7 @@ import ru.vzotov.accounting.domain.model.Remain;
 import ru.vzotov.accounting.domain.model.RemainId;
 import ru.vzotov.accounting.domain.model.RemainRepository;
 import ru.vzotov.accounting.domain.model.TransactionRepository;
-import ru.vzotov.accounting.infrastructure.SecurityUtils;
+import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;

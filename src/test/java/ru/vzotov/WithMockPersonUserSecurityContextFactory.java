@@ -6,8 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
+import ru.vzotov.accounting.infrastructure.security.User;
 import ru.vzotov.person.domain.model.PersonId;
 
 import java.util.Arrays;
@@ -21,13 +21,10 @@ public class WithMockPersonUserSecurityContextFactory
     public SecurityContext createSecurityContext(WithMockPersonUser personUser) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        User principal = new org.springframework.security.core.userdetails.User(
+        User principal = new User(
                 personUser.value(),
                 personUser.password(),
-                true,
-                true,
-                true,
-                true,
+                new SimpleGrantedAuthority(new PersonId(personUser.person()).authority()),
                 getAuthorities(personUser.roles(), personUser.person()));
 
         Authentication auth = new UsernamePasswordAuthenticationToken(

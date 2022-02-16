@@ -1,4 +1,4 @@
-package ru.vzotov.accounting.infrastructure;
+package ru.vzotov.accounting.infrastructure.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,23 +24,28 @@ public class SecurityUtils {
 
     public static PersonId getCurrentPerson() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        //final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-        log.trace("Current authorities: {}", authorities);
+        log.trace("Current authentication: {}", authentication);
 
-        return authorities.stream()
+        User user = (authentication.getPrincipal() instanceof User) ? (User) authentication.getPrincipal() :
+                (authentication.getDetails() instanceof User) ? (User) authentication.getDetails() :
+                        null;
+        return user != null ? PersonId.fromAuthority(user.getMainAuthority().getAuthority()) : null;
+
+        /* return authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(PersonId::isValidAuthority)
                 .findFirst()
                 .map(PersonId::fromAuthority)
-                .orElse(null);
+                .orElse(null); */
     }
 
     public static Collection<PersonId> getAuthorizedPersons() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-        log.trace("Current authorities: {}", authorities);
+        log.trace("Current authentication: {}", authentication);
 
         return authorities.stream()
                 .map(GrantedAuthority::getAuthority)

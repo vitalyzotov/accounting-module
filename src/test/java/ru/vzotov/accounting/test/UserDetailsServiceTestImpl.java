@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import ru.vzotov.accounting.infrastructure.security.User;
 
 import java.util.Arrays;
 
@@ -13,14 +14,12 @@ public class UserDetailsServiceTestImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return new org.springframework.security.core.userdetails.User(
+        final SimpleGrantedAuthority mainAuthority = new SimpleGrantedAuthority("PERSON_" + username.substring(username.indexOf('_') + 1));
+        return new User(
                 username.substring(0, username.indexOf('_')), "password",
-                true,
-                true,
-                true,
-                true,
+                mainAuthority,
                 Arrays.asList(
-                        new SimpleGrantedAuthority("PERSON_" + username.substring(username.indexOf('_') + 1)),
+                        mainAuthority,
                         new SimpleGrantedAuthority("ROLE_USER")
                 ));
     }

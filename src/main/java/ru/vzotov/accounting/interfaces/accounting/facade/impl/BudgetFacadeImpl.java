@@ -4,7 +4,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import ru.vzotov.accounting.domain.model.BudgetPlanRepository;
 import ru.vzotov.accounting.domain.model.BudgetRepository;
-import ru.vzotov.accounting.infrastructure.SecurityUtils;
+import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.facade.BudgetFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetNotFoundException;
