@@ -108,7 +108,7 @@ public class BudgetRepositoryJpaTest {
 
     @Test
     public void testFindForRule() {
-        final Budget budget = budgetRepository.findForRule(new BudgetRuleId("003"));
+        final Budget budget = budgetRepository.findForRule(new BudgetRuleId("003jpa"));
         assertThat(budget).isNotNull().hasFieldOrPropertyWithValue("budgetId", new BudgetId("test-budget-1"));
     }
 
