@@ -6,7 +6,7 @@
 
     <groupId>ru.vzotov</groupId>
     <artifactId>accounting-module</artifactId>
-    <version>1.64-SNAPSHOT</version>
+    <version>1.64</version>
     <name>Module: Accounting</name>
 
     <properties>
