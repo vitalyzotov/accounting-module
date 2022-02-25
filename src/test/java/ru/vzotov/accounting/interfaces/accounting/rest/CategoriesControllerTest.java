@@ -23,6 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource("classpath:application-test.properties")
 public class CategoriesControllerTest extends AbstractControllerTest {
 
+    private static final String PERSON_ID = "c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2";
+
     @Test
     public void listCategories() {
         ResponseEntity<List<BudgetCategoryDTO>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
@@ -34,7 +36,7 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         assertThat(exchange.getBody())
                 .isNotEmpty()
                 .usingElementComparatorOnFields("id", "name")
-                .contains(new BudgetCategoryDTO(781381038049753674L, "Прочие расходы"))
+                .contains(new BudgetCategoryDTO(781381038049753674L, PERSON_ID, "Прочие расходы"))
         ;
     }
 
@@ -48,7 +50,7 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         );
         assertThat(exchange.getBody())
                 .usingRecursiveComparison()
-                .isEqualTo(new BudgetCategoryDTO(781381038049753674L, "Прочие расходы", "#FF000000", "MyIcon"));
+                .isEqualTo(new BudgetCategoryDTO(781381038049753674L, PERSON_ID, "Прочие расходы", "#FF000000", "MyIcon"));
     }
 
     @Test
@@ -63,7 +65,7 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         assertThat(exchange.getBody())
                 .usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(new BudgetCategoryDTO(0L, categoryName));
+                .isEqualTo(new BudgetCategoryDTO(0L, PERSON_ID, categoryName));
         assertThat(exchange.getBody().getId()).isPositive();
     }
 
@@ -78,6 +80,6 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         );
         assertThat(exchange.getBody())
                 .usingRecursiveComparison()
-                .isEqualTo(new BudgetCategoryDTO(1000L, categoryName, "#00FF0000", "icon-2"));
+                .isEqualTo(new BudgetCategoryDTO(1000L, PERSON_ID, categoryName, "#00FF0000", "icon-2"));
     }
 }

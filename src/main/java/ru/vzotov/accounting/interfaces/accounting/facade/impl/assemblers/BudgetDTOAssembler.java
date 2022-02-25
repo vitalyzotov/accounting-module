@@ -12,6 +12,7 @@ public class BudgetDTOAssembler {
     public static BudgetDTO toDTO(Budget budget) {
         return budget == null ? null : new BudgetDTO(
                 budget.budgetId().value(),
+                budget.owner().value(),
                 budget.name(),
                 budget.locale(),
                 budget.currency() == null ? null : budget.currency().getCurrencyCode(),

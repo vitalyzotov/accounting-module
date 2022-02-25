@@ -25,6 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
 
+    private static final String PERSON_ID = "c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2";
+
     @Test
     public void listCategories() {
         ResponseEntity<List<PurchaseCategoryDTO>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
@@ -62,7 +64,7 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
         assertThat(exchange.getBody())
                 .isNotNull()
                 .usingRecursiveComparison()
-                .isEqualTo(new PurchaseCategoryDTO(catId, "Табак"));
+                .isEqualTo(new PurchaseCategoryDTO(catId, PERSON_ID, "Табак"));
     }
 
     @Test
@@ -70,7 +72,7 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
         final String newCategoryName = "Новая категория";
         ResponseEntity<PurchaseCategoryDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories",
-                HttpMethod.POST, new HttpEntity<>(new PurchaseCategoryDTO(null, newCategoryName)),
+                HttpMethod.POST, new HttpEntity<>(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName)),
                 new ParameterizedTypeReference<PurchaseCategoryDTO>() {
                 }
         );
@@ -78,7 +80,7 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .ignoringFields("categoryId")
-                .isEqualTo(new PurchaseCategoryDTO(null, newCategoryName));
+                .isEqualTo(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName));
         assertThat(exchange.getBody().getCategoryId())
                 .isNotEmpty();
     }
@@ -89,14 +91,14 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
         final String newCategoryName2 = "категория переименованная";
         PurchaseCategoryDTO mycat = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories",
-                HttpMethod.POST, new HttpEntity<>(new PurchaseCategoryDTO(null, newCategoryName)),
+                HttpMethod.POST, new HttpEntity<>(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName)),
                 new ParameterizedTypeReference<PurchaseCategoryDTO>() {
                 }
         ).getBody();
 
         ResponseEntity<PurchaseCategoryDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories/" + mycat.getCategoryId(),
-                HttpMethod.PATCH, new HttpEntity<>(new PurchaseCategoryDTO(null, newCategoryName2)),
+                HttpMethod.PATCH, new HttpEntity<>(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName2)),
                 new ParameterizedTypeReference<PurchaseCategoryDTO>() {
                 }
         );
@@ -104,6 +106,6 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
         assertThat(exchange.getBody())
                 .isNotNull()
                 .usingRecursiveComparison()
-                .isEqualTo(new PurchaseCategoryDTO(mycat.getCategoryId(), newCategoryName2));
+                .isEqualTo(new PurchaseCategoryDTO(mycat.getCategoryId(), PERSON_ID, newCategoryName2));
     }
 }

@@ -8,6 +8,10 @@ public class PurchaseCategoryAssembler extends AbstractAssembler<PurchaseCategor
 
     @Override
     public PurchaseCategoryDTO toDTO(PurchaseCategory model) {
-        return model == null ? null : new PurchaseCategoryDTO(model.categoryId().value(), model.name(), model.parentId() == null ? null : model.parentId().value());
+        return model == null ? null : new PurchaseCategoryDTO(
+                model.categoryId().value(),
+                model.owner().value(),
+                model.name(), model.parentId() == null ? null : model.parentId().value()
+        );
     }
 }

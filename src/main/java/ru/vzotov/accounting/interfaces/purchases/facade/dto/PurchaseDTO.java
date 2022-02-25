@@ -9,6 +9,8 @@ public class PurchaseDTO extends PurchaseRef {
 
     private String receiptId;
 
+    private String owner;
+
     private String name;
 
     private LocalDateTime dateTime;
@@ -22,9 +24,10 @@ public class PurchaseDTO extends PurchaseRef {
     public PurchaseDTO() {
     }
 
-    public PurchaseDTO(String purchaseId, String receiptId, String name, LocalDateTime dateTime, MoneyDTO price, Double quantity, String categoryId) {
+    public PurchaseDTO(String purchaseId, String owner, String receiptId, String name, LocalDateTime dateTime, MoneyDTO price, Double quantity, String categoryId) {
         super(purchaseId);
         this.receiptId = receiptId;
+        this.owner = owner;
         this.name = name;
         this.dateTime = dateTime;
         this.price = price;
@@ -38,6 +41,14 @@ public class PurchaseDTO extends PurchaseRef {
 
     public void setReceiptId(String receiptId) {
         this.receiptId = receiptId;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getName() {

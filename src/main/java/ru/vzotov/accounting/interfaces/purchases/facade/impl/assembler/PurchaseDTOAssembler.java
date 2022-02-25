@@ -23,6 +23,7 @@ public class PurchaseDTOAssembler extends AbstractAssembler<PurchaseDTO, Purchas
     public PurchaseDTO toDTO(Purchase model) {
         return model == null ? null : new PurchaseDTO(
                 model.purchaseId() == null ? null : model.purchaseId().value(),
+                model.owner().value(),
                 model.receiptId() == null ? null : model.receiptId().value(),
                 model.name(),
                 model.dateTime(),

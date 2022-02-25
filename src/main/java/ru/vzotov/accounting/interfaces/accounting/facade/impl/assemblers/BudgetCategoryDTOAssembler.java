@@ -7,7 +7,7 @@ public class BudgetCategoryDTOAssembler {
 
     public static BudgetCategoryDTO toDTO(BudgetCategory category) {
         return category == null ? null :
-                new BudgetCategoryDTO(category.id().id(), category.name(),
+                new BudgetCategoryDTO(category.id().id(), category.owner().value(), category.name(),
                         ColorAssembler.toDTO(category.color()), category.icon());
     }
 }

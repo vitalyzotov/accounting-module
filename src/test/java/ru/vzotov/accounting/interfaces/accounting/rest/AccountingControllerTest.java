@@ -47,6 +47,8 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @Transactional
 public class AccountingControllerTest extends AbstractControllerTest {
 
+    private static final String PERSON_ID = "c483a33e-5e84-4d4c-84fe-4edcb5cc0fd2";
+
     @MockBean
     private ReceiptRepositoryNalogru2 nalogru;
 
@@ -84,7 +86,8 @@ public class AccountingControllerTest extends AbstractControllerTest {
                 ),
                 "NEW",
                 1L,
-                OffsetDateTime.of(LocalDateTime.of(2018, JUNE, 16, 14, 0, 0), ZoneOffset.UTC)
+                OffsetDateTime.of(LocalDateTime.of(2018, JUNE, 16, 14, 0, 0), ZoneOffset.UTC),
+                PERSON_ID
         );
         assertThat(response.getBody())
                 .usingRecursiveFieldByFieldElementComparator()

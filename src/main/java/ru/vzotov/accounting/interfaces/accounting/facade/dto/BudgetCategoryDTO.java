@@ -2,6 +2,7 @@ package ru.vzotov.accounting.interfaces.accounting.facade.dto;
 
 public class BudgetCategoryDTO {
     private long id;
+    private String owner;
     private String name;
     private String color;
     private String icon;
@@ -9,19 +10,28 @@ public class BudgetCategoryDTO {
     public BudgetCategoryDTO() {
     }
 
-    public BudgetCategoryDTO(long id, String name) {
-        this(id, name, null, null);
+    public BudgetCategoryDTO(long id, String owner, String name) {
+        this(id, owner, name, null, null);
     }
 
-    public BudgetCategoryDTO(long id, String name, String color) {
-        this(id, name, color, null);
+    public BudgetCategoryDTO(long id, String owner, String name, String color) {
+        this(id, owner, name, color, null);
     }
 
-    public BudgetCategoryDTO(long id, String name, String color, String icon) {
+    public BudgetCategoryDTO(long id, String owner, String name, String color, String icon) {
         this.id = id;
+        this.owner = owner;
         this.name = name;
         this.color = color;
         this.icon = icon;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public long getId() {

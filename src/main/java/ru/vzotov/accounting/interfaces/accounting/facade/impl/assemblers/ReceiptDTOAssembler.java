@@ -12,6 +12,7 @@ public class ReceiptDTOAssembler extends AbstractAssembler<ReceiptDTO, Receipt> 
         if (receipt == null) return null;
         MoneyDTOAssembler moneyDTOAssembler = new MoneyDTOAssembler();
         return new ReceiptDTO(
+                receipt.owner().value(),
                 receipt.receiptId().value(),
                 new FiscalInfoDTOAssembler().toDTO(receipt.fiscalInfo()),
                 receipt.dateTime(),

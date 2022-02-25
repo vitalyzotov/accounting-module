@@ -6,14 +6,24 @@ public class CardDTO {
     private String cardNumber;
     private LocalDate validThru;
     private String issuer;
+    private String owner;
 
     public CardDTO() {
     }
 
-    public CardDTO(String cardNumber, LocalDate validThru, String issuer) {
+    public CardDTO(String cardNumber, String owner, LocalDate validThru, String issuer) {
         this.cardNumber = cardNumber;
+        this.owner = owner;
         this.validThru = validThru;
         this.issuer = issuer;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getCardNumber() {

@@ -9,6 +9,7 @@ import java.util.List;
 
 public final class ReceiptDTO extends ReceiptRef implements Serializable {
 
+    private String owner;
     private FiscalInfoDTO fiscalInfo;
     private LocalDateTime dateTime;
     private Long requestNumber;
@@ -35,7 +36,8 @@ public final class ReceiptDTO extends ReceiptRef implements Serializable {
     public ReceiptDTO() {
     }
 
-    public ReceiptDTO(String receiptId,
+    public ReceiptDTO(String owner,
+                      String receiptId,
                       FiscalInfoDTO fiscalInfo,
                       LocalDateTime dateTime,
                       Long requestNumber,
@@ -56,6 +58,7 @@ public final class ReceiptDTO extends ReceiptRef implements Serializable {
                       Long taxationType,
                       long operationType) {
         super(receiptId);
+        this.owner = owner;
         this.fiscalInfo = fiscalInfo;
         this.dateTime = dateTime;
         this.requestNumber = requestNumber;
@@ -75,6 +78,14 @@ public final class ReceiptDTO extends ReceiptRef implements Serializable {
         this.address = address;
         this.taxationType = taxationType;
         this.operationType = operationType;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public List<ItemDTO> getStornoItems() {

@@ -4,6 +4,7 @@ import java.util.List;
 
 public class BudgetDTO {
     private String budgetId;
+    private String owner;
     private String name;
     private List<BudgetRuleDTO> rules;
     private String locale;
@@ -12,12 +13,21 @@ public class BudgetDTO {
     public BudgetDTO() {
     }
 
-    public BudgetDTO(String budgetId, String name, String locale, String currency, List<BudgetRuleDTO> rules) {
+    public BudgetDTO(String budgetId, String owner, String name, String locale, String currency, List<BudgetRuleDTO> rules) {
         this.budgetId = budgetId;
+        this.owner = owner;
         this.name = name;
         this.rules = rules;
         this.locale = locale;
         this.currency = currency;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getBudgetId() {

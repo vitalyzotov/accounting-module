@@ -8,6 +8,7 @@ public class CardDTOAssembler {
     public static CardDTO toDTO(Card card) {
         return card == null ? null : new CardDTO(
                 card.cardNumber().value(),
+                card.owner().value(),
                 card.validThru().atEndOfMonth(),
                 card.issuer().value()
         );

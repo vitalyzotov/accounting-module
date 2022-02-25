@@ -25,7 +25,8 @@ public class QRCodeDTOAssembler extends AbstractAssembler<QRCodeDTO, QRCode> {
                 assembler.toDTO(code.code()),
                 code.state().name(),
                 code.loadingTryCount(),
-                code.loadedAt()
+                code.loadedAt(),
+                code.owner().value()
         );
     }
 
