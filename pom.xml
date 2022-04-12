@@ -22,7 +22,7 @@
         <slf4j.version>1.7.32</slf4j.version>
         <!-- own modules -->
         <ddd.version>1.4</ddd.version>
-        <banking.model.version>1.55</banking.model.version>
+        <banking.model.version>1.56</banking.model.version>
         <cashreceipt.model.version>1.55</cashreceipt.model.version>
         <purchases.model.version>1.4</purchases.model.version>
         <money.model.version>1.5</money.model.version>
