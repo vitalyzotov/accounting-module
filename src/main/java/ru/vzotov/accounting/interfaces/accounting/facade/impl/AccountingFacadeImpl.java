@@ -3,6 +3,7 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 import org.apache.commons.lang.Validate;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.application.AccountNotFoundException;
@@ -19,6 +20,7 @@ import ru.vzotov.accounting.domain.model.RemainRepository;
 import ru.vzotov.accounting.domain.model.TransactionRepository;
 import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountBindingDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BankDTO;
@@ -40,6 +42,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.Transac
 import ru.vzotov.accounting.interfaces.common.guards.OwnedGuard;
 import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountAliases;
+import ru.vzotov.banking.domain.model.AccountBinding;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.Bank;
 import ru.vzotov.banking.domain.model.BankId;
@@ -64,7 +67,9 @@ import java.time.YearMonth;
 import java.util.Collection;
 import java.util.Currency;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class AccountingFacadeImpl implements AccountingFacade {
@@ -463,9 +468,33 @@ public class AccountingFacadeImpl implements AccountingFacade {
 
     @Override
     @Transactional(value = "accounting-tx")
-    @Secured({"ROLE_USER"})
-    public CardNumber createCard(CardNumber number, YearMonth validThru, BankId issuer) {
-        cardRepository.store(new Card(number, SecurityUtils.getCurrentPerson(), validThru, issuer));
+    @PreAuthorize("hasRole('ROLE_USER') and hasAuthority(#holder.authority())")
+    public CardNumber createCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBindingDTO> accounts) {
+        final Card card = new Card(number, holder, validThru, issuer);
+        Optional.ofNullable(accounts).map(Collection::stream).orElse(Stream.empty())
+                .forEach(b -> card.bindToAccount(
+                        new AccountNumber(b.getAccountNumber()),
+                        b.getFrom(),
+                        b.getTo()
+                ));
+        cardRepository.store(card);
+        return number;
+    }
+
+    @Override
+    @Transactional(value = "accounting-tx")
+    @PreAuthorize("hasRole('ROLE_USER') and hasAuthority(#holder.authority())")
+    public CardNumber modifyCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBindingDTO> accounts) {
+        final Card card = cardRepository.find(number);
+        Validate.notNull(card, "Card not found");
+        Validate.isTrue(card.owner().equals(holder), "Card holder cannot be modified");
+        Validate.isTrue(card.issuer().equals(issuer), "Card issuer cannot be modified");
+        card.setValidThru(validThru);
+        card.unbindAll();
+        accounts.stream()
+                .map(d -> new AccountBinding(new AccountNumber(d.getAccountNumber()), d.getFrom(), d.getTo()))
+                .forEach(b -> card.bindToAccount(b.accountNumber(), b.from(), b.to()));
+        cardRepository.store(card);
         return number;
     }
 

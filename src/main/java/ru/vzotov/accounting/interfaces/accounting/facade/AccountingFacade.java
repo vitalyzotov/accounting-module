@@ -1,6 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
 import ru.vzotov.accounting.application.AccountNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountBindingDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BankDTO;
@@ -16,9 +17,11 @@ import ru.vzotov.banking.domain.model.BankId;
 import ru.vzotov.banking.domain.model.CardNumber;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.OperationType;
+import ru.vzotov.person.domain.model.PersonId;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Collection;
 import java.util.List;
 
 public interface AccountingFacade {
@@ -121,7 +124,9 @@ public interface AccountingFacade {
 
     CardDTO getCard(CardNumber cardNumber);
 
-    CardNumber createCard(CardNumber number, YearMonth validThru, BankId issuer);
+    CardNumber createCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBindingDTO> accounts);
+
+    CardNumber modifyCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBindingDTO> accounts);
 
     CardNumber deleteCard(CardNumber number);
 
