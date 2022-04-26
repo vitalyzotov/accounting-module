@@ -17,12 +17,7 @@ import ru.vzotov.accounting.interfaces.accounting.rest.dto.RemainCreateResponse;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.RemainDeleteResponse;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/accounting/remains")
@@ -38,18 +33,9 @@ public class RemainsController {
     @GetMapping
     public List<RemainDTO> listRemains(@RequestParam(name = "account", required = false) List<String> accounts,
                                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        if (from != null && to != null) {
-            final List<RemainDTO> result = accountingFacade.listRemains(from, to);
-            final Set<String> filter = new HashSet<>(accounts == null ? Collections.emptySet() : accounts);
-            final Stream<RemainDTO> stream = filter.isEmpty() ? result.stream() :
-                    result.stream().filter(dto -> filter.contains(dto.getAccountNumber()));
-            return stream.collect(Collectors.toList());
-        } else {
-            return accounts.stream()
-                    .flatMap(account -> accountingFacade.listRemains(account).stream())
-                    .collect(Collectors.toList());
-        }
+                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                       @RequestParam(required = false, defaultValue = "false") boolean recent) {
+        return accountingFacade.listRemains(accounts, from, to, recent);
     }
 
     @GetMapping("{remainId}")

@@ -12,6 +12,36 @@
         <query>SELECT qr_.* FROM QR_CODE qr_ WHERE qr_.CHECK_ID NOT IN (SELECT dr.RECEIPT_ID FROM DEAL_RECEIPTS dr)</query>
     </named-native-query>
 
+    <named-native-query name="recent-remains" result-set-mapping="RemainMapping" result-class="ru.vzotov.accounting.domain.model.Remain">
+        <!--
+        Query parameters:
+        1 - list of account owners
+        2 - list of accounts
+        3 - from date (nullable)
+        4 - to date (nullable)
+        5 - (most recent / all) remains flag. True = most recent records only; False = all records.
+        6 - all accounts flag. True = all accounts; False = specified list of accounts.
+        -->
+        <query>
+            SELECT r.*
+            FROM remain_ r
+            LEFT JOIN remain_ r2 ON r.ACCOUNT_NUMBER=r2.ACCOUNT_NUMBER AND r.DATE&lt;r2.DATE
+                AND (?3 IS NULL OR r2.DATE &gt;= ?3)
+                AND (?4 IS NULL OR r2.DATE &lt;= ?4)
+                AND ?5
+            LEFT JOIN account_ a ON a.ACCOUNT_NUMBER=r.ACCOUNT_NUMBER
+            WHERE r2.id IS NULL
+            AND a.ACCOUNT_OWNER IN (?1)
+            AND (?6 OR r.ACCOUNT_NUMBER in (?2))
+            AND (?3 IS NULL OR r.DATE &gt;= ?3)
+            AND (?4 IS NULL OR r.DATE &lt;= ?4)
+        </query>
+    </named-native-query>
+
+    <sql-result-set-mapping name="RemainMapping">
+        <entity-result entity-class="ru.vzotov.accounting.domain.model.Remain"/>
+    </sql-result-set-mapping>
+
     <sql-result-set-mapping name="OperationMapping">
         <entity-result entity-class="ru.vzotov.banking.domain.model.Operation"/>
     </sql-result-set-mapping>

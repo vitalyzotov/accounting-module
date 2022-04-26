@@ -1,19 +1,19 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import ru.vzotov.accounting.config.DatasourceConfig;
-import ru.vzotov.accounting.domain.model.RemainRepository;
+import org.assertj.core.data.Index;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.vzotov.accounting.config.DatasourceConfig;
 import ru.vzotov.accounting.domain.model.Remain;
 import ru.vzotov.accounting.domain.model.RemainId;
+import ru.vzotov.accounting.domain.model.RemainRepository;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.person.domain.model.PersonId;
@@ -44,6 +44,33 @@ public class RemainRepositoryJpaTest {
     public void testConstruct() {
         Remain remain = new Remain(new AccountNumber("40817810108290123456"), LocalDate.of(2020, Month.FEBRUARY, 1), Money.kopecks(20000));
         remainRepository.store(remain);
+    }
+
+    @Test
+    public void testFind() {
+        List<Remain> remains = remainRepository.find(
+                Collections.singleton(new PersonId(PERSON_ID)),
+                Collections.singleton(new AccountNumber("40817810418370123456")),
+                null,
+                null,
+                true
+        );
+        assertThat(remains)
+                .hasSize(1)
+                .satisfies(
+                        r -> assertThat(r.date()).isEqualTo("2019-08-10"),
+                        Index.atIndex(0)
+                );
+
+        remains = remainRepository.find(
+                Collections.singleton(new PersonId(PERSON_ID)),
+                Collections.singleton(new AccountNumber("40817810418370123456")),
+                LocalDate.of(2019, Month.AUGUST, 1),
+                LocalDate.of(2019, Month.AUGUST, 10),
+                false
+        );
+        assertThat(remains)
+                .hasSize(2);
     }
 
     @Test

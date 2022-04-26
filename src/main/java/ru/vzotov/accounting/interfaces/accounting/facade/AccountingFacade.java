@@ -42,6 +42,17 @@ public interface AccountingFacade {
     // Remains
     //
 
+    /**
+     * Finds remains for given accounts
+     *
+     * @param accounts list of accounts. Use {@code null} to find remains for all accounts.
+     * @param from start date
+     * @param to end date
+     * @param recentOnly whether to find only most recent remain
+     * @return remains for given criteria
+     */
+    List<RemainDTO> listRemains(Collection<String> accounts, LocalDate from, LocalDate to, boolean recentOnly);
+
     List<RemainDTO> listRemains(LocalDate from, LocalDate to);
 
     List<RemainDTO> listRemains(String accountNumber);

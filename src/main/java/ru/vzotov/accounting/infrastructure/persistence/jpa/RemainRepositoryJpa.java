@@ -1,10 +1,10 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import ru.vzotov.accounting.domain.model.RemainRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vzotov.accounting.domain.model.Remain;
 import ru.vzotov.accounting.domain.model.RemainId;
+import ru.vzotov.accounting.domain.model.RemainRepository;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.person.domain.model.PersonId;
 
@@ -13,6 +13,7 @@ import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RemainRepositoryJpa extends JpaRepository implements RemainRepository {
 
@@ -36,9 +37,24 @@ public class RemainRepositoryJpa extends JpaRepository implements RemainReposito
     }
 
     @Override
+    public List<Remain> find(Collection<PersonId> owners, Collection<AccountNumber> accounts, LocalDate fromDate, LocalDate toDate, boolean recentOnly) {
+        return em.createNamedQuery("recent-remains", Remain.class)
+                .setParameter(1, owners.stream().map(PersonId::value).collect(Collectors.toList()))
+                .setParameter(2, accounts == null ? null : accounts.stream().map(AccountNumber::number).collect(Collectors.toList()))
+                .setParameter(3, fromDate)
+                .setParameter(4, toDate)
+                .setParameter(5, recentOnly)
+                .setParameter(6, accounts == null)
+                .getResultList();
+    }
+
+    @Override
     public List<Remain> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate) {
-        return em.createQuery("select r from Remain r, Account a where a.owner in (:owners) and r.account=a.accountNumber and r.date >= :dateFrom and r.date <= :dateTo"
-                        , Remain.class)
+        return em.createQuery(
+                        "select r from Remain r, Account a where a.owner in (:owners) " +
+                                "and r.account=a.accountNumber and r.date >= :dateFrom and r.date <= :dateTo",
+                        Remain.class
+                )
                 .setParameter("owners", owners)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)

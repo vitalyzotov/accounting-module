@@ -171,6 +171,24 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
+    public List<RemainDTO> listRemains(Collection<String> accounts, LocalDate from, LocalDate to, boolean recentOnly) {
+        return remainRepository.find(
+                        SecurityUtils.getAuthorizedPersons(),
+                        accounts == null ? null : accounts.stream()
+                                .map(AccountNumber::new)
+                                .peek(number -> ownedGuard.accessing(accountRepository.find(number)))
+                                .collect(Collectors.toList()),
+                        from, to,
+                        recentOnly
+                )
+                .stream()
+                .map(RemainDTOAssembler::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(value = "accounting-tx", readOnly = true)
+    @Secured({"ROLE_USER"})
     public List<RemainDTO> listRemains(LocalDate from, LocalDate to) {
         return remainRepository.findByDate(SecurityUtils.getAuthorizedPersons(), from, to)
                 .stream()
