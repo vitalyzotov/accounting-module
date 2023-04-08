@@ -13,6 +13,8 @@ public class BudgetPlanDTO {
 
     private Long categoryId;
 
+    private String purchaseCategoryId;
+
     private MoneyDTO value;
 
     private String ruleId;
@@ -22,15 +24,24 @@ public class BudgetPlanDTO {
     public BudgetPlanDTO() {
     }
 
-    public BudgetPlanDTO(String itemId, String direction, String sourceAccount, String targetAccount, Long categoryId, MoneyDTO value, String ruleId, LocalDate date) {
+    public BudgetPlanDTO(String itemId, String direction, String sourceAccount, String targetAccount, Long categoryId, String purchaseCategoryId, MoneyDTO value, String ruleId, LocalDate date) {
         this.itemId = itemId;
         this.direction = direction;
         this.sourceAccount = sourceAccount;
         this.targetAccount = targetAccount;
         this.categoryId = categoryId;
+        this.purchaseCategoryId = purchaseCategoryId;
         this.value = value;
         this.ruleId = ruleId;
         this.date = date;
+    }
+
+    public String getPurchaseCategoryId() {
+        return purchaseCategoryId;
+    }
+
+    public void setPurchaseCategoryId(String purchaseCategoryId) {
+        this.purchaseCategoryId = purchaseCategoryId;
     }
 
     public String getItemId() {

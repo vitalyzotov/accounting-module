@@ -1,0 +1,33 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+
+    <changeSet id="acc-81" author="vzotov">
+        <addColumn tableName="BUDGET_RULE">
+            <column name="PCATEGORY_ID" type="VARCHAR(255)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="BUDGET_RULE" baseColumnNames="PCATEGORY_ID"
+                                 constraintName="FK_BRULE_PCATEGORY"
+                                 referencedTableName="PURCHASE_CATEGORY" referencedColumnNames="CATEGORY_ID"
+                                 onDelete="RESTRICT" onUpdate="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="acc-82" author="vzotov">
+        <addColumn tableName="BUDGET_PLAN">
+            <column name="PCATEGORY_ID" type="VARCHAR(255)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="BUDGET_PLAN" baseColumnNames="PCATEGORY_ID"
+                                 constraintName="FK_BPLAN_PCATEGORY"
+                                 referencedTableName="PURCHASE_CATEGORY" referencedColumnNames="CATEGORY_ID"
+                                 onDelete="RESTRICT" onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

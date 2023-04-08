@@ -1,9 +1,22 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
+import org.apache.commons.lang.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.vzotov.accounting.domain.model.Budget;
+import ru.vzotov.accounting.domain.model.BudgetDirection;
+import ru.vzotov.accounting.domain.model.BudgetId;
+import ru.vzotov.accounting.domain.model.BudgetPlan;
+import ru.vzotov.accounting.domain.model.BudgetPlanId;
 import ru.vzotov.accounting.domain.model.BudgetPlanRepository;
 import ru.vzotov.accounting.domain.model.BudgetRepository;
+import ru.vzotov.accounting.domain.model.BudgetRule;
+import ru.vzotov.accounting.domain.model.BudgetRuleId;
+import ru.vzotov.accounting.domain.model.BudgetRuleType;
+import ru.vzotov.accounting.domain.model.Calculation;
 import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.facade.BudgetFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetDTO;
@@ -15,22 +28,10 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetPlanDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetRuleDTOAssembler;
-import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.vzotov.accounting.domain.model.Budget;
-import ru.vzotov.accounting.domain.model.BudgetDirection;
-import ru.vzotov.accounting.domain.model.BudgetId;
-import ru.vzotov.accounting.domain.model.BudgetPlan;
-import ru.vzotov.accounting.domain.model.BudgetPlanId;
-import ru.vzotov.accounting.domain.model.BudgetRule;
-import ru.vzotov.accounting.domain.model.BudgetRuleId;
-import ru.vzotov.accounting.domain.model.BudgetRuleType;
-import ru.vzotov.accounting.domain.model.Calculation;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.calendar.domain.model.Recurrence;
+import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.domain.model.Money;
 
 import java.time.LocalDate;
@@ -198,7 +199,9 @@ public class BudgetFacadeImpl implements BudgetFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public BudgetPlanDTO createPlan(String direction, String sourceAccount, String targetAccount, Long categoryId, MoneyDTO value, String ruleId, LocalDate date) {
+    public BudgetPlanDTO createPlan(String direction, String sourceAccount, String targetAccount,
+                                    Long categoryId, String purchaseCategoryId,
+                                    MoneyDTO value, String ruleId, LocalDate date) {
         Validate.notNull(ruleId);
 
         final Budget budget = findSecurely(new BudgetRuleId(ruleId));
@@ -212,7 +215,8 @@ public class BudgetFacadeImpl implements BudgetFacade {
                 value == null ? null : Money.ofRaw(value.getAmount(), Currency.getInstance(value.getCurrency())),
                 sourceAccount == null ? null : new AccountNumber(sourceAccount),
                 targetAccount == null ? null : new AccountNumber(targetAccount),
-                categoryId == null ? null : new BudgetCategoryId(categoryId)
+                categoryId == null ? null : new BudgetCategoryId(categoryId),
+                purchaseCategoryId == null ? null : new PurchaseCategoryId(purchaseCategoryId)
         );
         budgetPlanRepository.store(item);
         return BudgetPlanDTOAssembler.toDTO(item);
@@ -221,7 +225,9 @@ public class BudgetFacadeImpl implements BudgetFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public BudgetPlanDTO modifyPlan(String itemId, String direction, String sourceAccount, String targetAccount, Long categoryId, MoneyDTO value, String ruleId, LocalDate date) throws BudgetPlanNotFoundException {
+    public BudgetPlanDTO modifyPlan(String itemId, String direction, String sourceAccount, String targetAccount,
+                                    Long categoryId, String purchaseCategoryId,
+                                    MoneyDTO value, String ruleId, LocalDate date) throws BudgetPlanNotFoundException {
         final Budget ruleBudget = findSecurely(new BudgetRuleId(ruleId));
         Validate.notNull(ruleBudget, "Budget for rule not found");
 
@@ -231,13 +237,16 @@ public class BudgetFacadeImpl implements BudgetFacade {
         final Budget itemBudget = findSecurely(item.rule().ruleId());
         Validate.notNull(itemBudget, "Budget for plan not found");
 
-        item = item.withData(budgetRepository.findRule(new BudgetRuleId(ruleId)),
+        item = item.withData(
+                budgetRepository.findRule(new BudgetRuleId(ruleId)),
                 date,
                 BudgetDirection.of(direction),
                 value == null ? null : Money.ofRaw(value.getAmount(), Currency.getInstance(value.getCurrency())),
                 sourceAccount == null ? null : new AccountNumber(sourceAccount),
                 targetAccount == null ? null : new AccountNumber(targetAccount),
-                categoryId == null ? null : new BudgetCategoryId(categoryId));
+                categoryId == null ? null : new BudgetCategoryId(categoryId),
+                purchaseCategoryId == null ? null : new PurchaseCategoryId(purchaseCategoryId)
+        );
         budgetPlanRepository.store(item);
         return BudgetPlanDTOAssembler.toDTO(item);
     }
@@ -261,6 +270,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
                 rule.getRuleId() == null ? null : new BudgetRuleId(rule.getRuleId()),
                 BudgetRuleType.of(rule.getRuleType().charAt(0)),
                 rule.getCategoryId() == null ? null : new BudgetCategoryId(rule.getCategoryId()),
+                rule.getPurchaseCategoryId() == null ? null : new PurchaseCategoryId(rule.getPurchaseCategoryId()),
                 rule.getSourceAccount() == null ? null : new AccountNumber(rule.getSourceAccount()),
                 rule.getTargetAccount() == null ? null : new AccountNumber(rule.getTargetAccount()),
                 rule.getRecurrence() == null ? null : Recurrence.fromString(rule.getRecurrence()),

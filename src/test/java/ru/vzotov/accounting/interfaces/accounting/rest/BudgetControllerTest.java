@@ -46,6 +46,7 @@ public class BudgetControllerTest extends AbstractControllerTest {
                         "+", "Заработная плата 2",
                         null,
                         null,
+                        null,
                         "40817810108290123456",
                         "M2020-01-01(1)[8]",
                         new MoneyDTO(2900000, "RUR"),

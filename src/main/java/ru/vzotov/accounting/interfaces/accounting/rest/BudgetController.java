@@ -1,13 +1,5 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.BudgetFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetPlanDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetPlanNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetRuleDTO;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetCreateRequest;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetModifyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vzotov.accounting.domain.model.BudgetId;
 import ru.vzotov.accounting.domain.model.BudgetPlanId;
+import ru.vzotov.accounting.interfaces.accounting.facade.BudgetFacade;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetPlanDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetPlanNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetRuleDTO;
+import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetCreateRequest;
+import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetModifyRequest;
 
 import java.util.List;
 
@@ -93,6 +93,7 @@ public class BudgetController {
                 item.getSourceAccount(),
                 item.getTargetAccount(),
                 item.getCategoryId(),
+                item.getPurchaseCategoryId(),
                 item.getValue(),
                 item.getRuleId(),
                 item.getDate()
@@ -111,8 +112,17 @@ public class BudgetController {
     @PutMapping("{budgetId}/plan/{itemId}")
     public BudgetPlanDTO modifyPlan(@PathVariable String budgetId, @PathVariable String itemId,
                                     @RequestBody BudgetPlanDTO item) throws BudgetPlanNotFoundException {
-        return budgetFacade.modifyPlan(itemId, item.getDirection(), item.getSourceAccount(), item.getTargetAccount(),
-                item.getCategoryId(), item.getValue(), item.getRuleId(), item.getDate());
+        return budgetFacade.modifyPlan(
+                itemId,
+                item.getDirection(),
+                item.getSourceAccount(),
+                item.getTargetAccount(),
+                item.getCategoryId(),
+                item.getPurchaseCategoryId(),
+                item.getValue(),
+                item.getRuleId(),
+                item.getDate()
+        );
     }
 
     /**

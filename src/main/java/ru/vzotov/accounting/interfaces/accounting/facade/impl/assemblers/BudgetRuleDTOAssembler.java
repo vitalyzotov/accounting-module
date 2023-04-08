@@ -1,7 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetRuleDTO;
 import ru.vzotov.accounting.domain.model.BudgetRule;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetRuleDTO;
 
 public class BudgetRuleDTOAssembler {
 
@@ -11,6 +11,7 @@ public class BudgetRuleDTOAssembler {
                 String.valueOf(rule.type().symbol()),
                 rule.name(),
                 rule.categoryId() == null ? null : rule.categoryId().id(),
+                rule.purchaseCategoryId() == null ? null : rule.purchaseCategoryId().value(),
                 rule.sourceAccount() == null ? null : rule.sourceAccount().number(),
                 rule.targetAccount() == null ? null : rule.targetAccount().number(),
                 rule.recurrence() == null ? null : rule.recurrence().toString(),

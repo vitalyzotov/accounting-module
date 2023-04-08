@@ -36,11 +36,13 @@ public interface BudgetFacade {
     BudgetPlanDTO getPlan(BudgetPlanId itemId);
 
     BudgetPlanDTO createPlan(
-            String direction, String sourceAccount, String targetAccount, Long categoryId, MoneyDTO value, String ruleId, LocalDate date
+            String direction, String sourceAccount, String targetAccount,
+            Long categoryId, String purchaseCategoryId, MoneyDTO value, String ruleId, LocalDate date
     );
 
     BudgetPlanDTO modifyPlan(
-            String itemId, String direction, String sourceAccount, String targetAccount, Long categoryId, MoneyDTO value, String ruleId, LocalDate date
+            String itemId, String direction, String sourceAccount, String targetAccount,
+            Long categoryId, String purchaseCategoryId, MoneyDTO value, String ruleId, LocalDate date
     ) throws BudgetPlanNotFoundException;
 
     BudgetPlanDTO deletePlan(BudgetPlanId itemId);

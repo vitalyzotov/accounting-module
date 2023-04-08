@@ -254,6 +254,11 @@
                     <column name="CATEGORY_ID"/>
                 </attribute-override>
             </embedded>
+            <embedded name="purchaseCategoryId">
+                <attribute-override name="value">
+                    <column name="PCATEGORY_ID"/>
+                </attribute-override>
+            </embedded>
             <embedded name="sourceAccount">
                 <attribute-override name="number">
                     <column name="SOURCE_ACCOUNT" nullable="true"/>
@@ -305,6 +310,11 @@
             <embedded name="category">
                 <attribute-override name="id">
                     <column name="CATEGORY_ID" nullable="true"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="purchaseCategory">
+                <attribute-override name="value">
+                    <column name="PCATEGORY_ID"/>
                 </attribute-override>
             </embedded>
             <embedded name="value"/>

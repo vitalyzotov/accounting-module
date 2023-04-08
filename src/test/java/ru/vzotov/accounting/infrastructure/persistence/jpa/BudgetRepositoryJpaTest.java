@@ -57,6 +57,7 @@ public class BudgetRepositoryJpaTest {
                 BudgetRuleType.INCOME,
                 null,
                 null,
+                null,
                 workAccount,
                 new Recurrence(start, null, RecurrenceUnit.MONTHLY, 1, 7),
                 "Заработная плата",
@@ -69,6 +70,7 @@ public class BudgetRepositoryJpaTest {
                 BudgetRuleType.INCOME,
                 null,
                 null,
+                null,
                 workAccount,
                 new Recurrence(start, null, RecurrenceUnit.MONTHLY, 1, 22),
                 "Аванс",
@@ -79,6 +81,7 @@ public class BudgetRepositoryJpaTest {
         rules.add(new BudgetRule(
                 BudgetRuleId.nextId(),
                 BudgetRuleType.EXPENSE,
+                null,
                 null,
                 workAccount,
                 null,

@@ -52,7 +52,7 @@ public class BudgetPlanRepositoryJpaTest {
                 Money.rubles(15000),
                 new AccountNumber("40817810108290123456"),
                 null,
-                null
+                null, null
         );
         budgetPlanRepository.store(item);
     }

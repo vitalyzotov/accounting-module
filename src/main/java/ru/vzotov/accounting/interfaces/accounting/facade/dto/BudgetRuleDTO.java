@@ -5,6 +5,7 @@ public class BudgetRuleDTO {
     private String ruleType;
     private String name;
     private Long categoryId;
+    private String purchaseCategoryId;
     private String sourceAccount;
     private String targetAccount;
     private String recurrence;
@@ -15,11 +16,12 @@ public class BudgetRuleDTO {
     public BudgetRuleDTO() {
     }
 
-    public BudgetRuleDTO(String ruleId, String ruleType, String name, Long categoryId, String sourceAccount, String targetAccount, String recurrence, MoneyDTO value, String calculation, Boolean enabled) {
+    public BudgetRuleDTO(String ruleId, String ruleType, String name, Long categoryId, String purchaseCategoryId, String sourceAccount, String targetAccount, String recurrence, MoneyDTO value, String calculation, Boolean enabled) {
         this.ruleId = ruleId;
         this.ruleType = ruleType;
         this.name = name;
         this.categoryId = categoryId;
+        this.purchaseCategoryId = purchaseCategoryId;
         this.sourceAccount = sourceAccount;
         this.targetAccount = targetAccount;
         this.recurrence = recurrence;
@@ -58,6 +60,14 @@ public class BudgetRuleDTO {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getPurchaseCategoryId() {
+        return purchaseCategoryId;
+    }
+
+    public void setPurchaseCategoryId(String purchaseCategoryId) {
+        this.purchaseCategoryId = purchaseCategoryId;
     }
 
     public String getRuleType() {
