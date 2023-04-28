@@ -11,10 +11,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>2.5.6</spring.boot.version>
-        <spring.version>5.3.12</spring.version>
+        <spring.boot.version>2.5.14</spring.boot.version>
+        <spring.version>5.3.27</spring.version>
         <java.version>1.8</java.version>
-        <jackson.version>2.12.5</jackson.version>
+        <jackson.version>2.12.7</jackson.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-io.version>2.11.0</commons-io.version>
         <junit.version>4.13.1</junit.version>
@@ -22,11 +22,11 @@
         <slf4j.version>1.7.32</slf4j.version>
         <!-- own modules -->
         <ddd.version>1.4</ddd.version>
-        <banking.model.version>1.57</banking.model.version>
-        <cashreceipt.model.version>1.55</cashreceipt.model.version>
-        <purchases.model.version>1.4</purchases.model.version>
-        <money.model.version>1.5</money.model.version>
-        <accounting.model.version>1.10-SNAPSHOT</accounting.model.version>
+        <money.model.version>1.6</money.model.version>
+        <banking.model.version>1.58</banking.model.version>
+        <cashreceipt.model.version>1.56</cashreceipt.model.version>
+        <purchases.model.version>1.5</purchases.model.version>
+        <accounting.model.version>1.10</accounting.model.version>
     </properties>
 
     <dependencies>
