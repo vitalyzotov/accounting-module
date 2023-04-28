@@ -33,7 +33,7 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
     @Override
     public Receipt findByQRCodeData(QRCodeData data) {
         try {
-            return em.createQuery("from Receipt where dateTime = :dateTime" +
+            return em.createQuery("from Receipt where TIMESTAMPDIFF(MINUTE, dateTime, :dateTime) = 0" +
                             " AND products.totalSum = :totalSum" +
                             " AND fiscalInfo.fiscalDriveNumber = :fiscalDriveNumber" +
                             " AND fiscalInfo.fiscalDocumentNumber = :fiscalDocumentNumber" +

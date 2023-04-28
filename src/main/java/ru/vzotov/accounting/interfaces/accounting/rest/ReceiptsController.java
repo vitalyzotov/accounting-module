@@ -44,18 +44,21 @@ public class ReceiptsController {
     }
 
     @PostMapping("/accounting/receipts/")
-    public ReceiptRegistrationResponse registerReceipt(@RequestBody ReceiptRegistrationRequest request) throws ReceiptNotFoundException, IOException {
+    public ReceiptRegistrationResponse registerReceipt(@RequestBody ReceiptRegistrationRequest request)
+            throws ReceiptNotFoundException, IOException {
         final ReceiptId qrId = receiptRegistrationService.register(new QRCodeData(request.getQrcode()));
         return new ReceiptRegistrationResponse(qrId.value());
     }
 
     @GetMapping("/accounting/receipts/")
-    public GetReceiptsResponse getReceipts(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    public GetReceiptsResponse getReceipts(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         return new GetReceiptsResponse(receiptsFacade.listAllReceipts(from, to));
     }
 
     @GetMapping(value = "/accounting/qr/")
-    public List<QRCodeDTO> getCodes(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    public List<QRCodeDTO> getCodes(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         return receiptsFacade.listAllCodes(from, to);
     }
 
@@ -65,30 +68,37 @@ public class ReceiptsController {
     }
 
     @GetMapping("/accounting/receipts/{fiscalSign}")
-    public GetReceiptResponse getReceipt(@PathVariable String fiscalSign, @RequestParam("t") String date,
+    public GetReceiptResponse getReceipt(@PathVariable String fiscalSign,
+                                         @RequestParam("t") String date,
                                          @RequestParam("s") String sum,
                                          @RequestParam("fn") String fiscalDriveNumber,
                                          @RequestParam("i") String fiscalDocumentNumber,
                                          @RequestParam("n") String operationType) throws ReceiptNotFoundException {
-        final String queryString = getQrString(fiscalSign, date, sum, fiscalDriveNumber, fiscalDocumentNumber, operationType);
-        final ReceiptDTO receipt = receiptsFacade.getReceipt(queryString);
+        final String query = getQrString(fiscalSign, date, sum, fiscalDriveNumber, fiscalDocumentNumber, operationType);
+        final ReceiptDTO receipt = receiptsFacade.getReceipt(query);
         if (receipt == null) throw new ReceiptNotFoundException();
         return new GetReceiptResponse(receipt);
     }
 
     @PutMapping("/accounting/receipts/{fiscalSign}")
-    public GetReceiptResponse loadReceiptDetails(@PathVariable String fiscalSign, @RequestParam("t") String date,
+    public GetReceiptResponse loadReceiptDetails(@PathVariable String fiscalSign,
+                                                 @RequestParam("t") String date,
                                                  @RequestParam("s") String sum,
                                                  @RequestParam("fn") String fiscalDriveNumber,
                                                  @RequestParam("i") String fiscalDocumentNumber,
                                                  @RequestParam("n") String operationType) throws ReceiptNotFoundException {
-        final String queryString = getQrString(fiscalSign, date, sum, fiscalDriveNumber, fiscalDocumentNumber, operationType);
-        final ReceiptDTO receipt = receiptsFacade.loadReceiptDetails(new QRCodeData(queryString));
+        final String query = getQrString(fiscalSign, date, sum, fiscalDriveNumber, fiscalDocumentNumber, operationType);
+        final ReceiptDTO receipt = receiptsFacade.loadReceiptDetails(new QRCodeData(query));
         if (receipt == null) throw new ReceiptNotFoundException();
         return new GetReceiptResponse(receipt);
     }
 
-    private String getQrString(String fiscalSign, String date, String sum, String fiscalDriveNumber, String fiscalDocumentNumber, String operationType) {
+    private String getQrString(String fiscalSign,
+                               String date,
+                               String sum,
+                               String fiscalDriveNumber,
+                               String fiscalDocumentNumber,
+                               String operationType) {
         final Map<String, String> query = new HashMap<>();
         query.put("t", date);
         query.put("s", sum);

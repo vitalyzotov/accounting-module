@@ -83,4 +83,11 @@ public class ReceiptRepositoryJpaTest {
         log.info("Receipt loaded {}", receipt);
         Assert.assertNotNull(receipt);
     }
+
+    @Test
+    public void findByQRCodeDataIgnoreSeconds() {
+        Receipt receipt = receiptRepository.findByQRCodeData(new QRCodeData("t=20210615T131415&s=150.00&fn=1234567891234567&i=15141&fp=1234567891&n=1"));
+        Assert.assertNotNull(receipt);
+    }
+
 }
