@@ -1,17 +1,16 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import ru.vzotov.accounting.config.DatasourceConfig;
-import ru.vzotov.accounting.domain.model.WorkCalendarRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.vzotov.accounting.config.DatasourceConfig;
+import ru.vzotov.accounting.domain.model.WorkCalendarRepository;
 import ru.vzotov.calendar.domain.model.WorkCalendar;
 import ru.vzotov.calendar.domain.model.WorkCalendars;
 
@@ -49,4 +48,10 @@ public class WorkCalendarRepositoryJpaTest {
                 .containsAll(WorkCalendars.CALENDAR_2020.specialDays());
     }
 
+    @Test
+    public void testFindEmpty() {
+        WorkCalendar calendar = workCalendarRepository.find(WorkCalendars.RUSSIA, LocalDate.of(2035, Month.FEBRUARY, 1), LocalDate.of(2035, Month.AUGUST, 1));
+        assertThat(calendar.specialDays())
+                .isNotNull();
+    }
 }
