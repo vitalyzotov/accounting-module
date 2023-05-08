@@ -8,11 +8,11 @@ import java.time.ZoneOffset;
 public class OffsetDateTimeAttributeConverter implements AttributeConverter<OffsetDateTime, Timestamp> {
     @Override
     public Timestamp convertToDatabaseColumn(OffsetDateTime offsetDateTime) {
-        return (offsetDateTime == null ? null : Timestamp.valueOf(offsetDateTime.toLocalDateTime()));
+        return (offsetDateTime == null ? null : Timestamp.from(offsetDateTime.toInstant()));
     }
 
     @Override
     public OffsetDateTime convertToEntityAttribute(Timestamp timestamp) {
-        return timestamp == null ? null : OffsetDateTime.of(timestamp.toLocalDateTime(), ZoneOffset.UTC);
+        return timestamp == null ? null : OffsetDateTime.ofInstant(timestamp.toInstant(), ZoneOffset.UTC);
     }
 }

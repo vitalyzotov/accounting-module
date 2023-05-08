@@ -7,21 +7,21 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.person.domain.model.PersonId;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.vzotov.accounting.test.DateUtils.inCurrentZone;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -61,9 +61,7 @@ public class QRCodeRepositoryJpaTest {
     @Test
     public void loadedAt() {
         QRCode code = repository.find(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"));
-        assertThat(code.loadedAt()).isEqualTo(OffsetDateTime.of(
-                LocalDateTime.of(2018, Month.JUNE, 16, 14, 0, 0), ZoneOffset.UTC
-        ));
+        assertThat(code.loadedAt()).isEqualTo(inCurrentZone(LocalDateTime.of(2018, Month.JUNE, 16, 14, 0, 0)));
 
         code.tryLoading();
         OffsetDateTime newTimestamp = code.loadedAt();

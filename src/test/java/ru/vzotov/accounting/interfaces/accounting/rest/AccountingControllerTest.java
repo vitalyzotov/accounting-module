@@ -1,6 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import org.assertj.core.api.Assertions;
+import org.assertj.core.internal.OffsetDateTimeByInstantComparator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -40,6 +40,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
+import static ru.vzotov.accounting.test.DateUtils.inCurrentZone;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -86,11 +87,12 @@ public class AccountingControllerTest extends AbstractControllerTest {
                 ),
                 "NEW",
                 1L,
-                OffsetDateTime.of(LocalDateTime.of(2018, JUNE, 16, 14, 0, 0), ZoneOffset.UTC),
+                inCurrentZone(LocalDateTime.of(2018, JUNE, 16, 14, 0, 0)),
                 PERSON_ID
         );
         assertThat(response.getBody())
                 .usingRecursiveFieldByFieldElementComparator()
+                .usingComparatorForType(OffsetDateTimeByInstantComparator.getInstance(), OffsetDateTime.class)
                 .contains(expected);
     }
 
