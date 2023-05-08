@@ -37,6 +37,8 @@
         <loadData tableName="CHECK_ITEM" file="receipt_item.csv" relativeToChangelogFile="true"/>
         <loadData tableName="PURCHASE_CATEGORY" file="purchase_category.csv" relativeToChangelogFile="true"/>
         <loadData tableName="PURCHASE_" file="purchase_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="CONTACT_" file="contact_.csv" relativeToChangelogFile="true"/>
+        <loadData tableName="CONTACT_DATA" file="contact_data.csv" relativeToChangelogFile="true"/>
     </changeSet>
 
     <changeSet id="test9" author="vzotov">

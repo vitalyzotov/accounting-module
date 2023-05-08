@@ -1,0 +1,76 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+
+    <changeSet id="acc-83" author="vzotov">
+        <createTable tableName="CONTACT_">
+            <column name="ID" type="BIGINT(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CONTACT_UID" type="VARCHAR(64)" remarks="Идентификатор">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="OWNER" type="VARCHAR(255)" value="f3a9fa7e-36de-4a9f-b471-8369269aab36">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FIRST_NAME" type="VARCHAR(255)" remarks="Имя">
+                <constraints nullable="true"/>
+            </column>
+            <column name="MIDDLE_NAME" type="VARCHAR(255)" remarks="Отчество">
+                <constraints nullable="true"/>
+            </column>
+            <column name="LAST_NAME" type="VARCHAR(255)" remarks="Фамилия">
+                <constraints nullable="true"/>
+            </column>
+            <column name="DISPLAY_NAME" type="VARCHAR(255)" remarks="Отображаемое имя">
+                <constraints nullable="true"/>
+            </column>
+            <column name="VERSION" type="BIGINT(20)" remarks="Версия">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATED" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="CONTACT_" indexName="IX_CONTACT_OWNER">
+            <column name="OWNER"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableName="CONTACT_" baseColumnNames="OWNER"
+                                 constraintName="FK_CONTACT_OWNER"
+                                 referencedTableName="PERSON_" referencedColumnNames="PERSON_UID" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="acc-84" author="vzotov">
+        <createTable tableName="CONTACT_DATA">
+            <column name="ID" type="BIGINT(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CONTACT_ID" type="BIGINT(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MIME_TYPE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE_TYPE" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="CONTACT_DATA" baseColumnNames="CONTACT_ID"
+                                 constraintName="FK_CDATA_CONTACT"
+                                 referencedTableName="CONTACT_" referencedColumnNames="ID" onDelete="CASCADE"/>
+
+    </changeSet>
+
+
+</databaseChangeLog>

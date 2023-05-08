@@ -1,5 +1,8 @@
 package ru.vzotov.accounting.test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -14,10 +17,21 @@ public abstract class AbstractControllerTest {
     @Autowired
     protected TestRestTemplate restTemplate;
 
+    @Autowired
+    protected ObjectMapper mapper;
+
     @Before
     public void setup() {
         // PATCH support
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+    }
+
+    public String toJSON(Object value) {
+        try {
+            return mapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

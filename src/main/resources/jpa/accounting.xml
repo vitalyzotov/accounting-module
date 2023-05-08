@@ -4,15 +4,21 @@
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
 
-    <named-native-query name="operations-without-deals" result-set-mapping="OperationMapping" result-class="ru.vzotov.banking.domain.model.Operation">
-        <query>SELECT op.* FROM OPERATION_ op WHERE NOT EXISTS (SELECT 1 FROM DEAL_OPERATIONS dop WHERE dop.OPERATION_ID=op.ID)</query>
+    <named-native-query name="operations-without-deals" result-set-mapping="OperationMapping"
+                        result-class="ru.vzotov.banking.domain.model.Operation">
+        <query>SELECT op.* FROM OPERATION_ op WHERE NOT EXISTS (SELECT 1 FROM DEAL_OPERATIONS dop WHERE
+            dop.OPERATION_ID=op.ID)
+        </query>
     </named-native-query>
 
-    <named-native-query name="receipts-without-deals" result-set-mapping="ReceiptQRCodeMapping" result-class="ru.vzotov.cashreceipt.domain.model.QRCode">
-        <query>SELECT qr_.* FROM QR_CODE qr_ WHERE qr_.CHECK_ID NOT IN (SELECT dr.RECEIPT_ID FROM DEAL_RECEIPTS dr)</query>
+    <named-native-query name="receipts-without-deals" result-set-mapping="ReceiptQRCodeMapping"
+                        result-class="ru.vzotov.cashreceipt.domain.model.QRCode">
+        <query>SELECT qr_.* FROM QR_CODE qr_ WHERE qr_.CHECK_ID NOT IN (SELECT dr.RECEIPT_ID FROM DEAL_RECEIPTS dr)
+        </query>
     </named-native-query>
 
-    <named-native-query name="recent-remains" result-set-mapping="RemainMapping" result-class="ru.vzotov.accounting.domain.model.Remain">
+    <named-native-query name="recent-remains" result-set-mapping="RemainMapping"
+                        result-class="ru.vzotov.accounting.domain.model.Remain">
         <!--
         Query parameters:
         1 - list of account owners
@@ -26,9 +32,9 @@
             SELECT r.*
             FROM remain_ r
             LEFT JOIN remain_ r2 ON r.ACCOUNT_NUMBER=r2.ACCOUNT_NUMBER AND r.DATE&lt;r2.DATE
-                AND (?3 IS NULL OR r2.DATE &gt;= ?3)
-                AND (?4 IS NULL OR r2.DATE &lt;= ?4)
-                AND ?5
+            AND (?3 IS NULL OR r2.DATE &gt;= ?3)
+            AND (?4 IS NULL OR r2.DATE &lt;= ?4)
+            AND ?5
             LEFT JOIN account_ a ON a.ACCOUNT_NUMBER=r.ACCOUNT_NUMBER
             WHERE r2.id IS NULL
             AND a.ACCOUNT_OWNER IN (?1)
@@ -770,6 +776,80 @@
         </attributes>
     </entity>
 
+    <entity name="Contact" class="ru.vzotov.person.domain.model.Contact" access="FIELD">
+        <table name="CONTACT_"/>
+        <pre-persist method-name="onCreate"/>
+        <pre-update method-name="onUpdate"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+
+            <basic name="firstName">
+                <column name="FIRST_NAME" nullable="true" length="255"/>
+            </basic>
+            <basic name="middleName">
+                <column name="MIDDLE_NAME" nullable="true" length="255"/>
+            </basic>
+            <basic name="lastName">
+                <column name="LAST_NAME" nullable="true" length="255"/>
+            </basic>
+            <basic name="displayName">
+                <column name="DISPLAY_NAME" nullable="true" length="255"/>
+            </basic>
+            <basic name="created">
+                <column name="CREATED" nullable="false"/>
+            </basic>
+            <basic name="updated">
+                <column name="UPDATED" nullable="false"/>
+            </basic>
+
+            <version name="version">
+                <column name="VERSION" nullable="false"/>
+            </version>
+
+            <one-to-many name="data" orphan-removal="true">
+                <join-column name="CONTACT_ID" nullable="false"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="OWNER"/>
+                </attribute-override>
+            </embedded>
+
+            <embedded name="contactId">
+                <attribute-override name="value">
+                    <column name="CONTACT_UID" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded>
+
+        </attributes>
+    </entity>
+
+    <entity name="ContactData" class="ru.vzotov.person.domain.model.ContactData" access="FIELD">
+        <table name="CONTACT_DATA"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="mimeType">
+                <column name="MIME_TYPE" nullable="false"/>
+            </basic>
+            <basic name="value">
+                <column name="VALUE" nullable="false"/>
+            </basic>
+            <basic name="type">
+                <column name="VALUE_TYPE" nullable="true"/>
+            </basic>
+        </attributes>
+    </entity>
+
     <embeddable class="ru.vzotov.cashreceipt.domain.model.QRCodeData" access="FIELD">
         <attributes>
             <basic name="dateTime">
@@ -1142,7 +1222,7 @@
     <embeddable class="ru.vzotov.person.domain.model.PersonId" access="FIELD">
         <attributes>
             <basic name="value">
-                <column name="PERSON_UID" />
+                <column name="PERSON_UID"/>
             </basic>
         </attributes>
     </embeddable>
@@ -1159,6 +1239,14 @@
         <attributes>
             <basic name="value">
                 <column name="DEAL_ID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.person.domain.model.ContactId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="CONTACT_ID" nullable="false" unique="true"/>
             </basic>
         </attributes>
     </embeddable>

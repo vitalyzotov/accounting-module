@@ -28,3 +28,7 @@ hs_err_pid*
 
 # Maven
 /target/
+
+# Test database
+db.mv.db
+db.trace.db

@@ -24,9 +24,10 @@
         <ddd.version>1.4</ddd.version>
         <money.model.version>1.6</money.model.version>
         <banking.model.version>1.58</banking.model.version>
-        <cashreceipt.model.version>1.56</cashreceipt.model.version>
-        <purchases.model.version>1.5</purchases.model.version>
-        <accounting.model.version>1.10</accounting.model.version>
+        <cashreceipt.model.version>1.57-SNAPSHOT</cashreceipt.model.version>
+        <purchases.model.version>1.6-SNAPSHOT</purchases.model.version>
+        <accounting.model.version>1.11-SNAPSHOT</accounting.model.version>
+        <person.model.version>1.1-SNAPSHOT</person.model.version>
     </properties>
 
     <dependencies>
@@ -67,6 +68,12 @@
             <groupId>ru.vzotov</groupId>
             <artifactId>accounting-model</artifactId>
             <version>${accounting.model.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.vzotov</groupId>
+            <artifactId>person-model</artifactId>
+            <version>${person.model.version}</version>
         </dependency>
 
         <!--

@@ -7,6 +7,7 @@ import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
 import ru.vzotov.accounting.domain.model.BudgetRepository;
 import ru.vzotov.accounting.domain.model.CardOperationRepository;
 import ru.vzotov.accounting.domain.model.CardRepository;
+import ru.vzotov.accounting.domain.model.ContactRepository;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.accounting.domain.model.HoldOperationRepository;
 import ru.vzotov.accounting.domain.model.MccDetailsRepository;
@@ -167,6 +168,12 @@ public class JpaConfig {
     @ConditionalOnMissingBean
     public PurchaseCategoryRepository purchaseCategoryRepository(@Qualifier("accounting-emf") EntityManager em) {
         return new PurchaseCategoryRepositoryJpa(em);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ContactRepository contactRepository(@Qualifier("accounting-emf") EntityManager em) {
+        return new ContactRepositoryJpa(em);
     }
 
     @Bean("accounting-emf")
