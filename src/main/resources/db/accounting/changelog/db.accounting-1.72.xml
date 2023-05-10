@@ -1,0 +1,14 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+
+    <changeSet id="acc-85" author="vzotov">
+        <dropForeignKeyConstraint baseTableName="CARD_OPERATION_" constraintName="FK_CARD_OPERATION"/>
+        <addForeignKeyConstraint baseTableName="CARD_OPERATION_" baseColumnNames="ID" constraintName="FK_CARD_OPERATION"
+                                 referencedTableName="OPERATION_"
+                                 referencedColumnNames="ID" onUpdate="CASCADE" onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

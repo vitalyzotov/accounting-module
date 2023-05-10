@@ -43,5 +43,6 @@
     <include file="db.accounting-1.64.xml" relativeToChangelogFile="true"/>
     <include file="db.accounting-1.70.xml" relativeToChangelogFile="true"/>
     <include file="db.accounting-1.71.xml" relativeToChangelogFile="true"/>
+    <include file="db.accounting-1.72.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
