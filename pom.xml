@@ -24,7 +24,7 @@
         <ddd.version>1.4</ddd.version>
         <money.model.version>1.6</money.model.version>
         <banking.model.version>1.59</banking.model.version>
-        <cashreceipt.model.version>1.57</cashreceipt.model.version>
+        <cashreceipt.model.version>1.58</cashreceipt.model.version>
         <purchases.model.version>1.6</purchases.model.version>
         <accounting.model.version>1.11</accounting.model.version>
         <person.model.version>1.1</person.model.version>

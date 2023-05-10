@@ -90,7 +90,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
             return alreadyRegistered.receiptId();
         }
 
-        final QRCode qrCode = new QRCode(qrCodeData, SecurityUtils.getCurrentPerson());
+        final QRCode qrCode = new QRCode(ReceiptId.ofQrCode(qrCodeData), qrCodeData, SecurityUtils.getCurrentPerson());
         qrCodeRepository.store(qrCode);
 
         eventPublisher.publishEvent(new QRCodeCreatedEvent(qrCode.receiptId()));

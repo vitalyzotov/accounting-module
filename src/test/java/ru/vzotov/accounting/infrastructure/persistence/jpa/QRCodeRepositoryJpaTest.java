@@ -19,6 +19,7 @@ import java.time.Month;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.vzotov.accounting.test.DateUtils.inCurrentZone;
@@ -52,6 +53,7 @@ public class QRCodeRepositoryJpaTest {
     @Test
     public void store() {
         QRCode qrCode = new QRCode(
+                new ReceiptId("710ae210-f0d1-450f-920a-1eedbc475f53"),
                 new QRCodeData("t=20190215T145400&s=741.92&fn=9282000100199855&i=493&fp=1237736343&n=1"),
                 PERSON_ID
         );
