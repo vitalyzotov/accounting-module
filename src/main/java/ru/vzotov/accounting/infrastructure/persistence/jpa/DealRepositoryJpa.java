@@ -1,5 +1,6 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import org.apache.commons.lang3.StringUtils;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
@@ -13,6 +14,9 @@ import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.lowerCase;
+import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 public class DealRepositoryJpa extends JpaRepository implements DealRepository {
 
@@ -45,6 +49,30 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
                 .setParameter("owners", owners)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
+                .getResultList();
+    }
+
+    @Override
+    public List<Deal> findByDate(Collection<PersonId> owners, String query, LocalDate fromDate, LocalDate toDate) {
+        //todo: use fulltext search engine
+        return em.createQuery("from Deal d where d.owner in (:owners)" +
+                        " AND (:query IS NULL OR (" +
+                        "    LOCATE(:query, LOWER(d.description))>0" +
+                        " OR LOCATE(:query, LOWER(d.comment))>0"+
+                        " OR EXISTS(SELECT 1 FROM Purchase p WHERE p.purchaseId member of d.purchases AND LOCATE(:query, LOWER(p.name))>0)"+
+                        " OR EXISTS(SELECT 1 FROM Operation o WHERE o.operationId member of d.operations AND LOCATE(:query, LOWER(o.description))>0)"+
+                        " OR EXISTS(SELECT 1 FROM Receipt r WHERE r.receiptId member of d.receipts AND (" +
+                        "        LOCATE(:query, LOWER(r.shiftInfo.operator))>0" +
+                        "     OR LOCATE(:query, LOWER(r.retailPlace.user))>0" +
+                        "     OR LOCATE(:query, LOWER(r.retailPlace.address))>0" +
+                        "   )" +
+                        " )"+
+                        ")) AND d.date >= :dateFrom" +
+                        " AND d.date <= :dateTo", Deal.class)
+                .setParameter("owners", owners)
+                .setParameter("dateFrom", fromDate)
+                .setParameter("dateTo", toDate)
+                .setParameter("query", lowerCase(trimToNull(query)))
                 .getResultList();
     }
 

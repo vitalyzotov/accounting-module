@@ -23,7 +23,7 @@ public interface DealsFacade {
     DealDTO deleteDeal(String dealId) throws DealNotFoundException;
     List<DealDTO> splitDeal(String dealId) throws DealNotFoundException;
 
-    List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<DealDTOExpansion> expand);
+    List<DealDTO> listDeals(String query, LocalDate from, LocalDate to, Set<DealDTOExpansion> expand);
 
     DealDTO getDeal(String dealId, Set<DealDTOExpansion> expand) throws DealNotFoundException;
 

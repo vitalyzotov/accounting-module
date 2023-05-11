@@ -16,6 +16,8 @@ public interface DealRepository {
 
     List<Deal> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate);
 
+    List<Deal> findByDate(Collection<PersonId> owners, String query, LocalDate fromDate, LocalDate toDate);
+
     Deal findByOperation(OperationId operation);
 
     Deal findByReceipt(ReceiptId receiptId);

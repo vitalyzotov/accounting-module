@@ -45,8 +45,10 @@ public class DealsController {
     @GetMapping
     public List<DealDTO> listDeals(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                   @RequestParam(required = false) String query,
                                    @RequestParam(required = false) List<String> expand) {
-        return dealsFacade.listDeals(from, to, expand == null ? emptySet() : expand.stream().map(DealDTOExpansion::of).collect(toSet()));
+        return dealsFacade.listDeals(query, from, to,
+                expand == null ? emptySet() : expand.stream().map(DealDTOExpansion::of).collect(toSet()));
     }
 
     @GetMapping("metadata")

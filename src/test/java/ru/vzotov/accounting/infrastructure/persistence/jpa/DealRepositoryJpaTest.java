@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -96,6 +97,21 @@ public class DealRepositoryJpaTest {
     }
 
     @Test
+    public void findByQuery() {
+        final List<Deal> result = dealRepository.findByDate(
+                singleton(PERSON_ID),
+                "AcCio",
+                LocalDate.of(2017, 7, 1),
+                LocalDate.of(2022, 1, 1));
+        assertThat(result)
+                .as("at least one deal expected")
+                .isNotEmpty()
+                .extracting(Deal::dealId)
+                .containsExactly(new DealId("deal-1"))
+        ;
+    }
+
+    @Test
     @Rollback(false) // we need flush for element collections
     public void store() {
         Deal deal = new Deal(
@@ -105,8 +121,8 @@ public class DealRepositoryJpaTest {
                 Money.kopecks(123456),
                 "description", "comment",
                 new BudgetCategoryId(781381038049753674L),
-                Collections.singleton(new ReceiptId("receipt-d06eeb5c598c")),
-                Collections.singleton(new OperationId("deal-operation-4")),
+                singleton(new ReceiptId("receipt-d06eeb5c598c")),
+                singleton(new OperationId("deal-operation-4")),
                 Collections.emptySet(),
                 Collections.singletonList(new PurchaseId("purchase-0912fc12d100"))
         );
@@ -120,12 +136,12 @@ public class DealRepositoryJpaTest {
 
     @Test
     public void findMinMaxDates() {
-        LocalDate min = dealRepository.findMinDealDate(Collections.singleton(PERSON_ID));
-        LocalDate max = dealRepository.findMaxDealDate(Collections.singleton(PERSON_ID));
+        LocalDate min = dealRepository.findMinDealDate(singleton(PERSON_ID));
+        LocalDate max = dealRepository.findMaxDealDate(singleton(PERSON_ID));
         assertThat(min).isNotNull().isEqualTo(LocalDate.of(2017, 7, 10));
         assertThat(max).isNotNull().isAfter(min);
 
-        LocalDate[] minmax = dealRepository.findMinMaxDealDates(Collections.singleton(PERSON_ID));
+        LocalDate[] minmax = dealRepository.findMinMaxDealDates(singleton(PERSON_ID));
         assertThat(minmax).isNotNull().hasSize(2);
         assertThat(minmax[0]).isNotNull().isEqualTo(LocalDate.of(2017, 7, 10));
         assertThat(minmax[1]).isNotNull().isAfter(min);

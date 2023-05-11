@@ -250,12 +250,14 @@ public class DealsFacadeImpl implements DealsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<DealDTO> listDeals(LocalDate from, LocalDate to, Set<DealDTOExpansion> expand) {
+    public List<DealDTO> listDeals(String query, LocalDate from, LocalDate to, Set<DealDTOExpansion> expand) {
         final Collection<PersonId> owners = SecurityUtils.getAuthorizedPersons();
-        return expandDeals(owners, expand, from, to,
-                () -> dealRepository.findByDate(owners, from, to).stream()
-                        .map(DealDTOAssembler::toDTO))
-                .collect(Collectors.toList());
+
+        final Supplier<Stream<DealDTO>> dealsSupplier = StringUtils.isBlank(query) ?
+                () -> dealRepository.findByDate(owners, from, to).stream().map(DealDTOAssembler::toDTO):
+                () -> dealRepository.findByDate(owners, query, from, to).stream().map(DealDTOAssembler::toDTO);
+
+        return expandDeals(owners, expand, from, to, dealsSupplier).collect(Collectors.toList());
     }
 
     @Override
