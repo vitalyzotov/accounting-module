@@ -97,6 +97,8 @@ public interface AccountingFacade {
                                         String comment,
                                         Long categoryId) throws CategoryNotFoundException;
 
+    List<AccountOperationDTO> createOperations(List<AccountOperationDTO> data) throws CategoryNotFoundException;
+
     AccountOperationDTO deleteOperation(String operationId) throws OperationNotFoundException;
 
     AccountOperationDTO assignCategoryToOperation(String operationId, long categoryId) throws OperationNotFoundException, CategoryNotFoundException;

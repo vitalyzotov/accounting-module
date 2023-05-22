@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,7 +24,9 @@ import ru.vzotov.accounting.interfaces.accounting.rest.dto.AccountStoreResponse;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.OperationCreateRequest;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/accounting/accounts")
@@ -63,9 +65,18 @@ public class AccountsController {
         return accountingFacade.listOperations(accountNumber, from, to);
     }
 
-    @PostMapping("{accountNumber}/operations")
+
+    @PostMapping(value = "{accountNumber}/operations", params = {"!batch"})
+    public AccountOperationDTO createSingleOperation(@PathVariable String accountNumber,
+                                               @RequestBody OperationCreateRequest operation)
+            throws CategoryNotFoundException {
+        return createOperation(accountNumber, operation);
+    }
+
+    @PostMapping(value = "{accountNumber}/operations", params = {"batch=false"})
     public AccountOperationDTO createOperation(@PathVariable String accountNumber,
-                                               @RequestBody OperationCreateRequest operation) throws CategoryNotFoundException {
+                                               @RequestBody OperationCreateRequest operation)
+            throws CategoryNotFoundException {
         Validate.notNull(operation.getOperationType());
         return accountingFacade.createOperation(
                 accountNumber,
@@ -78,6 +89,32 @@ public class AccountsController {
                 operation.getDescription(),
                 operation.getComment(),
                 operation.getCategoryId()
+        );
+    }
+
+    @PostMapping(value = "{accountNumber}/operations", params = {"batch=true"})
+    public List<AccountOperationDTO> createOperations(@PathVariable String accountNumber,
+                                                      @RequestBody OperationCreateRequest[] operations)
+            throws CategoryNotFoundException {
+        Arrays.stream(operations)
+                .map(OperationCreateRequest::getOperationType)
+                .forEach(Validate::notNull);
+
+        return accountingFacade.createOperations(
+                Arrays.stream(operations).map(request -> new AccountOperationDTO(
+                                accountNumber,
+                                request.getDate(),
+                                request.getAuthorizationDate(),
+                                request.getTransactionReference(),
+                                null,
+                                request.getOperationType(),
+                                request.getAmount(),
+                                request.getCurrency(),
+                                request.getDescription(),
+                                request.getComment(),
+                                request.getCategoryId()
+                        ))
+                        .collect(Collectors.toList())
         );
     }
 

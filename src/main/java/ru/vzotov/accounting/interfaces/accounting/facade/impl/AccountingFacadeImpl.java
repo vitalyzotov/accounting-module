@@ -64,6 +64,7 @@ import ru.vzotov.person.domain.model.PersonId;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Currency;
 import java.util.List;
@@ -317,6 +318,30 @@ public class AccountingFacadeImpl implements AccountingFacade {
         eventPublisher.publishEvent(new OperationCreatedEvent(operationId));
 
         return OperationDTOAssembler.toDTO(operation);
+    }
+
+    @Override
+    @Transactional(value = "accounting-tx")
+    @Secured({"ROLE_USER"})
+    public List<AccountOperationDTO> createOperations(List<AccountOperationDTO> data) throws CategoryNotFoundException {
+        Validate.notNull(data, "Data required");
+
+        List<AccountOperationDTO> result = new ArrayList<>(data.size());
+        for (AccountOperationDTO operation : data) {
+            result.add(createOperation(
+                    operation.getAccount(),
+                    operation.getDate(),
+                    operation.getAuthorizationDate(),
+                    operation.getTransactionReference(),
+                    operation.getOperationType().charAt(0),
+                    operation.getAmount(),
+                    operation.getCurrency(),
+                    operation.getDescription(),
+                    operation.getComment(),
+                    operation.getCategoryId()
+            ));
+        }
+        return result;
     }
 
     @Override
