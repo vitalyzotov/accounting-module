@@ -77,7 +77,7 @@ public class ContactRepositoryJpaTest {
 
     @Test
     public void testDelete() {
-        final ContactId contactId = new ContactId("9ba67847-fdfe-431e-be58-6c892f17d270");
+        final ContactId contactId = new ContactId("21649b67-dd43-48f2-961a-7343aa3c31a4");
         assertThat(contactRepository.delete(contactId)).isTrue();
         assertThat(contactRepository.find(contactId)).isNull();
     }

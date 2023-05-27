@@ -1,8 +1,8 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
-import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 import ru.vzotov.person.domain.model.PersonId;
 
@@ -22,7 +22,7 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
     public Receipt find(ReceiptId id) {
         try {
             return em.createQuery("from Receipt where receiptId = :id"
-                    , Receipt.class)
+                            , Receipt.class)
                     .setParameter("id", id)
                     .getSingleResult();
         } catch (NoResultException ex) {
@@ -34,12 +34,12 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
     public Receipt findByQRCodeData(QRCodeData data) {
         try {
             return em.createQuery("from Receipt where TIMESTAMPDIFF(MINUTE, dateTime, :dateTime) = 0" +
-                            " AND products.totalSum = :totalSum" +
-                            " AND fiscalInfo.fiscalDriveNumber = :fiscalDriveNumber" +
-                            " AND fiscalInfo.fiscalDocumentNumber = :fiscalDocumentNumber" +
-                            " AND fiscalInfo.fiscalSign.value = :fiscalSign" +
-                            " AND operationType = :operationType"
-                    , Receipt.class)
+                                    " AND products.totalSum = :totalSum" +
+                                    " AND fiscalInfo.fiscalDriveNumber = :fiscalDriveNumber" +
+                                    " AND fiscalInfo.fiscalDocumentNumber = :fiscalDocumentNumber" +
+                                    " AND fiscalInfo.fiscalSign.value = :fiscalSign" +
+                                    " AND operationType = :operationType"
+                            , Receipt.class)
                     .setParameter("dateTime", data.dateTime().value())
                     .setParameter("totalSum", data.totalSum())
                     .setParameter("fiscalDriveNumber", data.fiscalDriveNumber())
@@ -90,5 +90,15 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
         } catch (NoResultException ex) {
             return null;
         }
+    }
+
+    @Override
+    public boolean delete(ReceiptId id) {
+        final Receipt receipt = find(id);
+        if (receipt != null) {
+            em.remove(receipt);
+            return true;
+        }
+        return false;
     }
 }

@@ -2,6 +2,8 @@ package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -15,6 +17,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.PosTerminalDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 import ru.vzotov.accounting.test.AbstractControllerTest;
@@ -32,6 +35,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 public class DealsControllerTest extends AbstractControllerTest {
+
+    private static final Logger log = LoggerFactory.getLogger(DealsControllerTest.class);
+
     public static final String DEAL_DESCRIPTION = "description of my deal";
 
     @Test
@@ -107,6 +113,30 @@ public class DealsControllerTest extends AbstractControllerTest {
                 );
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(exchange.getBody()).hasSize(0);
+    }
+
+    @Test
+    public void deleteDealWithReceipt() {
+        final ResponseEntity<List<DealDTO>> exchange = this.restTemplate
+                .withBasicAuth(USER, PASSWORD)
+                .exchange(
+                        "/accounting/deals/deal-for-remove-3?receipt=true",
+                        HttpMethod.DELETE, new HttpEntity<>(null),
+                        new ParameterizedTypeReference<List<DealDTO>>() {
+                        }
+                );
+        assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(exchange.getBody()).hasSize(0);
+
+        final ResponseEntity<QRCodeDTO> result = this.restTemplate.withBasicAuth(USER, PASSWORD)
+                .exchange(
+                        "/accounting/qr/receipt_of_deal_to_remove",
+                        HttpMethod.GET, new HttpEntity<>(null),
+                        new ParameterizedTypeReference<QRCodeDTO>() {
+                        }
+                );
+        log.info("qr {}", result.getBody());
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test

@@ -18,4 +18,6 @@ public interface QRCodeRepository {
     List<QRCode> findAllInState(ReceiptState state);
 
     List<QRCode> findWithoutDeals();
+
+    boolean delete(ReceiptId id);
 }

@@ -64,11 +64,12 @@ public class DealsController {
 
     @DeleteMapping("{dealId}")
     public List<DealDTO> deleteDeal(@PathVariable String dealId,
-                                    @RequestParam(required = false, defaultValue = "false") boolean split) throws DealNotFoundException {
+                                    @RequestParam(required = false, defaultValue = "false") boolean split,
+                                    @RequestParam(required=false, defaultValue = "false") boolean receipt) throws DealNotFoundException {
         if (split) {
             return dealsFacade.splitDeal(dealId);
         } else {
-            dealsFacade.deleteDeal(dealId);
+            dealsFacade.deleteDeal(dealId, receipt);
             return Collections.emptyList();
         }
     }

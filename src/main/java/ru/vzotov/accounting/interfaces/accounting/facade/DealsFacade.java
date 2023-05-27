@@ -20,7 +20,7 @@ public interface DealsFacade {
     DealDTO modifyDeal(String dealId, LocalDate date, long amount, String currency, String description, String comment,
                        Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases) throws DealNotFoundException, CategoryNotFoundException;
 
-    DealDTO deleteDeal(String dealId) throws DealNotFoundException;
+    DealDTO deleteDeal(String dealId, boolean deleteReceipts) throws DealNotFoundException;
     List<DealDTO> splitDeal(String dealId) throws DealNotFoundException;
 
     List<DealDTO> listDeals(String query, LocalDate from, LocalDate to, Set<DealDTOExpansion> expand);

@@ -1,17 +1,16 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
-import ru.vzotov.cashreceipt.domain.model.ReceiptState;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
-import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.cashreceipt.domain.model.QRCodeDateTime;
+import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.cashreceipt.domain.model.ReceiptState;
 import ru.vzotov.person.domain.model.PersonId;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class QRCodeRepositoryJpa extends JpaRepository implements QRCodeReposito
     public QRCode find(ReceiptId id) {
         try {
             return em.createQuery("from QRCode where receiptId=:receiptId"
-                    , QRCode.class)
+                            , QRCode.class)
                     .setParameter("receiptId", id)
                     .getSingleResult();
         } catch (NoResultException ex) {
@@ -37,12 +36,12 @@ public class QRCodeRepositoryJpa extends JpaRepository implements QRCodeReposito
     public QRCode findByQRCodeData(QRCodeData data) {
         try {
             return em.createQuery("from QRCode where data.dateTime = :dateTime" +
-                            " AND data.totalSum = :totalSum" +
-                            " AND data.fiscalDriveNumber = :fiscalDriveNumber" +
-                            " AND data.fiscalDocumentNumber = :fiscalDocumentNumber" +
-                            " AND data.fiscalSign.value = :fiscalSign" +
-                            " AND data.operationType = :operationType"
-                    , QRCode.class)
+                                    " AND data.totalSum = :totalSum" +
+                                    " AND data.fiscalDriveNumber = :fiscalDriveNumber" +
+                                    " AND data.fiscalDocumentNumber = :fiscalDocumentNumber" +
+                                    " AND data.fiscalSign.value = :fiscalSign" +
+                                    " AND data.operationType = :operationType"
+                            , QRCode.class)
                     .setParameter("dateTime", data.dateTime())
                     .setParameter("totalSum", data.totalSum())
                     .setParameter("fiscalDriveNumber", data.fiscalDriveNumber())
@@ -81,5 +80,15 @@ public class QRCodeRepositoryJpa extends JpaRepository implements QRCodeReposito
     public List<QRCode> findWithoutDeals() {
         return em.createNamedQuery("receipts-without-deals", QRCode.class)
                 .getResultList();
+    }
+
+    @Override
+    public boolean delete(ReceiptId id) {
+        final QRCode qrCode = find(id);
+        if (qrCode != null) {
+            em.remove(qrCode);
+            return true;
+        }
+        return false;
     }
 }

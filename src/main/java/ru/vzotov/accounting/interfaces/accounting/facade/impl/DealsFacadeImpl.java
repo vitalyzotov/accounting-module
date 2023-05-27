@@ -35,6 +35,7 @@ import ru.vzotov.banking.domain.model.OperationType;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.Purchase;
@@ -67,6 +68,7 @@ public class DealsFacadeImpl implements DealsFacade {
     private final PurchaseRepository purchaseRepository;
     private final BudgetCategoryRepository budgetCategoryRepository;
     private final QRCodeRepository qrCodeRepository;
+    private final ReceiptRepository receiptRepository;
     private final TransactionRepository transactionRepository;
     private final OwnedGuard ownedGuard;
 
@@ -77,6 +79,7 @@ public class DealsFacadeImpl implements DealsFacade {
             PurchaseRepository purchaseRepository,
             BudgetCategoryRepository budgetCategoryRepository,
             QRCodeRepository qrCodeRepository,
+            ReceiptRepository receiptRepository,
             TransactionRepository transactionRepository,
             OwnedGuard ownedGuard) {
         this.dealRepository = dealRepository;
@@ -85,6 +88,7 @@ public class DealsFacadeImpl implements DealsFacade {
         this.purchaseRepository = purchaseRepository;
         this.budgetCategoryRepository = budgetCategoryRepository;
         this.qrCodeRepository = qrCodeRepository;
+        this.receiptRepository = receiptRepository;
         this.transactionRepository = transactionRepository;
         this.ownedGuard = ownedGuard;
     }
@@ -155,11 +159,17 @@ public class DealsFacadeImpl implements DealsFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public DealDTO deleteDeal(String dealId) throws DealNotFoundException {
+    public DealDTO deleteDeal(String dealId, boolean deleteReceipts) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
         ownedGuard.accessing(deal);
 
+        if(deleteReceipts) {
+            for(ReceiptId receiptId: deal.receipts()) {
+                receiptRepository.delete(receiptId);
+                qrCodeRepository.delete(receiptId);
+            }
+        }
         dealRepository.delete(deal);
         return DealDTOAssembler.toDTO(deal);
     }

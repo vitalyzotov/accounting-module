@@ -1,5 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import org.springframework.http.ResponseEntity;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -63,8 +65,8 @@ public class ReceiptsController {
     }
 
     @GetMapping("/accounting/qr/{receiptId}")
-    public QRCodeDTO getCode(@PathVariable String receiptId) {
-        return receiptsFacade.getCode(receiptId);
+    public ResponseEntity<QRCodeDTO> getCode(@PathVariable String receiptId) {
+        return ResponseEntity.of(Optional.ofNullable(receiptsFacade.getCode(receiptId)));
     }
 
     @GetMapping("/accounting/receipts/{fiscalSign}")

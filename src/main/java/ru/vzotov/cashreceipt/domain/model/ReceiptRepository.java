@@ -17,4 +17,6 @@ public interface ReceiptRepository {
     long countByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate);
 
     Receipt findOldest(Collection<PersonId> owners);
+
+    boolean delete(ReceiptId id);
 }
