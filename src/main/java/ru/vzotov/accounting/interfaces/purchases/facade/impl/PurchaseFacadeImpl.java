@@ -95,30 +95,30 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
     @Secured({"ROLE_USER"})
     public void modifyPurchase(PurchaseDTO purchase) {
         Validate.notNull(purchase);
-        Validate.notNull(purchase.getPurchaseId());
+        Validate.notNull(purchase.purchaseId());
 
-        Purchase p = ownedGuard.accessing(purchaseRepository.find(new PurchaseId(purchase.getPurchaseId())));
+        Purchase p = ownedGuard.accessing(purchaseRepository.find(new PurchaseId(purchase.purchaseId())));
         Validate.notNull(p);
 
-        if (purchase.getName() != null) {
-            p.setName(purchase.getName());
+        if (purchase.name() != null) {
+            p.setName(purchase.name());
         }
 
-        if (purchase.getDateTime() != null) {
-            p.setDateTime(purchase.getDateTime());
+        if (purchase.dateTime() != null) {
+            p.setDateTime(purchase.dateTime());
         }
 
-        if (purchase.getPrice() != null) {
-            Money price = Money.ofRaw(purchase.getPrice().getAmount(), Currency.getInstance(purchase.getPrice().getCurrency()));
+        if (purchase.price() != null) {
+            Money price = Money.ofRaw(purchase.price().getAmount(), Currency.getInstance(purchase.price().getCurrency()));
             p.setPrice(price);
         }
 
-        if (purchase.getQuantity() != null) {
-            p.setQuantity(BigDecimal.valueOf(purchase.getQuantity()));
+        if (purchase.quantity() != null) {
+            p.setQuantity(BigDecimal.valueOf(purchase.quantity()));
         }
 
-        if (purchase.getCategoryId() != null) {
-            p.assignCategory(categoryRepository.findById(new PurchaseCategoryId(purchase.getCategoryId())));
+        if (purchase.categoryId() != null) {
+            p.assignCategory(categoryRepository.findById(new PurchaseCategoryId(purchase.categoryId())));
         }
     }
 
@@ -136,18 +136,18 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
         final List<Purchase> entities = purchases.stream()
                 .map(dto -> {
                     final Purchase p;
-                    if (dto.getPurchaseId() != null) {
+                    if (dto.purchaseId() != null) {
                         throw new IllegalArgumentException("It is not allowed to modify purchase here");
                     } else {
-                        Money price = Money.ofRaw(dto.getPrice().getAmount(), Currency.getInstance(dto.getPrice().getCurrency()));
-                        p = new Purchase(PurchaseId.nextId(), SecurityUtils.getCurrentPerson(), dto.getName(), dto.getDateTime(), price, BigDecimal.valueOf(dto.getQuantity()));
+                        Money price = Money.ofRaw(dto.price().getAmount(), Currency.getInstance(dto.price().getCurrency()));
+                        p = new Purchase(PurchaseId.nextId(), SecurityUtils.getCurrentPerson(), dto.name(), dto.dateTime(), price, BigDecimal.valueOf(dto.quantity()));
                     }
 
-                    if (dto.getReceiptId() != null) {
-                        p.assignReceipt(new ReceiptId(dto.getReceiptId()));
+                    if (dto.receiptId() != null) {
+                        p.assignReceipt(new ReceiptId(dto.receiptId()));
                     }
-                    if (dto.getCategoryId() != null) {
-                        p.assignCategory(ownedGuard.accessing(categoryRepository.findById(new PurchaseCategoryId(dto.getCategoryId()))));
+                    if (dto.categoryId() != null) {
+                        p.assignCategory(ownedGuard.accessing(categoryRepository.findById(new PurchaseCategoryId(dto.categoryId()))));
                     }
                     return p;
                 })

@@ -89,14 +89,14 @@ public class BudgetController {
     @PostMapping("{budgetId}/plan")
     public BudgetPlanDTO createPlan(@PathVariable String budgetId, @RequestBody BudgetPlanDTO item) {
         return budgetFacade.createPlan(
-                item.getDirection(),
-                item.getSourceAccount(),
-                item.getTargetAccount(),
-                item.getCategoryId(),
-                item.getPurchaseCategoryId(),
-                item.getValue(),
-                item.getRuleId(),
-                item.getDate()
+                item.direction(),
+                item.sourceAccount(),
+                item.targetAccount(),
+                item.categoryId(),
+                item.purchaseCategoryId(),
+                item.value(),
+                item.ruleId(),
+                item.date()
         );
     }
 
@@ -114,14 +114,14 @@ public class BudgetController {
                                     @RequestBody BudgetPlanDTO item) throws BudgetPlanNotFoundException {
         return budgetFacade.modifyPlan(
                 itemId,
-                item.getDirection(),
-                item.getSourceAccount(),
-                item.getTargetAccount(),
-                item.getCategoryId(),
-                item.getPurchaseCategoryId(),
-                item.getValue(),
-                item.getRuleId(),
-                item.getDate()
+                item.direction(),
+                item.sourceAccount(),
+                item.targetAccount(),
+                item.categoryId(),
+                item.purchaseCategoryId(),
+                item.value(),
+                item.ruleId(),
+                item.date()
         );
     }
 

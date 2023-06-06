@@ -27,7 +27,6 @@ import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
@@ -76,29 +75,32 @@ public class DealsController {
 
     @PostMapping
     public DealDTO createDeal(@RequestBody DealDTO deal) throws CategoryNotFoundException {
-        return dealsFacade.createDeal(deal.getDate(), deal.getAmount().getAmount(), deal.getAmount().getCurrency(),
-                deal.getDescription(), deal.getComment(), deal.getCategory(),
-                ofNullable(deal.getReceipts()).orElse(emptyList()).stream()
-                        .map(ReceiptRef::getReceiptId).collect(toSet()),
-                ofNullable(deal.getOperations()).orElse(emptyList()).stream()
-                        .map(OperationRef::getOperationId).collect(toSet()),
-                ofNullable(deal.getPurchases()).orElse(emptyList()).stream()
-                        .map(PurchaseRef::getPurchaseId).collect(Collectors.toList()));
+        return dealsFacade.createDeal(
+                deal.date(),
+                deal.amount().amount(),
+                deal.amount().currency(),
+                deal.description(),
+                deal.comment(),
+                deal.category(),
+                ofNullable(deal.receipts()).orElse(emptyList()).stream().map(ReceiptRef::receiptId).collect(toSet()),
+                ofNullable(deal.operations()).orElse(emptyList()).stream().map(OperationRef::operationId).collect(toSet()),
+                ofNullable(deal.purchases()).orElse(emptyList()).stream().map(PurchaseRef::purchaseId).toList());
     }
 
     @PutMapping("{dealId}")
     public void modifyDeal(@PathVariable String dealId, @RequestBody DealDTO deal
     ) throws DealNotFoundException, CategoryNotFoundException {
-        deal.setDealId(dealId);
-        dealsFacade.modifyDeal(deal.getDealId(), deal.getDate(),
-                deal.getAmount().getAmount(), deal.getAmount().getCurrency(),
-                deal.getDescription(), deal.getComment(), deal.getCategory(),
-                ofNullable(deal.getReceipts()).orElse(emptyList()).stream()
-                        .map(ReceiptRef::getReceiptId).collect(toSet()),
-                ofNullable(deal.getOperations()).orElse(emptyList()).stream()
-                        .map(OperationRef::getOperationId).collect(toSet()),
-                ofNullable(deal.getPurchases()).orElse(emptyList()).stream()
-                        .map(PurchaseRef::getPurchaseId).collect(Collectors.toList()));
+        dealsFacade.modifyDeal(
+                dealId,
+                deal.date(),
+                deal.amount().amount(),
+                deal.amount().currency(),
+                deal.description(),
+                deal.comment(),
+                deal.category(),
+                ofNullable(deal.receipts()).orElse(emptyList()).stream().map(ReceiptRef::receiptId).collect(toSet()),
+                ofNullable(deal.operations()).orElse(emptyList()).stream().map(OperationRef::operationId).collect(toSet()),
+                ofNullable(deal.purchases()).orElse(emptyList()).stream().map(PurchaseRef::purchaseId).toList());
     }
 
     @PatchMapping

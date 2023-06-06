@@ -164,8 +164,8 @@ public class DealsFacadeImpl implements DealsFacade {
         if (deal == null) throw new DealNotFoundException();
         ownedGuard.accessing(deal);
 
-        if(deleteReceipts) {
-            for(ReceiptId receiptId: deal.receipts()) {
+        if (deleteReceipts) {
+            for (ReceiptId receiptId : deal.receipts()) {
                 receiptRepository.delete(receiptId);
                 qrCodeRepository.delete(receiptId);
             }
@@ -263,9 +263,9 @@ public class DealsFacadeImpl implements DealsFacade {
     public List<DealDTO> listDeals(String query, LocalDate from, LocalDate to, Set<DealDTOExpansion> expand) {
         final Collection<PersonId> owners = SecurityUtils.getAuthorizedPersons();
 
-        final Supplier<Stream<DealDTO>> dealsSupplier = StringUtils.isBlank(query) ?
-                () -> dealRepository.findByDate(owners, from, to).stream().map(DealDTOAssembler::toDTO):
-                () -> dealRepository.findByDate(owners, query, from, to).stream().map(DealDTOAssembler::toDTO);
+        final Supplier<Stream<Deal>> dealsSupplier = StringUtils.isBlank(query) ?
+                () -> dealRepository.findByDate(owners, from, to).stream() :
+                () -> dealRepository.findByDate(owners, query, from, to).stream();
 
         return expandDeals(owners, expand, from, to, dealsSupplier).collect(Collectors.toList());
     }
@@ -277,7 +277,7 @@ public class DealsFacadeImpl implements DealsFacade {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
         ownedGuard.accessing(deal);
-        return expandDeals(Collections.emptySet(), expand, null, null, () -> Stream.of(DealDTOAssembler.toDTO(deal)))
+        return expandDeals(Collections.emptySet(), expand, null, null, () -> Stream.of(deal))
                 .findFirst()
                 .orElseThrow(DealNotFoundException::new);
     }
@@ -345,15 +345,10 @@ public class DealsFacadeImpl implements DealsFacade {
 
         Money amount = target.operations().stream()
                 .map(operationRepository::find)
-                .map(op -> {
-                    switch (op.type()) {
-                        case DEPOSIT:
-                            return op.amount();
-                        case WITHDRAW:
-                            return op.amount().negate();
-                        default:
-                            throw new IllegalArgumentException();
-                    }
+                .map(op -> switch (op.type()) {
+                    case DEPOSIT -> op.amount();
+                    case WITHDRAW -> op.amount().negate();
+                    default -> throw new IllegalArgumentException();
                 })
                 .reduce(Money::add).orElseThrow(IllegalArgumentException::new);
         target.setAmount(amount);
@@ -397,7 +392,8 @@ public class DealsFacadeImpl implements DealsFacade {
         dealRepository.store(target);
     }
 
-    private Stream<DealDTO> expandDeals(Collection<PersonId> owners, Set<DealDTOExpansion> expand, LocalDate cacheFrom, LocalDate cacheTo, Supplier<Stream<DealDTO>> request) {
+    private Stream<DealDTO> expandDeals(Collection<PersonId> owners, Set<DealDTOExpansion> expand,
+                                        LocalDate cacheFrom, LocalDate cacheTo, Supplier<Stream<Deal>> request) {
         Validate.notNull(expand);
         final boolean expandReceipts = expand.contains(DealDTOExpansion.RECEIPTS);
         final boolean expandOperations = expand.contains(DealDTOExpansion.OPERATIONS);
@@ -419,15 +415,14 @@ public class DealsFacadeImpl implements DealsFacade {
         final ReceiptEnricher receiptEnricher = new ReceiptEnricher(qrCodeRepository, receipts);
         final PurchaseEnricher purchaseEnricher = new PurchaseEnricher(purchaseRepository, purchases);
 
-        Stream<DealDTO> stream = request.get();
-        if (expandOperations)
-            stream = stream.peek(dto -> dto.setOperations(operationEnricher.list(dto.getOperations())));
-        if (expandCardOperations)
-            stream = stream.peek(dto -> dto.setCardOperations(cardOperationEnricher.list(dto.getCardOperations())));
-        if (expandReceipts)
-            stream = stream.peek(dto -> dto.setReceipts(receiptEnricher.list(dto.getReceipts())));
-        if (expandPurchases)
-            stream = stream.peek(dto -> dto.setPurchases(purchaseEnricher.list(dto.getPurchases())));
-        return stream;
+        Stream<Deal> stream = request.get();
+
+        return stream.map(deal -> DealDTOAssembler.toDTO(
+                deal,
+                expandReceipts ? (d) -> receiptEnricher.list(DealDTOAssembler.receipts(d)) : null,
+                expandOperations ? (d) -> operationEnricher.list(DealDTOAssembler.operations(d)) : null,
+                expandCardOperations ? (d) -> cardOperationEnricher.list(DealDTOAssembler.cardOperations(d)) : null,
+                expandPurchases ? (d) -> purchaseEnricher.list(DealDTOAssembler.purchases(d)) : null
+        ));
     }
 }

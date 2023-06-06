@@ -28,8 +28,14 @@ public class AccountRepositoryJpa extends JpaRepository implements AccountReposi
     @Override
     public Account findAccountOfCard(CardNumber cardNumber, LocalDate date) {
         try {
-            return em.createQuery("select a from Account a where a.accountNumber.number in " +
-                            "(select acc.accountNumber.number from Card c join c.accounts acc where c.cardNumber.value=:cardNumber and acc.from<=:date and acc.to>=:date)", Account.class)
+            return em.createQuery(
+                            """
+                                    select a from Account a where a.accountNumber.number in (
+                                        select acc.accountNumber.number from Card c
+                                        join c.accounts acc 
+                                        where c.cardNumber.value=:cardNumber and acc.from<=:date and acc.to>=:date
+                                    )
+                                    """, Account.class)
                     .setParameter("cardNumber", cardNumber.value())
                     .setParameter("date", date)
                     .getSingleResult();

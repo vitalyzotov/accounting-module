@@ -1,21 +1,22 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
-import ru.vzotov.cashreceipt.domain.model.ReceiptId;
-import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptIdDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
 import ru.vzotov.accounting.interfaces.common.assembler.AbstractAssembler;
+import ru.vzotov.cashreceipt.domain.model.QRCode;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 
 public class QRCodeDTOAssembler extends AbstractAssembler<QRCodeDTO, QRCode> {
 
     private final QRCodeDataDTOAssembler assembler = new QRCodeDataDTOAssembler();
 
     public ReceiptRef toRef(ReceiptId model) {
-        return model == null? null : new ReceiptRef(model.value());
+        return model == null ? null : new ReceiptIdDTO(model.value());
     }
 
     public ReceiptRef toRef(QRCode code) {
-        return code == null? null: toRef(code.receiptId());
+        return code == null ? null : toRef(code.receiptId());
     }
 
     @Override

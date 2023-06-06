@@ -35,7 +35,7 @@ public class PurchaseRepositoryJpa extends JpaRepository implements PurchaseRepo
 
     @Override
     public void store(Purchase purchase) {
-        if (hasId(purchase, "id")) {
+        if (em.contains(purchase)) {
             em.detach(purchase);
             em.merge(purchase);
             em.flush();

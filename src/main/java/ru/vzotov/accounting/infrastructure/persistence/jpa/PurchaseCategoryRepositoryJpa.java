@@ -51,7 +51,7 @@ public class PurchaseCategoryRepositoryJpa extends JpaRepository implements Purc
 
     @Override
     public void store(PurchaseCategory category) {
-        if (hasId(category, "id")) {
+        if (em.contains(category)) {
             em.merge(category);
             em.flush();
         } else {

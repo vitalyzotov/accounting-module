@@ -48,7 +48,7 @@ public class AccountsController {
 
     @PostMapping
     public AccountStoreResponse newAccount(@RequestBody AccountCreateRequest account) {
-        String accountNumber = accountingFacade.createAccount(account.getNumber(), account.getName(), account.getBankId(), account.getCurrency(), account.getOwner(), account.getAliases());
+        String accountNumber = accountingFacade.createAccount(account.number(), account.name(), account.bankId(), account.currency(), account.owner(), account.aliases());
         return new AccountStoreResponse(accountNumber);
     }
 

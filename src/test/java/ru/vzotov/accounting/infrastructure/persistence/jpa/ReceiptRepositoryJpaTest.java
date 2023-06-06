@@ -1,28 +1,26 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.config.DatasourceConfig;
 import ru.vzotov.cashreceipt.ReceiptFactory;
-import ru.vzotov.cashreceipt.domain.model.Receipt;
-import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategory;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 import ru.vzotov.person.domain.model.PersonId;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({DatasourceConfig.class, JpaConfig.class})
@@ -43,18 +41,18 @@ public class ReceiptRepositoryJpaTest {
     public void find() {
         Receipt receipt = receiptRepository.find(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"));
         log.info("Receipt loaded {}", receipt);
-        Assert.assertNotNull(receipt);
+        assertThat(receipt).isNotNull();
     }
 
     @Test
     public void assignItemToCategory() {
         Receipt receipt = receiptRepository.find(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"));
         log.info("Receipt loaded {}", receipt);
-        Assert.assertNotNull(receipt);
+        assertThat(receipt).isNotNull();
 
         PurchaseCategory cat = categoryRepository.findByName(new PersonId(PERSON_ID), "Пакеты");
         log.info("Category loaded {}", cat);
-        Assert.assertNotNull(cat);
+        assertThat(cat).isNotNull();
 
         receipt.assignCategoryToItem(0, cat);
 
@@ -77,17 +75,17 @@ public class ReceiptRepositoryJpaTest {
     @Test
     public void findByQRCodeData() {
         Receipt notFound = receiptRepository.findByQRCodeData(new QRCodeData("t=20180614T1641&s=566.92&fn=8710000100312991&i=21128&fp=2663320648&n=1"));
-        Assert.assertNull(notFound);
+        assertThat(notFound).isNull();
 
         Receipt receipt = receiptRepository.findByQRCodeData(new QRCodeData("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1"));
         log.info("Receipt loaded {}", receipt);
-        Assert.assertNotNull(receipt);
+        assertThat(receipt).isNotNull();
     }
 
     @Test
     public void findByQRCodeDataIgnoreSeconds() {
         Receipt receipt = receiptRepository.findByQRCodeData(new QRCodeData("t=20210615T131415&s=150.00&fn=1234567891234567&i=15141&fp=1234567891&n=1"));
-        Assert.assertNotNull(receipt);
+        assertThat(receipt).isNotNull();
     }
 
 }

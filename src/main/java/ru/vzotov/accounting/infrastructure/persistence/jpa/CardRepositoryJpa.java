@@ -57,7 +57,7 @@ public class CardRepositoryJpa extends JpaRepository implements CardRepository {
 
     @Override
     public void store(Card card) {
-        if (hasId(card, "id")) {
+        if (em.contains(card)) {
             em.detach(card);
             em.merge(card);
             em.flush();

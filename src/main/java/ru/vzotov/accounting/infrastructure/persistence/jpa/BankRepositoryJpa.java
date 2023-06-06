@@ -32,7 +32,7 @@ public class BankRepositoryJpa extends JpaRepository implements BankRepository {
 
     @Override
     public void store(Bank bank) {
-        if (hasId(bank, "id")) {
+        if (em.contains(bank)) {
             em.detach(bank);
             em.merge(bank);
             em.flush();

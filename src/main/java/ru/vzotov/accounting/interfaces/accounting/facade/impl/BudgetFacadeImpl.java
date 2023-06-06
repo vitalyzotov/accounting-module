@@ -212,7 +212,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
                 budgetRepository.findRule(new BudgetRuleId(ruleId)),
                 date,
                 BudgetDirection.of(direction),
-                value == null ? null : Money.ofRaw(value.getAmount(), Currency.getInstance(value.getCurrency())),
+                value == null ? null : Money.ofRaw(value.amount(), Currency.getInstance(value.currency())),
                 sourceAccount == null ? null : new AccountNumber(sourceAccount),
                 targetAccount == null ? null : new AccountNumber(targetAccount),
                 categoryId == null ? null : new BudgetCategoryId(categoryId),
@@ -241,7 +241,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
                 budgetRepository.findRule(new BudgetRuleId(ruleId)),
                 date,
                 BudgetDirection.of(direction),
-                value == null ? null : Money.ofRaw(value.getAmount(), Currency.getInstance(value.getCurrency())),
+                value == null ? null : Money.ofRaw(value.amount(), Currency.getInstance(value.currency())),
                 sourceAccount == null ? null : new AccountNumber(sourceAccount),
                 targetAccount == null ? null : new AccountNumber(targetAccount),
                 categoryId == null ? null : new BudgetCategoryId(categoryId),
@@ -267,17 +267,17 @@ public class BudgetFacadeImpl implements BudgetFacade {
 
     BudgetRule createRuleFromDTO(BudgetRuleDTO rule) {
         return new BudgetRule(
-                rule.getRuleId() == null ? null : new BudgetRuleId(rule.getRuleId()),
-                BudgetRuleType.of(rule.getRuleType().charAt(0)),
-                rule.getCategoryId() == null ? null : new BudgetCategoryId(rule.getCategoryId()),
-                rule.getPurchaseCategoryId() == null ? null : new PurchaseCategoryId(rule.getPurchaseCategoryId()),
-                rule.getSourceAccount() == null ? null : new AccountNumber(rule.getSourceAccount()),
-                rule.getTargetAccount() == null ? null : new AccountNumber(rule.getTargetAccount()),
-                rule.getRecurrence() == null ? null : Recurrence.fromString(rule.getRecurrence()),
-                rule.getName(),
-                rule.getValue() == null ? null : Money.ofRaw(rule.getValue().getAmount(), Currency.getInstance(rule.getValue().getCurrency())),
-                rule.getCalculation() == null ? null : new Calculation(rule.getCalculation()),
-                rule.getEnabled() == null || rule.getEnabled()
+                rule.ruleId() == null ? null : new BudgetRuleId(rule.ruleId()),
+                BudgetRuleType.of(rule.ruleType().charAt(0)),
+                rule.categoryId() == null ? null : new BudgetCategoryId(rule.categoryId()),
+                rule.purchaseCategoryId() == null ? null : new PurchaseCategoryId(rule.purchaseCategoryId()),
+                rule.sourceAccount() == null ? null : new AccountNumber(rule.sourceAccount()),
+                rule.targetAccount() == null ? null : new AccountNumber(rule.targetAccount()),
+                rule.recurrence() == null ? null : Recurrence.fromString(rule.recurrence()),
+                rule.name(),
+                rule.value() == null ? null : Money.ofRaw(rule.value().amount(), Currency.getInstance(rule.value().currency())),
+                rule.calculation() == null ? null : new Calculation(rule.calculation()),
+                rule.enabled() == null || rule.enabled()
         );
     }
 }

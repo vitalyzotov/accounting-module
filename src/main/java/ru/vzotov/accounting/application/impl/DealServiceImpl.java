@@ -131,17 +131,11 @@ public class DealServiceImpl implements DealService {
     private void createDealForOperation(Operation operation) {
         log.info("Automatically create deal for operation {}", operation.operationId());
 
-        Money amount;
-        switch (operation.type()) {
-            case WITHDRAW:
-                amount = operation.amount().negate();
-                break;
-            case DEPOSIT:
-                amount = operation.amount();
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        final Money amount = switch (operation.type()) {
+            case WITHDRAW -> operation.amount().negate();
+            case DEPOSIT -> operation.amount();
+            default -> throw new IllegalArgumentException();
+        };
         final Account account = accountRepository.find(operation.account());
         final CardOperation cardOperation = cardOperationRepository.find(operation.operationId());
 
@@ -179,19 +173,11 @@ public class DealServiceImpl implements DealService {
 
     private void createDealForQrCode(QRCode qrCode) {
         log.info("Automatically create deal for QR code {}", qrCode.receiptId());
-        Money amount;
-        switch (qrCode.code().operationType()) {
-            case INCOME:
-            case EXPENSE_RETURN:
-                amount = qrCode.code().totalSum().negate();
-                break;
-            case EXPENSE:
-            case INCOME_RETURN:
-                amount = qrCode.code().totalSum();
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        final Money amount = switch (qrCode.code().operationType()) {
+            case INCOME, EXPENSE_RETURN -> qrCode.code().totalSum().negate();
+            case EXPENSE, INCOME_RETURN -> qrCode.code().totalSum();
+            default -> throw new IllegalArgumentException();
+        };
         final Deal deal = new Deal(
                 DealId.nextId(),
                 qrCode.owner(),

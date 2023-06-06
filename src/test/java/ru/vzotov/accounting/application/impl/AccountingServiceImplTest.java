@@ -1,13 +1,11 @@
 package ru.vzotov.accounting.application.impl;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.vzotov.accounting.application.AccountNotFoundException;
 import ru.vzotov.accounting.application.AccountingService;
 import ru.vzotov.accounting.domain.model.AccountRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.banking.domain.model.Account;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.CardNumber;
@@ -29,7 +27,6 @@ import java.time.Month;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountingServiceImplTest {
 

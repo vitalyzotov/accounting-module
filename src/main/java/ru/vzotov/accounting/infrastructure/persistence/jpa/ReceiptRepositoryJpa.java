@@ -54,7 +54,7 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
 
     @Override
     public void store(Receipt receipt) {
-        if (hasId(receipt, "id")) {
+        if (em.contains(receipt)) {
             em.detach(receipt);
             em.merge(receipt);
             em.flush();

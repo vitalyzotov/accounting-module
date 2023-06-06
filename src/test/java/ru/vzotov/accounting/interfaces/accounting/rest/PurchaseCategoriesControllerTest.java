@@ -2,15 +2,13 @@ package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Condition;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
 import ru.vzotov.accounting.test.AbstractControllerTest;
@@ -19,7 +17,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 @Transactional
@@ -40,13 +37,13 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
                 .have(new Condition<PurchaseCategoryDTO>() {
                     @Override
                     public boolean matches(PurchaseCategoryDTO value) {
-                        return value.getCategoryId() != null && !value.getCategoryId().isEmpty();
+                        return value.categoryId() != null && !value.categoryId().isEmpty();
                     }
                 })
                 .haveExactly(1, new Condition<PurchaseCategoryDTO>() {
                     @Override
                     public boolean matches(PurchaseCategoryDTO value) {
-                        return value.getName().equals("Табак");
+                        return value.name().equals("Табак");
                     }
                 })
         ;
@@ -81,7 +78,7 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
                 .usingRecursiveComparison()
                 .ignoringFields("categoryId")
                 .isEqualTo(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName));
-        assertThat(exchange.getBody().getCategoryId())
+        assertThat(exchange.getBody().categoryId())
                 .isNotEmpty();
     }
 
@@ -97,7 +94,7 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
         ).getBody();
 
         ResponseEntity<PurchaseCategoryDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
-                "/accounting/purchase-categories/" + mycat.getCategoryId(),
+                "/accounting/purchase-categories/" + mycat.categoryId(),
                 HttpMethod.PATCH, new HttpEntity<>(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName2)),
                 new ParameterizedTypeReference<PurchaseCategoryDTO>() {
                 }
@@ -106,6 +103,6 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
         assertThat(exchange.getBody())
                 .isNotNull()
                 .usingRecursiveComparison()
-                .isEqualTo(new PurchaseCategoryDTO(mycat.getCategoryId(), PERSON_ID, newCategoryName2));
+                .isEqualTo(new PurchaseCategoryDTO(mycat.categoryId(), PERSON_ID, newCategoryName2));
     }
 }

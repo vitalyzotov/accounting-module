@@ -2,9 +2,15 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
+import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
+import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
 
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.function.Function;
+
+import static java.util.Optional.ofNullable;
 
 public class DealDTOAssembler {
 
@@ -12,6 +18,14 @@ public class DealDTOAssembler {
     private static final PurchaseDTOAssembler purchaseAssembler = new PurchaseDTOAssembler();
 
     public static DealDTO toDTO(Deal deal) {
+        return toDTO(deal, null, null, null, null);
+    }
+
+    public static DealDTO toDTO(Deal deal,
+                                Function<Deal, List<ReceiptRef>> receipts,
+                                Function<Deal, List<OperationRef>> operations,
+                                Function<Deal, List<OperationRef>> cardOperations,
+                                Function<Deal, List<PurchaseRef>> purchases) {
         return deal == null ? null : new DealDTO(
                 deal.dealId().value(),
                 deal.owner().value(),
@@ -20,18 +34,26 @@ public class DealDTOAssembler {
                 deal.description(),
                 deal.comment(),
                 deal.category() == null ? null : deal.category().id(),
-                deal.receipts().stream()
-                        .map(receiptAssembler::toRef)
-                        .collect(Collectors.toList()),
-                deal.operations().stream()
-                        .map(OperationDTOAssembler::toRef)
-                        .collect(Collectors.toList()),
-                deal.cardOperations().stream()
-                        .map(OperationDTOAssembler::toRef)
-                        .collect(Collectors.toList()),
-                deal.purchases().stream()
-                        .map(purchaseAssembler::toRef)
-                        .collect(Collectors.toList())
+                ofNullable(receipts).orElse(DealDTOAssembler::receipts).apply(deal),
+                ofNullable(operations).orElse(DealDTOAssembler::operations).apply(deal),
+                ofNullable(cardOperations).orElse(DealDTOAssembler::cardOperations).apply(deal),
+                ofNullable(purchases).orElse(DealDTOAssembler::purchases).apply(deal)
         );
+    }
+
+    public static List<ReceiptRef> receipts(Deal deal) {
+        return deal.receipts().stream().map(receiptAssembler::toRef).toList();
+    }
+
+    public static List<OperationRef> operations(Deal deal) {
+        return deal.operations().stream().map(OperationDTOAssembler::toRef).toList();
+    }
+
+    public static List<OperationRef> cardOperations(Deal deal) {
+        return deal.cardOperations().stream().map(OperationDTOAssembler::toRef).toList();
+    }
+
+    public static List<PurchaseRef> purchases(Deal deal) {
+        return deal.purchases().stream().map(purchaseAssembler::toRef).toList();
     }
 }

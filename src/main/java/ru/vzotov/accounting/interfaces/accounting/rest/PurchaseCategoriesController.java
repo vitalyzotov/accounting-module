@@ -39,11 +39,11 @@ public class PurchaseCategoriesController {
 
     @PostMapping
     public PurchaseCategoryDTO createNewCategory(@RequestBody PurchaseCategoryDTO category) {
-        return receiptsFacade.createNewCategory(category.getName());
+        return receiptsFacade.createNewCategory(category.name());
     }
 
     @PatchMapping("/{categoryId}")
     public PurchaseCategoryDTO renameCategory(@PathVariable String categoryId, @RequestBody PurchaseCategoryDTO category) {
-        return receiptsFacade.renameCategory(new PurchaseCategoryId(categoryId), category.getName());
+        return receiptsFacade.renameCategory(new PurchaseCategoryId(categoryId), category.name());
     }
 }

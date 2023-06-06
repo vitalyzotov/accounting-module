@@ -1,8 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import org.assertj.core.api.Condition;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.HoldOperationDTO;
@@ -29,7 +27,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 public class AccountsControllerTest extends AbstractControllerTest {
@@ -187,7 +184,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 ).getBody()).isNotEmpty().doNotHave(new Condition<AccountOperationDTO>() {
             @Override
             public boolean matches(AccountOperationDTO value) {
-                return "will-be-removed".equalsIgnoreCase(value.getOperationId());
+                return "will-be-removed".equalsIgnoreCase(value.operationId());
             }
         });
     }
@@ -218,7 +215,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                         AccountOperationDTO.class,
                         accountNumber
                 );
-        final String operationId = exchange.getBody().getOperationId();
+        final String operationId = exchange.getBody().operationId();
         assertThat(exchange.getBody()).usingRecursiveComparison().isEqualTo(new AccountOperationDTO(
                 accountNumber,
                 operationDate,
@@ -247,7 +244,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 .haveExactly(1, new Condition<AccountOperationDTO>() {
                     @Override
                     public boolean matches(AccountOperationDTO value) {
-                        return operationId.equalsIgnoreCase(value.getOperationId());
+                        return operationId.equalsIgnoreCase(value.operationId());
                     }
                 });
     }
@@ -264,7 +261,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                         },
                         operationId
                 );
-        assertThat(exchange.getBody().getCategoryId()).isEqualTo(781381038049753674L);
+        assertThat(exchange.getBody().categoryId()).isEqualTo(781381038049753674L);
     }
 
     @Test
@@ -283,7 +280,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                         },
                         operationId
                 );
-        assertThat(exchange.getBody().getComment()).isEqualTo("my comment");
+        assertThat(exchange.getBody().comment()).isEqualTo("my comment");
     }
 
     private static class OperationCategoryPatch {

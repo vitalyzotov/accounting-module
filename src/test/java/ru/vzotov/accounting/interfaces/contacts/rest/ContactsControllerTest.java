@@ -1,8 +1,8 @@
 package ru.vzotov.accounting.interfaces.contacts.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.assertj.core.internal.OffsetDateTimeByInstantComparator;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,18 +11,19 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactDTO;
 import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactDataDTO;
 import ru.vzotov.accounting.interfaces.contacts.rest.dto.ContactCreateRequest;
 import ru.vzotov.accounting.interfaces.contacts.rest.dto.ContactModifyRequest;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.Comparator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 public class ContactsControllerTest extends AbstractControllerTest {
@@ -190,11 +191,16 @@ public class ContactsControllerTest extends AbstractControllerTest {
                 contactId
         );
         log.info("getModifiedContact: {}", getModifiedContact.toString());
-        log.info("getModifiedContact response: {}",toJSON(getModifiedContact.getBody()));
+        log.info("getModifiedContact response: {}", toJSON(getModifiedContact.getBody()));
 
         assertThat(getModifiedContact.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getModifiedContact.getBody()).isNotNull();
-        assertThat(getModifiedContact.getBody()).usingRecursiveComparison().isEqualTo(modification);
+        assertThat(getModifiedContact.getBody()).usingRecursiveComparison()
+                .withComparatorForType(
+                        Comparator.comparing(a -> a.truncatedTo(ChronoUnit.MILLIS).toInstant()),
+                        OffsetDateTime.class
+                )
+                .isEqualTo(modification);
 
     }
 }

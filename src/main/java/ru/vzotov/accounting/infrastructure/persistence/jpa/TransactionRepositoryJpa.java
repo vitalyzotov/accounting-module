@@ -31,9 +31,9 @@ public class TransactionRepositoryJpa extends JpaRepository implements Transacti
     @Override
     public List<Transaction> findByDate(Collection<PersonId> owners, LocalDate fromDate, LocalDate toDate) {
         return em.createQuery("select tx from Transaction as tx where " +
-                        "tx.primaryOperation.id in (select primaryOp.operationId.id from Operation primaryOp, Account a1 where a1.accountNumber=primaryOp.account and a1.owner in (:owners) and (primaryOp.date >= :dateFrom and primaryOp.date <= :dateTo)) " +
-                        "or tx.secondaryOperation.id in (select secondaryOp.operationId.id from Operation secondaryOp, Account a2 where a2.accountNumber=secondaryOp.account and a2.owner in (:owners) and (secondaryOp.date >= :dateFrom and secondaryOp.date <= :dateTo))"
-                , Transaction.class)
+                                "tx.primaryOperation.id in (select primaryOp.operationId.id from Operation primaryOp, Account a1 where a1.accountNumber=primaryOp.account and a1.owner in (:owners) and (primaryOp.date >= :dateFrom and primaryOp.date <= :dateTo)) " +
+                                "or tx.secondaryOperation.id in (select secondaryOp.operationId.id from Operation secondaryOp, Account a2 where a2.accountNumber=secondaryOp.account and a2.owner in (:owners) and (secondaryOp.date >= :dateFrom and secondaryOp.date <= :dateTo))"
+                        , Transaction.class)
                 .setParameter("owners", owners)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
@@ -42,7 +42,7 @@ public class TransactionRepositoryJpa extends JpaRepository implements Transacti
 
     @Override
     public void store(Transaction transaction) {
-        if (hasId(transaction, "id")) {
+        if (em.contains(transaction)) {
             em.detach(transaction);
             em.merge(transaction);
             em.flush();

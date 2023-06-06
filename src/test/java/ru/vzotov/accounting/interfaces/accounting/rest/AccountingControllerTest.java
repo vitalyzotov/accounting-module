@@ -1,9 +1,8 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import org.assertj.core.api.Assertions;
-import org.assertj.core.internal.OffsetDateTimeByInstantComparator;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpEntity;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDataDTO;
@@ -30,19 +28,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.time.Month.JUNE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static ru.vzotov.accounting.test.DateUtils.inCurrentZone;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 @Transactional
@@ -91,8 +90,12 @@ public class AccountingControllerTest extends AbstractControllerTest {
                 PERSON_ID
         );
         assertThat(response.getBody())
-                .usingRecursiveFieldByFieldElementComparator()
-                .usingComparatorForType(OffsetDateTimeByInstantComparator.getInstance(), OffsetDateTime.class)
+                .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder()
+                        .withComparatorForType(
+                                Comparator.comparing(a -> a.truncatedTo(ChronoUnit.MILLIS).toInstant()),
+                                OffsetDateTime.class
+                        )
+                        .build())
                 .contains(expected);
     }
 
@@ -101,7 +104,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
         GetReceiptResponse body = this.restTemplate
                 .withBasicAuth(USER, PASSWORD)
                 .getForObject("/accounting/receipts/2128735201?t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&n=1", GetReceiptResponse.class);
-        assertThat(body.getReceipt().getItems()).hasSize(2);
+        assertThat(body.getReceipt().items()).hasSize(2);
     }
 
     @Test

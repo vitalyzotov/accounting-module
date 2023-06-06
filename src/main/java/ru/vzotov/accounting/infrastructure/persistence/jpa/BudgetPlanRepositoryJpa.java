@@ -41,7 +41,7 @@ public class BudgetPlanRepositoryJpa extends JpaRepository implements BudgetPlan
 
     @Override
     public void store(BudgetPlan item) {
-        if (hasId(item, "id")) {
+        if (em.contains(item)) {
             //em.detach(item);
             em.merge(item);
             em.flush();

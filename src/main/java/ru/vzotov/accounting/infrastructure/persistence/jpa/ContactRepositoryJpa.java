@@ -40,7 +40,7 @@ public class ContactRepositoryJpa extends JpaRepository implements ContactReposi
 
     @Override
     public void store(Contact contact) {
-        if (hasId(contact, "id")) {
+        if (em.contains(contact)) {
             em.merge(contact);
             em.flush();
         } else {

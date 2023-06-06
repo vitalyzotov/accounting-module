@@ -21,4 +21,12 @@ public final class MoneyDTO implements Serializable {
     public String getCurrency() {
         return currency;
     }
+
+    @Override
+    public String toString() {
+        return "MoneyDTO{" +
+                "amount=" + amount +
+                ", currency='" + currency + '\'' +
+                '}';
+    }
 }

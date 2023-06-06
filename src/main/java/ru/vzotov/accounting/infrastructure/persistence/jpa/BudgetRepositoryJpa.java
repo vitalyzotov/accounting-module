@@ -64,7 +64,7 @@ public class BudgetRepositoryJpa extends JpaRepository implements BudgetReposito
 
     @Override
     public void store(Budget budget) {
-        if (hasId(budget, "id")) {
+        if (em.contains(budget)) {
             //em.detach(budget);
             em.merge(budget);
             em.flush();

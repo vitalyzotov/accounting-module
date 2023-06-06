@@ -3,6 +3,7 @@ package ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler;
 import ru.vzotov.accounting.interfaces.common.assembler.AbstractAssembler;
 import ru.vzotov.accounting.interfaces.common.assembler.MoneyDTOAssembler;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
+import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseIdDTO;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
@@ -12,7 +13,7 @@ public class PurchaseDTOAssembler extends AbstractAssembler<PurchaseDTO, Purchas
     private final MoneyDTOAssembler moneyAssembler = new MoneyDTOAssembler();
 
     public PurchaseRef toRef(PurchaseId model) {
-        return model == null ? null : new PurchaseRef(model.value());
+        return model == null ? null : new PurchaseIdDTO(model.value());
     }
 
     public PurchaseRef toRef(Purchase model) {

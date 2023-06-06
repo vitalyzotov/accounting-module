@@ -1,21 +1,16 @@
 package ru.vzotov.accounting.interfaces.purchases.facade.dto;
 
-public class PurchaseRef {
-    private String purchaseId;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-    public PurchaseRef() {
-    }
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.DEDUCTION;
 
-    public PurchaseRef(String purchaseId) {
-        this.purchaseId = purchaseId;
-    }
+@JsonAutoDetect(fieldVisibility = ANY)
+@JsonTypeInfo(use = DEDUCTION, defaultImpl = PurchaseIdDTO.class)
+@JsonSubTypes({@JsonSubTypes.Type(PurchaseIdDTO.class), @JsonSubTypes.Type(PurchaseDTO.class)})
 
-    public String getPurchaseId() {
-        return purchaseId;
-    }
-
-    public void setPurchaseId(String purchaseId) {
-        this.purchaseId = purchaseId;
-    }
-
+public interface PurchaseRef {
+    String purchaseId();
 }

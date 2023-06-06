@@ -117,7 +117,7 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
                         endOfMonth,
                         count
                 );
-                result.getPeriods().add(period);
+                result.periods().add(period);
 
                 startOfMonth = startOfMonth.plusMonths(1);
             } while (endOfMonth.isBefore(today));

@@ -34,8 +34,8 @@ public class TransactionsController {
     @PostMapping
     public TransactionDTO makeTransaction(@RequestBody TransactionDTO transaction) {
         return accountingFacade.makeTransaction(
-                new OperationId(transaction.getPrimary()),
-                new OperationId(transaction.getSecondary())
+                new OperationId(transaction.primary()),
+                new OperationId(transaction.secondary())
         );
     }
 

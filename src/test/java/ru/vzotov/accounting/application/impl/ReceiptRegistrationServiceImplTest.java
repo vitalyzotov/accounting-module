@@ -1,13 +1,11 @@
 package ru.vzotov.accounting.application.impl;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.WithMockPersonUser;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
@@ -24,9 +22,8 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
 public class ReceiptRegistrationServiceImplTest {
@@ -61,7 +58,7 @@ public class ReceiptRegistrationServiceImplTest {
             // регистрация чека, сведения по которому отсутствуют в налоговой
             service.register(qrNonExistent);
 
-            verifyZeroInteractions(this.nalogru);
+            verifyNoInteractions(this.nalogru);
         }
     }
 }

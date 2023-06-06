@@ -95,7 +95,7 @@ public class HoldOperationRepositoryJpa extends JpaRepository implements HoldOpe
 
     @Override
     public void store(HoldOperation operation) {
-        if (hasId(operation, "id")) {
+        if (em.contains(operation)) {
             em.detach(operation);
             em.merge(operation);
             em.flush();

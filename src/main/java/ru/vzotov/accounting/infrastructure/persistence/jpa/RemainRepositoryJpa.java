@@ -70,7 +70,7 @@ public class RemainRepositoryJpa extends JpaRepository implements RemainReposito
 
     @Override
     public void store(Remain remain) {
-        if (hasId(remain, "id")) {
+        if (em.contains(remain)) {
             em.detach(remain);
             em.merge(remain);
             em.flush();

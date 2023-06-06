@@ -33,7 +33,7 @@ public class PurchaseEnricher extends AbstractEnricher<PurchaseRef> {
     @Override
     public PurchaseRef apply(PurchaseRef ref) {
         return ref == null ? null : assembler.toDTO(
-                cache.computeIfAbsent(ref.getPurchaseId(), id -> repository.find(new PurchaseId(id)))
+                cache.computeIfAbsent(ref.purchaseId(), id -> repository.find(new PurchaseId(id)))
         );
     }
 }

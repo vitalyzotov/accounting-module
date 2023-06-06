@@ -1,14 +1,12 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import org.assertj.core.api.Condition;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.accounting.domain.model.BudgetRuleId;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetRuleDTO;
@@ -17,7 +15,6 @@ import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 public class BudgetControllerTest extends AbstractControllerTest {
@@ -33,7 +30,7 @@ public class BudgetControllerTest extends AbstractControllerTest {
                 new BudgetRuleId("004").value()
         );
 
-        assertThat(exchange.getBody().getCategoryId()).isEqualTo(781381038049753674L);
+        assertThat(exchange.getBody().categoryId()).isEqualTo(781381038049753674L);
     }
 
     @Test
@@ -58,21 +55,21 @@ public class BudgetControllerTest extends AbstractControllerTest {
                 new BudgetRuleId("001").value()
         );
 
-        assertThat(exchange.getBody().getRules()).isNotEmpty();
+        assertThat(exchange.getBody().rules()).isNotEmpty();
 
         assertThat(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}",
                 HttpMethod.GET, new HttpEntity<>(null),
                 BudgetDTO.class, budgetId
-        ).getBody().getRules()).doNotHave(new Condition<BudgetRuleDTO>() {
+        ).getBody().rules()).doNotHave(new Condition<BudgetRuleDTO>() {
             @Override
             public boolean matches(BudgetRuleDTO rule) {
-                return rule.getName().equals("Заработная плата");
+                return rule.name().equals("Заработная плата");
             }
         }).haveExactly(1, new Condition<BudgetRuleDTO>() {
             @Override
             public boolean matches(BudgetRuleDTO rule) {
-                return rule.getName().equals("Заработная плата 2");
+                return rule.name().equals("Заработная плата 2");
             }
         });
     }
@@ -88,21 +85,21 @@ public class BudgetControllerTest extends AbstractControllerTest {
                 new BudgetRuleId("003").value() //.ruleIdOf("Гипермаркет")
         );
 
-        assertThat(exchange.getBody().getRules()).isNotEmpty();
+        assertThat(exchange.getBody().rules()).isNotEmpty();
 
         assertThat(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}",
                 HttpMethod.GET, new HttpEntity<>(null),
                 BudgetDTO.class, budgetId
-        ).getBody().getRules()).doNotHave(new Condition<BudgetRuleDTO>() {
+        ).getBody().rules()).doNotHave(new Condition<BudgetRuleDTO>() {
             @Override
             public boolean matches(BudgetRuleDTO rule) {
-                return rule.getName().equals("Гипермаркет");
+                return rule.name().equals("Гипермаркет");
             }
         }).haveExactly(1, new Condition<BudgetRuleDTO>() {
             @Override
             public boolean matches(BudgetRuleDTO rule) {
-                return rule.getName().equals("Аванс");
+                return rule.name().equals("Аванс");
             }
         });
     }

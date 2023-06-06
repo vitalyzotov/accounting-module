@@ -168,7 +168,7 @@ public class AccountingServiceImpl implements AccountingService {
                         cardOperation == null ? null : cardOperation.purchaseDate()
                 )
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
 
         LocalDate from = dates.stream().min(LocalDate::compareTo).orElse(operation.date());
         LocalDate to = dates.stream().max(LocalDate::compareTo).orElse(operation.date());

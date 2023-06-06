@@ -55,20 +55,22 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
     @Override
     public List<Deal> findByDate(Collection<PersonId> owners, String query, LocalDate fromDate, LocalDate toDate) {
         //todo: use fulltext search engine
-        return em.createQuery("from Deal d where d.owner in (:owners)" +
-                        " AND (:query IS NULL OR (" +
-                        "    LOCATE(:query, LOWER(d.description))>0" +
-                        " OR LOCATE(:query, LOWER(d.comment))>0"+
-                        " OR EXISTS(SELECT 1 FROM Purchase p WHERE p.purchaseId member of d.purchases AND LOCATE(:query, LOWER(p.name))>0)"+
-                        " OR EXISTS(SELECT 1 FROM Operation o WHERE o.operationId member of d.operations AND LOCATE(:query, LOWER(o.description))>0)"+
-                        " OR EXISTS(SELECT 1 FROM Receipt r WHERE r.receiptId member of d.receipts AND (" +
-                        "        LOCATE(:query, LOWER(r.shiftInfo.operator))>0" +
-                        "     OR LOCATE(:query, LOWER(r.retailPlace.user))>0" +
-                        "     OR LOCATE(:query, LOWER(r.retailPlace.address))>0" +
-                        "   )" +
-                        " )"+
-                        ")) AND d.date >= :dateFrom" +
-                        " AND d.date <= :dateTo", Deal.class)
+        return em.createQuery("""
+                        from Deal d where d.owner in (:owners)
+                         AND (:query IS NULL OR (
+                            LOCATE(:query, LOWER(d.description))>0
+                         OR LOCATE(:query, LOWER(d.comment))>0
+                         OR EXISTS(SELECT 1 FROM Purchase p WHERE p.purchaseId member of d.purchases AND LOCATE(:query, LOWER(p.name))>0)
+                         OR EXISTS(SELECT 1 FROM Operation o WHERE o.operationId member of d.operations AND LOCATE(:query, LOWER(o.description))>0)
+                         OR EXISTS(SELECT 1 FROM Receipt r WHERE r.receiptId member of d.receipts AND (
+                                LOCATE(:query, LOWER(r.shiftInfo.operator))>0
+                             OR LOCATE(:query, LOWER(r.retailPlace.user))>0
+                             OR LOCATE(:query, LOWER(r.retailPlace.address))>0
+                           )
+                         )
+                        )) AND d.date >= :dateFrom
+                         AND d.date <= :dateTo
+                        """, Deal.class)
                 .setParameter("owners", owners)
                 .setParameter("dateFrom", fromDate)
                 .setParameter("dateTo", toDate)
@@ -111,7 +113,7 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
 
     @Override
     public void store(Deal deal) {
-        if (hasId(deal, "id")) {
+        if (em.contains(deal)) {
             em.merge(deal);
         } else {
             em.persist(deal);
@@ -151,7 +153,7 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
             Object[] result = (Object[]) em.createQuery("select min(date), max(date) from Deal where owner in (:owners)")
                     .setParameter("owners", owners)
                     .getSingleResult();
-            return new LocalDate[] {
+            return new LocalDate[]{
                     (LocalDate) result[0], (LocalDate) result[1]
             };
         } catch (NoResultException ex) {

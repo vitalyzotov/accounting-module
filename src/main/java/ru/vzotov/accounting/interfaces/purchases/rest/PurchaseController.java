@@ -1,10 +1,12 @@
 package ru.vzotov.accounting.interfaces.purchases.rest;
 
+import org.apache.commons.lang3.Validate;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.purchases.facade.PurchasesFacade;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseCreateRequest;
+import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseData;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseDataRequest;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseDeleteResponse;
 import ru.vzotov.accounting.interfaces.purchases.rest.dto.PurchaseModifyRequest;
@@ -60,7 +62,7 @@ public class PurchaseController {
     @PostMapping(params = {"!receiptId", "!dealId"})
     public PurchaseStoreResponse newPurchase(@RequestBody PurchaseCreateRequest purchase) {
         final List<PurchaseDTO> dtoList = purchase.getPurchases().stream()
-                .map(this::toPurchaseDTO)
+                .map(data -> toPurchaseDTO(null, data))
                 .collect(Collectors.toList());
 
         final List<PurchaseId> pid = purchasesFacade.createPurchase(dtoList, new DealId(purchase.getDealId()));
@@ -79,20 +81,21 @@ public class PurchaseController {
 
     @PutMapping("{purchaseId}")
     public PurchaseStoreResponse modifyPurchase(@PathVariable String purchaseId, @RequestBody PurchaseModifyRequest purchase) {
-        final PurchaseDTO dto = toPurchaseDTO(purchase);
-        dto.setPurchaseId(purchaseId);
+        final PurchaseDTO dto = toPurchaseDTO(purchaseId, purchase);
         purchasesFacade.modifyPurchase(dto);
         return new PurchaseStoreResponse(Collections.singletonList(purchaseId));
     }
 
-    PurchaseDTO toPurchaseDTO(@RequestBody PurchaseDataRequest purchase) {
-        final PurchaseDTO dto = new PurchaseDTO();
-        dto.setReceiptId(purchase.getReceiptId());
-        dto.setName(purchase.getName());
-        dto.setDateTime(purchase.getDateTime());
-        dto.setPrice(purchase.getPrice());
-        dto.setQuantity(purchase.getQuantity());
-        dto.setCategoryId(purchase.getCategoryId());
-        return dto;
+    PurchaseDTO toPurchaseDTO(String purchaseId, PurchaseDataRequest purchase) {
+        return new PurchaseDTO(
+                purchaseId,
+                null,
+                purchase.getReceiptId(),
+                purchase.getName(),
+                purchase.getDateTime(),
+                purchase.getPrice(),
+                purchase.getQuantity(),
+                purchase.getCategoryId()
+        );
     }
 }

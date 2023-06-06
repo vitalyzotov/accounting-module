@@ -31,7 +31,7 @@ public class OperationEnricher extends AbstractEnricher<OperationRef> {
 
     public AccountOperationDTO apply(OperationRef ref) {
         return ref == null ? null : OperationDTOAssembler.toDTO(
-                cache.computeIfAbsent(ref.getOperationId(), id -> repository.find(new OperationId(id)))
+                cache.computeIfAbsent(ref.operationId(), id -> repository.find(new OperationId(id)))
         );
     }
 

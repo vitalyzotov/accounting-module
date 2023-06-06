@@ -1,7 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assembler;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ItemDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptDTOAssembler;
@@ -30,24 +30,24 @@ public class ReceiptDTOAssemblerTest {
         final ReceiptDTO dto = assembler.toDTO(receipt);
 
         assertThat(dto).isNotNull();
-        assertThat(dto.getDateTime())
+        assertThat(dto.dateTime())
                 .isEqualTo(LocalDateTime.of(2018, JULY, 17, 17, 8, 0));
 
-        assertThat(dto.getTotalSum().getAmount()).isEqualTo(15000);
-        assertThat(dto.getTotalSum().getCurrency()).isEqualTo("RUR");
+        assertThat(dto.totalSum().getAmount()).isEqualTo(15000);
+        assertThat(dto.totalSum().getCurrency()).isEqualTo("RUR");
 
-        assertThat(dto.getFiscalInfo().getKktRegId()).isEqualTo("0000485300049451");
-        assertThat(dto.getFiscalInfo().getKktNumber()).isNull();
-        assertThat(dto.getFiscalInfo().getFiscalDocumentNumber()).isEqualTo("2056");
-        assertThat(dto.getFiscalInfo().getFiscalDriveNumber()).isEqualTo("9288000100080294");
-        assertThat(dto.getFiscalInfo().getFiscalSign()).isEqualTo("2024263777");
+        assertThat(dto.fiscalInfo().kktRegId()).isEqualTo("0000485300049451");
+        assertThat(dto.fiscalInfo().kktNumber()).isNull();
+        assertThat(dto.fiscalInfo().fiscalDocumentNumber()).isEqualTo("2056");
+        assertThat(dto.fiscalInfo().fiscalDriveNumber()).isEqualTo("9288000100080294");
+        assertThat(dto.fiscalInfo().fiscalSign()).isEqualTo("2024263777");
 
-        assertThat(dto.getItems()).hasSize(1);
-        ItemDTO item = dto.getItems().get(0);
-        assertThat(item.getName()).isEqualTo("Пепси напиток 0,8л.");
-        assertThat(item.getQuantity()).isEqualTo(1d);
-        assertThat(item.getPrice().getAmount()).isEqualTo(15000);
-        assertThat(item.getSum().getAmount()).isEqualTo(15000);
+        assertThat(dto.items()).hasSize(1);
+        ItemDTO item = dto.items().get(0);
+        assertThat(item.name()).isEqualTo("Пепси напиток 0,8л.");
+        assertThat(item.quantity()).isEqualTo(1d);
+        assertThat(item.price().getAmount()).isEqualTo(15000);
+        assertThat(item.sum().getAmount()).isEqualTo(15000);
     }
 
     @Test

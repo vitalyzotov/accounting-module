@@ -1,20 +1,15 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.dto;
 
-public class ReceiptRef {
-    private String receiptId;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-    public ReceiptRef() {
-    }
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.DEDUCTION;
 
-    public ReceiptRef(String receiptId) {
-        this.receiptId = receiptId;
-    }
-
-    public String getReceiptId() {
-        return receiptId;
-    }
-
-    public void setReceiptId(String receiptId) {
-        this.receiptId = receiptId;
-    }
+@JsonAutoDetect(fieldVisibility = ANY)
+@JsonTypeInfo(use = DEDUCTION, defaultImpl = ReceiptIdDTO.class)
+@JsonSubTypes({@JsonSubTypes.Type(ReceiptIdDTO.class), @JsonSubTypes.Type(ReceiptDTO.class), @JsonSubTypes.Type(QRCodeDTO.class)})
+public interface ReceiptRef {
+    String receiptId();
 }

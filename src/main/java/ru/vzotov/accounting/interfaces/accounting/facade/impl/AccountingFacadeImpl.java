@@ -225,7 +225,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
         final AccountNumber account = new AccountNumber(accountNumber);
         ownedGuard.accessing(accountRepository.find(account));
         Remain remain = new Remain(account, date,
-                Money.ofRaw(value.getAmount(), Currency.getInstance(value.getCurrency()))
+                Money.ofRaw(value.amount(), Currency.getInstance(value.currency()))
         );
         remainRepository.store(remain);
         return remain.remainId().value();
@@ -329,16 +329,16 @@ public class AccountingFacadeImpl implements AccountingFacade {
         List<AccountOperationDTO> result = new ArrayList<>(data.size());
         for (AccountOperationDTO operation : data) {
             result.add(createOperation(
-                    operation.getAccount(),
-                    operation.getDate(),
-                    operation.getAuthorizationDate(),
-                    operation.getTransactionReference(),
-                    operation.getOperationType().charAt(0),
-                    operation.getAmount(),
-                    operation.getCurrency(),
-                    operation.getDescription(),
-                    operation.getComment(),
-                    operation.getCategoryId()
+                    operation.account(),
+                    operation.date(),
+                    operation.authorizationDate(),
+                    operation.transactionReference(),
+                    operation.operationType().charAt(0),
+                    operation.amount(),
+                    operation.currency(),
+                    operation.description(),
+                    operation.comment(),
+                    operation.categoryId()
             ));
         }
         return result;
@@ -516,9 +516,9 @@ public class AccountingFacadeImpl implements AccountingFacade {
         final Card card = new Card(number, holder, validThru, issuer);
         Optional.ofNullable(accounts).map(Collection::stream).orElse(Stream.empty())
                 .forEach(b -> card.bindToAccount(
-                        new AccountNumber(b.getAccountNumber()),
-                        b.getFrom(),
-                        b.getTo()
+                        new AccountNumber(b.accountNumber()),
+                        b.from(),
+                        b.to()
                 ));
         cardRepository.store(card);
         return number;
@@ -535,7 +535,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
         card.setValidThru(validThru);
         card.unbindAll();
         accounts.stream()
-                .map(d -> new AccountBinding(new AccountNumber(d.getAccountNumber()), d.getFrom(), d.getTo()))
+                .map(d -> new AccountBinding(new AccountNumber(d.accountNumber()), d.from(), d.to()))
                 .forEach(b -> card.bindToAccount(b.accountNumber(), b.from(), b.to()));
         cardRepository.store(card);
         return number;

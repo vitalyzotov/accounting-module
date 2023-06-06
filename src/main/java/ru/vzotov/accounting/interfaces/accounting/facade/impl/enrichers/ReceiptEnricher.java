@@ -34,7 +34,7 @@ public class ReceiptEnricher extends AbstractEnricher<ReceiptRef> {
     @Override
     public ReceiptRef apply(ReceiptRef ref) {
         return ref == null ? null : assembler.toDTO(
-                cache.computeIfAbsent(ref.getReceiptId(), id -> repository.find(new ReceiptId(id)))
+                cache.computeIfAbsent(ref.receiptId(), id -> repository.find(new ReceiptId(id)))
         );
     }
 }
