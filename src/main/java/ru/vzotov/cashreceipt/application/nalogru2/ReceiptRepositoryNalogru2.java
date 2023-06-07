@@ -3,7 +3,7 @@ package ru.vzotov.cashreceipt.application.nalogru2;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.application.events.PreAuthEvent;
 import ru.vzotov.cashreceipt.application.impl.LoggingRequestInterceptor;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

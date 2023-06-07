@@ -15,7 +15,7 @@ import ru.vzotov.banking.domain.model.Card;
 import ru.vzotov.banking.domain.model.CardNumber;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;

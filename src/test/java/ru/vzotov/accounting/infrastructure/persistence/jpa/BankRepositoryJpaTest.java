@@ -12,7 +12,7 @@ import ru.vzotov.accounting.domain.model.BankRepository;
 import ru.vzotov.banking.domain.model.Bank;
 import ru.vzotov.banking.domain.model.BankId;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

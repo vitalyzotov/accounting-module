@@ -5,8 +5,8 @@ import ru.vzotov.banking.domain.model.MccCode;
 import ru.vzotov.banking.domain.model.MccDetails;
 import ru.vzotov.banking.domain.model.MccGroupId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.util.List;
 
 public class MccDetailsRepositoryJpa extends JpaRepository implements MccDetailsRepository {

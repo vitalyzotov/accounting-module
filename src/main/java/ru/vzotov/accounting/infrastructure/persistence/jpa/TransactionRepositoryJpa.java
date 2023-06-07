@@ -5,8 +5,8 @@ import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.Transaction;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;

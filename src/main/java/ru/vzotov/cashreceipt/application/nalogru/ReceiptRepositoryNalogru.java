@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -101,7 +102,7 @@ public class ReceiptRepositoryNalogru {
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class, parameters);
 
-            switch (response.getStatusCode()) {
+            switch (HttpStatus.valueOf(response.getStatusCode().value())) {
                 case ACCEPTED:
                     log.info("Receipt request accepted, wait for nalog.ru to prepare data");
                     break;
@@ -120,8 +121,8 @@ public class ReceiptRepositoryNalogru {
                     break;
             }
         } catch (HttpStatusCodeException e) {
-            final HttpStatus status = e.getStatusCode();
-            if (HttpStatus.PAYMENT_REQUIRED.equals(status)) {
+            final HttpStatusCode status = e.getStatusCode();
+            if (HttpStatus.PAYMENT_REQUIRED.isSameCodeAs(status)) {
                 limitRestrictionDate = now;
             }
         } catch (RestClientException e) {

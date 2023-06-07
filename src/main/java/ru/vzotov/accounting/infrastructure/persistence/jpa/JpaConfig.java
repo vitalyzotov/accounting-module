@@ -28,9 +28,10 @@ import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Objects;
 
 @Configuration("jpa-accounting")
 public class JpaConfig {
@@ -177,6 +178,7 @@ public class JpaConfig {
     }
 
     @Bean("accounting-emf")
+    @Qualifier("accounting-emf")
     public LocalContainerEntityManagerFactoryBean accountingEntityManagerFactory(EntityManagerFactoryBuilder builder) {
         return builder
                 .dataSource(dataSource)
@@ -186,8 +188,10 @@ public class JpaConfig {
 
     @Bean("accounting-tx")
     public JpaTransactionManager transactionManager(@Qualifier("accounting-emf") final EntityManagerFactory emf) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(emf);
+        JpaTransactionManager transactionManager = new JpaTransactionManager(
+                Objects.requireNonNull(emf)
+        );
+//        transactionManager.setEntityManagerFactory(emf);
         return transactionManager;
     }
 

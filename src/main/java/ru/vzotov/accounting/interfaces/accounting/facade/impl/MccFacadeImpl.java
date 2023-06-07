@@ -7,7 +7,7 @@ import ru.vzotov.accounting.interfaces.accounting.facade.dto.MccDetailsDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.MccGroupDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccDetailsDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccGroupDTOAssembler;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

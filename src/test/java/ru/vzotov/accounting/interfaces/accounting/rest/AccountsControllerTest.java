@@ -51,7 +51,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
         ResponseEntity<List<AccountDTO>> exchange = this.restTemplate
                 .withBasicAuth(USER, PASSWORD)
                 .exchange(
-                        "/accounting/accounts/",
+                        "/accounting/accounts",
                         HttpMethod.GET, new HttpEntity<>(null),
                         new ParameterizedTypeReference<List<AccountDTO>>() {
                         }

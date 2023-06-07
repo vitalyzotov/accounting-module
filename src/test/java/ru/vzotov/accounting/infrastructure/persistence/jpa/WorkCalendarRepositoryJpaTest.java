@@ -12,7 +12,7 @@ import ru.vzotov.accounting.domain.model.WorkCalendarRepository;
 import ru.vzotov.calendar.domain.model.WorkCalendar;
 import ru.vzotov.calendar.domain.model.WorkCalendars;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Month;
 

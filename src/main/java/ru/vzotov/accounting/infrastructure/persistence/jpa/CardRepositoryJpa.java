@@ -6,8 +6,8 @@ import ru.vzotov.banking.domain.model.Card;
 import ru.vzotov.banking.domain.model.CardNumber;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.util.List;
 
 public class CardRepositoryJpa extends JpaRepository implements CardRepository {

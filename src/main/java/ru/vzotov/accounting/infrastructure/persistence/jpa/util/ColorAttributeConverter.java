@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa.util;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 public class ColorAttributeConverter implements AttributeConverter<Integer, String> {
     @Override

@@ -26,7 +26,7 @@ import ru.vzotov.banking.domain.model.PosTerminalId;
 import ru.vzotov.banking.domain.model.Street;
 import ru.vzotov.domain.model.Money;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 

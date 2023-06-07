@@ -2,7 +2,7 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa.util;
 
 import ru.vzotov.calendar.domain.model.Recurrence;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 public class RecurrenceAttributeConverter implements AttributeConverter<Recurrence, String> {
     @Override

@@ -2,7 +2,7 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa.util;
 
 import ru.vzotov.accounting.domain.model.BudgetRuleType;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 public class BudgetRuleTypeAttributeConverter implements AttributeConverter<BudgetRuleType, String> {
     @Override

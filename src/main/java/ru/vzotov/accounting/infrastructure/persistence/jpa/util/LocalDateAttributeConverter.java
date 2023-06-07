@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa.util;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 import java.time.LocalDate;
 import java.sql.Date;
 

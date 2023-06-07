@@ -22,7 +22,7 @@ import ru.vzotov.calendar.domain.model.RecurrenceUnit;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.HashSet;

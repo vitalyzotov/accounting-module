@@ -21,8 +21,8 @@ import ru.vzotov.banking.domain.model.OperationType;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.PersistenceException;
-import javax.transaction.Transactional;
+import jakarta.persistence.PersistenceException;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;

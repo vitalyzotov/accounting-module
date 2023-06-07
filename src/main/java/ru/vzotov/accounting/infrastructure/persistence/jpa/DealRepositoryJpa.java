@@ -1,6 +1,5 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import org.apache.commons.lang3.StringUtils;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
@@ -9,8 +8,8 @@ import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -65,7 +64,7 @@ public class DealRepositoryJpa extends JpaRepository implements DealRepository {
                          OR EXISTS(SELECT 1 FROM Receipt r WHERE r.receiptId member of d.receipts AND (
                                 LOCATE(:query, LOWER(r.shiftInfo.operator))>0
                              OR LOCATE(:query, LOWER(r.retailPlace.user))>0
-                             OR LOCATE(:query, LOWER(r.retailPlace.address))>0
+                             OR LOCATE(:query, LOWER(r.retailPlace.address.value))>0
                            )
                          )
                         )) AND d.date >= :dateFrom

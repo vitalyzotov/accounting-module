@@ -5,7 +5,7 @@ import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
 import ru.vzotov.accounting.interfaces.accounting.rest.dto.ReceiptItemCategoryPatch;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PatchMapping;

@@ -15,7 +15,7 @@ import ru.vzotov.person.domain.model.ContactData;
 import ru.vzotov.person.domain.model.ContactId;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

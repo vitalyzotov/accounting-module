@@ -19,7 +19,7 @@ import ru.vzotov.accounting.domain.model.BudgetRule;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.domain.model.Money;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;

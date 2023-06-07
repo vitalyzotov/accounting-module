@@ -10,7 +10,7 @@ import ru.vzotov.accounting.domain.model.MccGroupRepository;
 import ru.vzotov.banking.domain.model.MccGroup;
 import ru.vzotov.banking.domain.model.MccGroupId;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

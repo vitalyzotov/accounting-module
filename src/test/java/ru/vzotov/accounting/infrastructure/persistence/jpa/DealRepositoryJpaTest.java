@@ -19,7 +19,7 @@ import ru.vzotov.domain.model.Money;
 import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;

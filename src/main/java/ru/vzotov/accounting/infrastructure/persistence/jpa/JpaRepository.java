@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public abstract class JpaRepository {
 

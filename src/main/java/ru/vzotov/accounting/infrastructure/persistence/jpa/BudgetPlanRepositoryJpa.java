@@ -5,8 +5,8 @@ import ru.vzotov.accounting.domain.model.BudgetPlan;
 import ru.vzotov.accounting.domain.model.BudgetPlanId;
 import ru.vzotov.accounting.domain.model.BudgetRuleId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.util.List;
 
 public class BudgetPlanRepositoryJpa extends JpaRepository implements BudgetPlanRepository {

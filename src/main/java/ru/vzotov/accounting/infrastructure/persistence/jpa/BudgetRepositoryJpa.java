@@ -7,8 +7,8 @@ import ru.vzotov.accounting.domain.model.BudgetRule;
 import ru.vzotov.accounting.domain.model.BudgetRuleId;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import java.util.List;
 
 public class BudgetRepositoryJpa extends JpaRepository implements BudgetRepository {

@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.application.impl;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,6 @@ import ru.vzotov.domain.model.Money;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -110,7 +109,7 @@ public class AccountingServiceImpl implements AccountingService {
                                              MccCode mcc) {
         Validate.notNull(operationId);
         Validate.notNull(cardNumber);
-        // Validate.notNull(terminal); // may be null
+        // Validate.notNull(terminal); // allowed to be null
         Validate.notNull(authDate);
         Validate.notNull(purchaseDate);
         Validate.notNull(amount);
