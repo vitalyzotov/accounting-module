@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import java.util.HashMap;
@@ -33,7 +32,7 @@ public class ConfigControllerTest extends AbstractControllerTest {
 
     @Test
     public void testValidRequest() {
-        HttpEntity<AccountingApi.NalogPreAuthRequest> request = new HttpEntity<>(new AccountingApi.NalogPreAuthRequest("test_session", "test_refresh"));
+        HttpEntity<ConfigController.NalogPreAuthRequest> request = new HttpEntity<>(new ConfigController.NalogPreAuthRequest("test_session", "test_refresh"));
         ResponseEntity<Void> response = this.restTemplate.withBasicAuth(USER, PASSWORD)
                 .exchange(ACCOUNTING_CONFIG_NALOG_AUTH, HttpMethod.PUT, request, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

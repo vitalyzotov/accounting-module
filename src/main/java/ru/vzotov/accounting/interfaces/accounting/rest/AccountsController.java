@@ -1,7 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,63 +12,68 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vzotov.accounting.application.AccountNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Account;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.AccountOperation;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.HoldOperation;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.CategoryNotFoundException;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/accounting/accounts")
 @CrossOrigin
 public class AccountsController {
 
-    @Autowired
-    private AccountingFacade accountingFacade;
+    private final AccountingFacade accountingFacade;
+
+    public AccountsController(AccountingFacade accountingFacade) {
+        this.accountingFacade = accountingFacade;
+    }
 
     @GetMapping
-    public List<AccountingApi.Account> listAccounts() {
+    public List<Account> listAccounts() {
         return accountingFacade.listAccounts();
     }
 
     @GetMapping("{accountNumber}")
-    public AccountingApi.Account getAccount(@PathVariable String accountNumber) {
+    public Account getAccount(@PathVariable String accountNumber) {
         return accountingFacade.getAccount(accountNumber);
     }
 
     @PostMapping
-    public AccountingApi.AccountStoreResponse newAccount(@RequestBody AccountingApi.AccountCreateRequest account) {
-        String accountNumber = accountingFacade.createAccount(account.number(), account.name(), account.bankId(), account.currency(), account.owner(), account.aliases());
-        return new AccountingApi.AccountStoreResponse(accountNumber);
+    public Account.Ref newAccount(@RequestBody Account.Create account) {
+        String accountNumber = accountingFacade.createAccount(account.number(), account.name(), account.bankId(),
+                account.currency(), account.owner(), account.aliases());
+        return new Account.Ref(accountNumber);
     }
 
     @PutMapping("{accountNumber}")
-    public AccountingApi.AccountStoreResponse modifyAccount(@PathVariable String accountNumber, @RequestBody AccountingApi.AccountModifyRequest account) {
+    public Account.Ref modifyAccount(@PathVariable String accountNumber, @RequestBody Account.Modify account) {
         accountingFacade.modifyAccount(accountNumber, account.name(), account.bankId(), account.currency(), account.aliases());
-        return new AccountingApi.AccountStoreResponse(accountNumber);
+        return new Account.Ref(accountNumber);
     }
 
     @GetMapping("{accountNumber}/operations")
-    public List<AccountingApi.AccountOperation> listOperations(@PathVariable String accountNumber,
-                                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) throws AccountNotFoundException {
+    public List<AccountOperation> listOperations(@PathVariable String accountNumber,
+                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) throws AccountNotFoundException {
         return accountingFacade.listOperations(accountNumber, from, to);
     }
 
 
     @PostMapping(value = "{accountNumber}/operations", params = {"!batch"})
-    public AccountingApi.AccountOperation createSingleOperation(@PathVariable String accountNumber,
-                                                                @RequestBody AccountingApi.OperationCreateRequest operation)
+    public AccountOperation createSingleOperation(@PathVariable String accountNumber,
+                                                  @RequestBody AccountOperation.Create operation)
             throws CategoryNotFoundException {
         return createOperation(accountNumber, operation);
     }
 
     @PostMapping(value = "{accountNumber}/operations", params = {"batch=false"})
-    public AccountingApi.AccountOperation createOperation(@PathVariable String accountNumber,
-                                                          @RequestBody AccountingApi.OperationCreateRequest operation)
+    public AccountOperation createOperation(@PathVariable String accountNumber,
+                                            @RequestBody AccountOperation.Create operation)
             throws CategoryNotFoundException {
         Validate.notNull(operation.operationType());
         return accountingFacade.createOperation(
@@ -87,15 +91,15 @@ public class AccountsController {
     }
 
     @PostMapping(value = "{accountNumber}/operations", params = {"batch=true"})
-    public List<AccountingApi.AccountOperation> createOperations(@PathVariable String accountNumber,
-                                                                 @RequestBody AccountingApi.OperationCreateRequest[] operations)
+    public List<AccountOperation> createOperations(@PathVariable String accountNumber,
+                                                   @RequestBody AccountOperation.Create[] operations)
             throws CategoryNotFoundException {
         Arrays.stream(operations)
-                .map(AccountingApi.OperationCreateRequest::operationType)
+                .map(AccountOperation.Create::operationType)
                 .forEach(Validate::notNull);
 
         return accountingFacade.createOperations(
-                Arrays.stream(operations).map(request -> new AccountingApi.AccountOperation(
+                Arrays.stream(operations).map(request -> new AccountOperation(
                                 accountNumber,
                                 request.date(),
                                 request.authorizationDate(),
@@ -108,14 +112,14 @@ public class AccountsController {
                                 request.comment(),
                                 request.categoryId()
                         ))
-                        .collect(Collectors.toList())
+                        .toList()
         );
     }
 
     @GetMapping("{accountNumber}/holds")
-    public List<AccountingApi.HoldOperation> listHoldOperations(@PathVariable String accountNumber,
-                                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    public List<HoldOperation> listHoldOperations(@PathVariable String accountNumber,
+                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         return accountingFacade.listHolds(accountNumber, from, to);
     }
 

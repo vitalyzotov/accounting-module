@@ -10,11 +10,11 @@ import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.common.guards.OwnedGuard;
+import ru.vzotov.accounting.interfaces.purchases.PurchasesApi;
 import ru.vzotov.accounting.interfaces.purchases.facade.PurchasesFacade;
-import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
-import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
+import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseAssembler;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
 import ru.vzotov.cashreceipt.domain.model.Receipt;
@@ -63,8 +63,8 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public PurchaseDTO getPurchaseById(String purchaseId) {
-        return new PurchaseDTOAssembler().toDTO(
+    public PurchasesApi.Purchase getPurchaseById(String purchaseId) {
+        return new PurchaseAssembler().toDTO(
                 ownedGuard.accessing(purchaseRepository.find(new PurchaseId(purchaseId)))
         );
     }
@@ -86,14 +86,14 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<PurchaseDTO> findPurchases(LocalDateTime from, LocalDateTime to) {
-        return new PurchaseDTOAssembler().toDTOList(purchaseRepository.findByDate(SecurityUtils.getAuthorizedPersons(), from, to));
+    public List<PurchasesApi.Purchase> findPurchases(LocalDateTime from, LocalDateTime to) {
+        return new PurchaseAssembler().toDTOList(purchaseRepository.findByDate(SecurityUtils.getAuthorizedPersons(), from, to));
     }
 
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public void modifyPurchase(PurchaseDTO purchase) {
+    public void modifyPurchase(PurchasesApi.Purchase purchase) {
         Validate.notNull(purchase);
         Validate.notNull(purchase.purchaseId());
 
@@ -109,7 +109,7 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
         }
 
         if (purchase.price() != null) {
-            Money price = Money.ofRaw(purchase.price().getAmount(), Currency.getInstance(purchase.price().getCurrency()));
+            Money price = Money.ofRaw(purchase.price().amount(), Currency.getInstance(purchase.price().currency()));
             p.setPrice(price);
         }
 
@@ -125,7 +125,7 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public List<PurchaseId> createPurchase(Collection<PurchaseDTO> purchases, DealId dealId) {
+    public List<PurchaseId> createPurchase(Collection<PurchasesApi.Purchase> purchases, DealId dealId) {
         Validate.notEmpty(purchases);
         Validate.notNull(dealId);
 
@@ -139,7 +139,7 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
                     if (dto.purchaseId() != null) {
                         throw new IllegalArgumentException("It is not allowed to modify purchase here");
                     } else {
-                        Money price = Money.ofRaw(dto.price().getAmount(), Currency.getInstance(dto.price().getCurrency()));
+                        Money price = Money.ofRaw(dto.price().amount(), Currency.getInstance(dto.price().currency()));
                         p = new Purchase(PurchaseId.nextId(), SecurityUtils.getCurrentPerson(), dto.name(), dto.dateTime(), price, BigDecimal.valueOf(dto.quantity()));
                     }
 
@@ -157,7 +157,7 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
                     purchaseRepository.store(p);
                     deal.addPurchase(p.purchaseId());
                 })
-                .map(Purchase::purchaseId)
+                .map(ru.vzotov.purchase.domain.model.Purchase::purchaseId)
                 .collect(Collectors.toList());
 
         dealRepository.store(deal);
@@ -168,14 +168,14 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public List<PurchaseDTO> createPurchasesFromReceipt(String receiptId) {
+    public List<PurchasesApi.Purchase> createPurchasesFromReceipt(String receiptId) {
         Validate.notNull(receiptId);
         final ReceiptId rid = new ReceiptId(receiptId);
         final Receipt receipt = ownedGuard.accessing(receiptRepository.find(rid));
 
         final Deal deal = ownedGuard.accessing(dealRepository.findByReceipt(rid));
-        final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
-        final List<PurchaseDTO> result = receipt.products().items().stream()
+        final PurchaseAssembler assembler = new PurchaseAssembler();
+        final List<PurchasesApi.Purchase> result = receipt.products().items().stream()
                 .map(i -> {
                     final PurchaseId pid = PurchaseId.nextId();
                     final Purchase p = new Purchase(pid, deal.owner(), i.name(), receipt.dateTime(), i.price(), BigDecimal.valueOf(i.quantity()));
@@ -192,16 +192,16 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public List<PurchaseDTO> createPurchasesFromDealReceipts(String dealId) throws DealNotFoundException {
+    public List<PurchasesApi.Purchase> createPurchasesFromDealReceipts(String dealId) throws DealNotFoundException {
         Validate.notNull(dealId);
         final Deal deal = ownedGuard.accessing(dealRepository.find(new DealId(dealId)));
         if (deal == null) {
             throw new DealNotFoundException(String.format("Deal with ID=%s not found", dealId));
         }
 
-        final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
+        final PurchaseAssembler assembler = new PurchaseAssembler();
 
-        final List<PurchaseDTO> result = deal.receipts().stream()
+        final List<PurchasesApi.Purchase> result = deal.receipts().stream()
                 .map(receiptRepository::find)
                 .filter(Objects::nonNull)
                 .flatMap(receipt -> ownedGuard.accessing(receipt).products().items().stream().map(i -> {

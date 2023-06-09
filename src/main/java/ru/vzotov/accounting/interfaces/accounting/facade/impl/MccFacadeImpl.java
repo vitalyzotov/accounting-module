@@ -4,8 +4,8 @@ import ru.vzotov.accounting.domain.model.MccDetailsRepository;
 import ru.vzotov.accounting.domain.model.MccGroupRepository;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.MccFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccDetailsDTOAssembler;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccGroupDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccDetailsAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccGroupAssembler;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class MccFacadeImpl implements MccFacade {
     public List<AccountingApi.MccGroup> listGroups() {
         return mccGroupRepository.findAll()
                 .stream()
-                .map(MccGroupDTOAssembler::toDTO)
+                .map(MccGroupAssembler::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -40,14 +40,14 @@ public class MccFacadeImpl implements MccFacade {
     @Transactional(value = MCC_DATASOURCE, readOnly = true)
     public AccountingApi.MccGroup getGroup(MccGroupId groupId) {
         Validate.notNull(groupId);
-        return MccGroupDTOAssembler.toDTO(mccGroupRepository.find(groupId));
+        return MccGroupAssembler.toDTO(mccGroupRepository.find(groupId));
     }
 
     @Override
     @Transactional(value = MCC_DATASOURCE, readOnly = true)
     public AccountingApi.MccDetails getDetails(MccCode code) {
         Validate.notNull(code);
-        return MccDetailsDTOAssembler.toDTO(mccDetailsRepository.find(code));
+        return MccDetailsAssembler.toDTO(mccDetailsRepository.find(code));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class MccFacadeImpl implements MccFacade {
         Validate.notNull(groupId);
         return mccDetailsRepository.findByGroup(groupId)
                 .stream()
-                .map(MccDetailsDTOAssembler::toDTO)
+                .map(MccDetailsAssembler::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +65,7 @@ public class MccFacadeImpl implements MccFacade {
     public List<AccountingApi.MccDetails> listDetails() {
         return mccDetailsRepository.findAll()
                 .stream()
-                .map(MccDetailsDTOAssembler::toDTO)
+                .map(MccDetailsAssembler::toDTO)
                 .collect(Collectors.toList());
     }
 }

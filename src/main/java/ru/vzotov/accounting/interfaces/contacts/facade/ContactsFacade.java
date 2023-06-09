@@ -1,31 +1,29 @@
 package ru.vzotov.accounting.interfaces.contacts.facade;
 
 import ru.vzotov.accounting.interfaces.common.EntityConflictException;
-import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactDTO;
-import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactDataDTO;
-import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactNotFoundException;
+import ru.vzotov.accounting.interfaces.contacts.ContactsApi.Contact;
+import ru.vzotov.accounting.interfaces.contacts.ContactsApi.ContactData;
 import ru.vzotov.person.domain.model.ContactId;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public interface ContactsFacade {
 
-    List<ContactDTO> listContacts();
+    List<Contact> listContacts();
 
-    ContactDTO getContact(ContactId contactId) throws ContactNotFoundException;
+    Contact getContact(ContactId contactId) throws ContactNotFoundException;
 
-    ContactDTO deleteContact(ContactId contactId) throws ContactNotFoundException;
+    Contact deleteContact(ContactId contactId) throws ContactNotFoundException;
 
-    ContactDTO createContact(
+    Contact createContact(
             String firstName, String middleName, String lastName, String displayName,
-            Collection<ContactDataDTO> data
+            Collection<ContactData> data
     );
 
-    ContactDTO modifyContact(
+    Contact modifyContact(
             ContactId contactId, long version,
             String firstName, String middleName, String lastName, String displayName,
-            Collection<ContactDataDTO> data
+            Collection<ContactData> data
     ) throws ContactNotFoundException, EntityConflictException;
 }

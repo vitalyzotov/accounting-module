@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Card;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
 import ru.vzotov.banking.domain.model.BankId;
 import ru.vzotov.banking.domain.model.CardNumber;
@@ -26,21 +27,24 @@ import java.util.List;
 @CrossOrigin
 public class CardsController {
 
-    @Autowired
-    private AccountingFacade accountingFacade;
+    private final AccountingFacade accountingFacade;
+
+    public CardsController(AccountingFacade accountingFacade) {
+        this.accountingFacade = accountingFacade;
+    }
 
     @GetMapping
-    public List<AccountingApi.Card> listCards(@RequestParam(required = false) String issuer) {
+    public List<Card> listCards(@RequestParam(required = false) String issuer) {
         return accountingFacade.listCards(issuer == null ? null : new BankId(issuer));
     }
 
     @GetMapping("{cardNumber}")
-    public AccountingApi.Card getCard(@PathVariable String cardNumber) {
+    public Card getCard(@PathVariable String cardNumber) {
         return accountingFacade.getCard(new CardNumber(cardNumber));
     }
 
     @PostMapping
-    public AccountingApi.CardStoreResponse createCard(@RequestBody AccountingApi.CardCreateRequest card) {
+    public Card.Ref createCard(@RequestBody Card.Create card) {
         CardNumber cardNumber = accountingFacade.createCard(
                 new CardNumber(card.cardNumber()),
                 new PersonId(card.owner()),
@@ -48,11 +52,11 @@ public class CardsController {
                 new BankId(card.issuer()),
                 card.accounts()
         );
-        return new AccountingApi.CardStoreResponse(cardNumber.value());
+        return new Card.Ref(cardNumber.value());
     }
 
     @PutMapping("{cardNumber}")
-    public AccountingApi.CardStoreResponse updateCard(@PathVariable String cardNumber, @RequestBody AccountingApi.CardCreateRequest card) {
+    public Card.Ref updateCard(@PathVariable String cardNumber, @RequestBody Card.Create card) {
         if (!cardNumber.equals(card.cardNumber())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         final CardNumber number = accountingFacade.modifyCard(
                 new CardNumber(card.cardNumber()),
@@ -61,13 +65,13 @@ public class CardsController {
                 new BankId(card.issuer()),
                 card.accounts()
         );
-        return new AccountingApi.CardStoreResponse(number.value());
+        return new Card.Ref(number.value());
     }
 
     @DeleteMapping("{cardNumber}")
-    public AccountingApi.CardStoreResponse deleteCard(@PathVariable String cardNumber) {
+    public Card.Ref deleteCard(@PathVariable String cardNumber) {
         CardNumber id = accountingFacade.deleteCard(new CardNumber(cardNumber));
-        return new AccountingApi.CardStoreResponse(id.value());
+        return new Card.Ref(id.value());
     }
 
 }

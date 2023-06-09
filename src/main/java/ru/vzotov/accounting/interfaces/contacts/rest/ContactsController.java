@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vzotov.accounting.interfaces.common.EntityConflictException;
+import ru.vzotov.accounting.interfaces.contacts.ContactsApi.Contact;
+import ru.vzotov.accounting.interfaces.contacts.facade.ContactNotFoundException;
 import ru.vzotov.accounting.interfaces.contacts.facade.ContactsFacade;
-import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactDTO;
-import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactNotFoundException;
-import ru.vzotov.accounting.interfaces.contacts.rest.dto.ContactCreateRequest;
-import ru.vzotov.accounting.interfaces.contacts.rest.dto.ContactModifyRequest;
 import ru.vzotov.person.domain.model.ContactId;
 
 import java.util.List;
@@ -31,35 +29,34 @@ public class ContactsController {
     }
 
     @GetMapping("{contactId}")
-    public ContactDTO getContact(@PathVariable String contactId) throws ContactNotFoundException {
+    public Contact getContact(@PathVariable String contactId) throws ContactNotFoundException {
         return contactsFacade.getContact(new ContactId(contactId));
     }
 
     @DeleteMapping("{contactId}")
-    public ContactDTO deleteContact(@PathVariable String contactId)
-            throws ContactNotFoundException {
+    public Contact deleteContact(@PathVariable String contactId) throws ContactNotFoundException {
         return contactsFacade.deleteContact(new ContactId(contactId));
     }
 
     @GetMapping
-    public List<ContactDTO> listContacts() {
+    public List<Contact> listContacts() {
         return contactsFacade.listContacts();
     }
 
     @PostMapping
-    public ContactDTO createContact(@RequestBody ContactCreateRequest request) {
+    public Contact createContact(@RequestBody Contact.Create request) {
         return contactsFacade.createContact(
-                request.getFirstName(), request.getMiddleName(), request.getLastName(), request.getDisplayName(),
-                request.getData());
+                request.firstName(), request.middleName(), request.lastName(), request.displayName(),
+                request.data());
     }
 
     @PutMapping("{contactId}")
-    public ContactDTO modifyContact(@PathVariable String contactId, @RequestBody ContactModifyRequest request)
+    public Contact modifyContact(@PathVariable String contactId, @RequestBody Contact.Modify request)
             throws ContactNotFoundException, EntityConflictException {
         return contactsFacade.modifyContact(
-                new ContactId(contactId), request.getVersion(),
-                request.getFirstName(), request.getMiddleName(), request.getLastName(), request.getDisplayName(),
-                request.getData()
+                new ContactId(contactId), request.version(),
+                request.firstName(), request.middleName(), request.lastName(), request.displayName(),
+                request.data()
         );
     }
 

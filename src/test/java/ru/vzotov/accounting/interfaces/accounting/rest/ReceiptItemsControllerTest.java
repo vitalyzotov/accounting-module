@@ -20,7 +20,7 @@ public class ReceiptItemsControllerTest extends AbstractControllerTest {
 
     @Test
     public void patchItemCategory() {
-        HttpEntity<AccountingApi.ReceiptItemCategoryPatch> request = new HttpEntity<>(new AccountingApi.ReceiptItemCategoryPatch("Табак"));
+        HttpEntity<AccountingApi.Item.Category> request = new HttpEntity<>(new AccountingApi.Item.Category("Табак"));
         ResponseEntity<Void> response = this.restTemplate.withBasicAuth(USER, PASSWORD)
                 .exchange("/accounting/receipt-items/1?receipt=20180616135500_65624_8710000100313204_110992_2128735201_1", HttpMethod.PATCH, request, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

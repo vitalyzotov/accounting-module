@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.WithMockPersonUser;
+import ru.vzotov.accounting.interfaces.purchases.PurchasesApi;
 import ru.vzotov.accounting.interfaces.purchases.facade.PurchasesFacade;
-import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -25,12 +25,12 @@ public class PurchaseFacadeImplTest {
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void findPurchases() {
-        List<PurchaseDTO> purchases = facade.findPurchases(
+        List<PurchasesApi.Purchase> purchases = facade.findPurchases(
                 LocalDateTime.of(2018, Month.JUNE, 16, 13, 55),
                 LocalDateTime.of(2018, Month.JUNE, 16, 13, 56));
         Assertions.assertThat(purchases).
                 isNotEmpty().
-                hasAtLeastOneElementOfType(PurchaseDTO.class);
+                hasAtLeastOneElementOfType(PurchasesApi.Purchase.class);
     }
 
     @Test

@@ -3,7 +3,8 @@ package ru.vzotov.accounting.interfaces.accounting;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
+import ru.vzotov.accounting.interfaces.common.CommonApi;
+import ru.vzotov.accounting.interfaces.purchases.PurchasesApi;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -24,15 +25,39 @@ public interface AccountingApi {
 
     record Account(String number, String name, String bankId, String currency, String owner,
                    List<String> aliases) implements Serializable {
+        public record Ref(String accountNumber) {
+        }
+
+        public record Create(String number, String name, String bankId, String currency, String owner,
+                             List<String> aliases) {
+        }
+
+        public record Modify(String name, String bankId, String currency, List<String> aliases) {
+        }
     }
 
     record AccountOperation(String account, LocalDate date, LocalDate authorizationDate,
                             String transactionReference, String operationId, String operationType, double amount,
                             String currency, String description, String comment,
                             Long categoryId) implements OperationRef {
+        /**
+         * @param authorizationDate not used
+         */
+        public record Create(LocalDate date, LocalDate authorizationDate, String transactionReference,
+                             String operationType, double amount, String currency, String description,
+                             String comment, Long categoryId) {
+        }
     }
 
     record Bank(String bankId, String name, String shortName, String longName) {
+        public record Create(String bankId, String name, String shortName, String longName) {
+        }
+
+        public record Modify(String name, String shortName, String longName) {
+        }
+
+        public record Ref(String bankId) {
+        }
     }
 
     record BudgetCategory(long id, String owner, String name, String color, String icon) {
@@ -44,32 +69,53 @@ public interface AccountingApi {
             this(id, owner, name, color, null);
         }
 
+        public record Ref(long id) {
+        }
+
+        public record Modify(String name, String color, String icon) {
+        }
+
+        public record Create(String name, String color, String icon) {
+        }
     }
 
     record Budget(String budgetId, String owner, String name, String locale, String currency,
                   List<BudgetRule> rules) {
+        public record Create(String name, String currency, String locale) {
+        }
+
+        public record Modify(String name, String currency, String locale) {
+        }
     }
 
     record BudgetPlan(String itemId, String direction, String sourceAccount, String targetAccount,
-                      Long categoryId, String purchaseCategoryId, Money value, String ruleId, LocalDate date) {
+                      Long categoryId, String purchaseCategoryId, CommonApi.Money value, String ruleId,
+                      LocalDate date) {
     }
 
     record BudgetRule(String ruleId, String ruleType, String name, Long categoryId, String purchaseCategoryId,
-                      String sourceAccount, String targetAccount, String recurrence, Money value,
+                      String sourceAccount, String targetAccount, String recurrence, CommonApi.Money value,
                       String calculation, Boolean enabled) {
     }
 
     record Card(String cardNumber, String owner, LocalDate validThru, String issuer,
                 List<AccountBinding> accounts) {
+        public record Create(String cardNumber, YearMonth validThru, String issuer, String owner,
+                             List<AccountBinding> accounts) {
+        }
+
+        public record Ref(String cardNumber) {
+        }
     }
 
     record CardOperation(String operationId, String cardNumber, PosTerminal terminal, LocalDate authDate,
-                         LocalDate purchaseDate, Money amount, String extraInfo, String mcc) implements OperationRef {
+                         LocalDate purchaseDate, CommonApi.Money amount, String extraInfo,
+                         String mcc) implements OperationRef {
     }
 
-    record Deal(String dealId, String owner, LocalDate date, Money amount, String description, String comment,
+    record Deal(String dealId, String owner, LocalDate date, CommonApi.Money amount, String description, String comment,
                 Long category, List<ReceiptRef> receipts, List<OperationRef> operations,
-                List<OperationRef> cardOperations, List<PurchaseRef> purchases) {
+                List<OperationRef> cardOperations, List<PurchasesApi.PurchaseRef> purchases) {
         public enum Expansion {
             RECEIPTS("receipts"),
             OPERATIONS("operations"),
@@ -90,6 +136,15 @@ public interface AccountingApi {
             }
 
         }
+
+        public record Ref(String dealId) {
+        }
+
+        public record Patch(List<String> deals) {
+        }
+
+        public record Meta(LocalDate minDate, LocalDate maxDate) {
+        }
     }
 
     record FiscalInfo(String kktNumber, String kktRegId, String fiscalSign, String fiscalDocumentNumber,
@@ -100,17 +155,17 @@ public interface AccountingApi {
                          String currency, String description, String comment) {
     }
 
-    record Item(String name, ru.vzotov.accounting.interfaces.common.dto.MoneyDTO price, double quantity, ru.vzotov.accounting.interfaces.common.dto.MoneyDTO sum, Integer index,
+    record Item(String name, CommonApi.Money price, double quantity,
+                CommonApi.Money sum, Integer index,
                 String category) implements Serializable {
+        public record Category(String category) {
+        }
     }
 
     record MccDetails(String mcc, String name, String groupId) {
     }
 
     record MccGroup(String groupId, String name) {
-    }
-
-    record Money(long amount, String currency) implements Serializable {
     }
 
     record OperationId(String operationId) implements OperationRef {
@@ -120,7 +175,7 @@ public interface AccountingApi {
     @JsonTypeInfo(use = DEDUCTION, defaultImpl = OperationId.class)
     @JsonSubTypes({@JsonSubTypes.Type(OperationId.class), @JsonSubTypes.Type(AccountOperation.class), @JsonSubTypes.Type(CardOperation.class)})
     interface OperationRef {
-         String operationId();
+        String operationId();
     }
 
     record PosTerminal(String terminalId, String country, String city, String street, String merchant) {
@@ -130,9 +185,16 @@ public interface AccountingApi {
         public PurchaseCategory(String categoryId, String owner, String name) {
             this(categoryId, owner, name, null);
         }
+
+        public record Create(String name) {
+        }
+
+        public record Modify(String name) {
+        }
     }
 
-    record QRCodeData(LocalDateTime dateTime, ru.vzotov.accounting.interfaces.common.dto.MoneyDTO totalSum, String fiscalDriveNumber,
+    record QRCodeData(LocalDateTime dateTime, CommonApi.Money totalSum,
+                      String fiscalDriveNumber,
                       String fiscalDocumentNumber, String fiscalSign, Long operationType) {
     }
 
@@ -148,13 +210,13 @@ public interface AccountingApi {
             Long requestNumber,
             List<Item> items,
             List<Item> stornoItems,
-            ru.vzotov.accounting.interfaces.common.dto.MoneyDTO totalSum,
-            ru.vzotov.accounting.interfaces.common.dto.MoneyDTO cash,
-            ru.vzotov.accounting.interfaces.common.dto.MoneyDTO ecash,
-            ru.vzotov.accounting.interfaces.common.dto.MoneyDTO markup,
-            ru.vzotov.accounting.interfaces.common.dto.MoneyDTO markupSum,
-            ru.vzotov.accounting.interfaces.common.dto.MoneyDTO discount,
-            ru.vzotov.accounting.interfaces.common.dto.MoneyDTO discountSum,
+            CommonApi.Money totalSum,
+            CommonApi.Money cash,
+            CommonApi.Money ecash,
+            CommonApi.Money markup,
+            CommonApi.Money markupSum,
+            CommonApi.Money discount,
+            CommonApi.Money discountSum,
             Long shiftNumber,
             String operator,
             String user,
@@ -165,8 +227,8 @@ public interface AccountingApi {
 
         public Receipt(String owner, String receiptId, FiscalInfo fiscalInfo, LocalDateTime dateTime,
                        Long requestNumber, List<Item> items, List<Item> stornoItems,
-                       ru.vzotov.accounting.interfaces.common.dto.MoneyDTO totalSum, ru.vzotov.accounting.interfaces.common.dto.MoneyDTO cash, ru.vzotov.accounting.interfaces.common.dto.MoneyDTO ecash, ru.vzotov.accounting.interfaces.common.dto.MoneyDTO markup, ru.vzotov.accounting.interfaces.common.dto.MoneyDTO markupSum,
-                       ru.vzotov.accounting.interfaces.common.dto.MoneyDTO discount, ru.vzotov.accounting.interfaces.common.dto.MoneyDTO discountSum, Long shiftNumber, String operator, String user,
+                       CommonApi.Money totalSum, CommonApi.Money cash, CommonApi.Money ecash, CommonApi.Money markup, CommonApi.Money markupSum,
+                       CommonApi.Money discount, CommonApi.Money discountSum, Long shiftNumber, String operator, String user,
                        String userInn, String address, Long taxationType, Long operationType) {
             this.owner = owner;
             this.receiptId = receiptId;
@@ -190,6 +252,18 @@ public interface AccountingApi {
             this.taxationType = taxationType;
             this.operationType = operationType;
         }
+
+        public record One(Receipt receipt) {
+        }
+
+        public record Many(List<Receipt> receipts) {
+        }
+
+        public record Register(String qrcode) {
+        }
+
+        public record Ref(String id) {
+        }
     }
 
     record ReceiptId(String receiptId) implements ReceiptRef {
@@ -202,7 +276,12 @@ public interface AccountingApi {
         String receiptId();
     }
 
-    record Remain(String remainId, LocalDate date, String accountNumber, Money value) {
+    record Remain(String remainId, LocalDate date, String accountNumber, CommonApi.Money value) {
+        public record Create(String accountNumber, LocalDate date, CommonApi.Money value) {
+        }
+
+        public record Ref(String remainId) {
+        }
     }
 
     record SpecialDay(LocalDate day, String name, String type) {
@@ -223,95 +302,4 @@ public interface AccountingApi {
     record WorkCalendar(LocalDate from, LocalDate to, String location, List<SpecialDay> specialDays) {
     }
 
-    record AccountCreateRequest(String number, String name, String bankId, String currency, String owner,
-                                       List<String> aliases) {
-
-    }
-
-    record AccountModifyRequest(String name, String bankId, String currency, List<String> aliases) {
-
-    }
-
-    record AccountStoreResponse(String accountNumber) {
-
-    }
-
-    record BankCreateRequest(String bankId, String name, String shortName, String longName) {
-    }
-
-    record BankStoreResponse(String bankId) {
-
-    }
-
-    record BudgetCategoryCreateRequest(String name, String color, String icon) {
-
-    }
-
-    record BudgetCategoryDeleteResponse(long id) {
-
-    }
-
-    record BudgetCategoryModifyRequest(String name, String color, String icon) {
-
-    }
-
-    record BudgetCreateRequest(String name, String currency, String locale) {
-
-    }
-
-    record BudgetModifyRequest(String name, String currency, String locale) {
-    }
-
-    record CardCreateRequest(String cardNumber, YearMonth validThru, String issuer, String owner,
-                             List<AccountBinding> accounts) {
-    }
-
-    record CardStoreResponse(String cardNumber) {
-    }
-
-    record DealReference(String dealId) {
-    }
-
-    record DealsMetadataResponse(LocalDate minDate, LocalDate maxDate) {
-    }
-
-    record GetReceiptResponse(Receipt receipt) {
-
-    }
-
-    record GetReceiptsResponse(List<Receipt> receipts) {
-
-    }
-
-    record NalogPreAuthRequest(String sessionId, String refreshToken) {
-    }
-
-    /**
-     * @param authorizationDate not used
-     */
-    record OperationCreateRequest(LocalDate date, LocalDate authorizationDate, String transactionReference,
-                                         String operationType, double amount, String currency, String description,
-                                         String comment, Long categoryId) {
-    }
-
-    record PatchDealsRequest(List<String> deals) {
-    }
-
-    record ReceiptItemCategoryPatch(String category) {
-    }
-
-    record ReceiptRegistrationRequest(String qrcode) {
-    }
-
-    record ReceiptRegistrationResponse(String id) {
-    }
-
-    record RemainCreateRequest(String accountNumber, LocalDate date, Money value) {
-    }
-
-    record RemainCreateResponse(String remainId) {
-    }
-
-    record RemainDeleteResponse(String remainId) {
-    }
 }

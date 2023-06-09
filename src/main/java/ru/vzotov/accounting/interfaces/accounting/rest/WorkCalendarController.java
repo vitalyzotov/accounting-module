@@ -1,8 +1,5 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
-import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
-import ru.vzotov.accounting.interfaces.accounting.facade.WorkCalendarFacade;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.WorkCalendar;
+import ru.vzotov.accounting.interfaces.accounting.facade.WorkCalendarFacade;
 
 import java.time.LocalDate;
 
@@ -18,11 +17,14 @@ import java.time.LocalDate;
 @CrossOrigin
 public class WorkCalendarController {
 
-    @Autowired
-    private WorkCalendarFacade workCalendarFacade;
+    private final WorkCalendarFacade workCalendarFacade;
+
+    public WorkCalendarController(WorkCalendarFacade workCalendarFacade) {
+        this.workCalendarFacade = workCalendarFacade;
+    }
 
     @GetMapping("{location}")
-    public AccountingApi.WorkCalendar getCalendar(
+    public WorkCalendar getCalendar(
             @PathVariable String location,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {

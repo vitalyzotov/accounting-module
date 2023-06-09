@@ -3,7 +3,7 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl.assembler;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptAssembler;
 import ru.vzotov.cashreceipt.ReceiptFactory;
 import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.person.domain.model.PersonId;
@@ -23,7 +23,7 @@ public class ReceiptDTOAssemblerTest {
 
     @Test
     public void toDTO() throws IOException {
-        final ReceiptDTOAssembler assembler = new ReceiptDTOAssembler();
+        final ReceiptAssembler assembler = new ReceiptAssembler();
         final Receipt receipt = new ReceiptFactory().createReceiptFromJson(PERSON_ID, "/receipt015.json");
 
         final AccountingApi.Receipt dto = assembler.toDTO(receipt);
@@ -32,8 +32,8 @@ public class ReceiptDTOAssemblerTest {
         assertThat(dto.dateTime())
                 .isEqualTo(LocalDateTime.of(2018, JULY, 17, 17, 8, 0));
 
-        assertThat(dto.totalSum().getAmount()).isEqualTo(15000);
-        assertThat(dto.totalSum().getCurrency()).isEqualTo("RUR");
+        assertThat(dto.totalSum().amount()).isEqualTo(15000);
+        assertThat(dto.totalSum().currency()).isEqualTo("RUR");
 
         assertThat(dto.fiscalInfo().kktRegId()).isEqualTo("0000485300049451");
         assertThat(dto.fiscalInfo().kktNumber()).isNull();
@@ -45,13 +45,13 @@ public class ReceiptDTOAssemblerTest {
         AccountingApi.Item item = dto.items().get(0);
         assertThat(item.name()).isEqualTo("Пепси напиток 0,8л.");
         assertThat(item.quantity()).isEqualTo(1d);
-        assertThat(item.price().getAmount()).isEqualTo(15000);
-        assertThat(item.sum().getAmount()).isEqualTo(15000);
+        assertThat(item.price().amount()).isEqualTo(15000);
+        assertThat(item.sum().amount()).isEqualTo(15000);
     }
 
     @Test
     public void toDTOList() throws IOException {
-        final ReceiptDTOAssembler assembler = new ReceiptDTOAssembler();
+        final ReceiptAssembler assembler = new ReceiptAssembler();
         final Receipt receipt1 = new ReceiptFactory().createReceiptFromJson(PERSON_ID, "/receipt015.json");
         final Receipt receipt2 = new ReceiptFactory().createReceiptFromJson(PERSON_ID, "/receipt017.json");
 

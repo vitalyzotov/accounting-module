@@ -7,10 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.domain.model.ContactRepository;
 import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
 import ru.vzotov.accounting.interfaces.common.EntityConflictException;
+import ru.vzotov.accounting.interfaces.contacts.ContactsApi;
 import ru.vzotov.accounting.interfaces.contacts.facade.ContactsFacade;
-import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactDTO;
-import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactDataDTO;
-import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactNotFoundException;
+import ru.vzotov.accounting.interfaces.contacts.facade.ContactNotFoundException;
 import ru.vzotov.accounting.interfaces.contacts.facade.impl.assemblers.ContactDTOAssembler;
 import ru.vzotov.person.domain.model.Contact;
 import ru.vzotov.person.domain.model.ContactData;
@@ -34,7 +33,7 @@ public class ContactsFacadeImpl implements ContactsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @PreAuthorize("hasRole('ROLE_USER')")
-    public List<ContactDTO> listContacts() {
+    public List<ContactsApi.Contact> listContacts() {
         return contactRepository.find(SecurityUtils.getCurrentPerson()).stream()
                 .map(ContactDTOAssembler::toDTO)
                 .collect(Collectors.toList());
@@ -43,7 +42,7 @@ public class ContactsFacadeImpl implements ContactsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ContactDTO getContact(ContactId contactId) throws ContactNotFoundException {
+    public ContactsApi.Contact getContact(ContactId contactId) throws ContactNotFoundException {
         return Optional.ofNullable(ContactDTOAssembler.toDTO(findSecurely(contactId)))
                 .orElseThrow(ContactNotFoundException::new);
     }
@@ -51,7 +50,7 @@ public class ContactsFacadeImpl implements ContactsFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ContactDTO deleteContact(ContactId contactId) throws ContactNotFoundException {
+    public ContactsApi.Contact deleteContact(ContactId contactId) throws ContactNotFoundException {
         final Contact contact = findSecurely(contactId);
         if (contact == null) throw new ContactNotFoundException();
         return contactRepository.delete(contactId) ? ContactDTOAssembler.toDTO(contact) : null;
@@ -60,7 +59,7 @@ public class ContactsFacadeImpl implements ContactsFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ContactDTO createContact(String firstName, String middleName, String lastName, String displayName, Collection<ContactDataDTO> data) {
+    public ContactsApi.Contact createContact(String firstName, String middleName, String lastName, String displayName, Collection<ContactsApi.ContactData> data) {
         final Contact contact = new Contact(
                 ContactId.nextId(), SecurityUtils.getCurrentPerson(),
                 firstName, middleName, lastName, displayName, toModel(data)
@@ -72,9 +71,9 @@ public class ContactsFacadeImpl implements ContactsFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ContactDTO modifyContact(ContactId contactId, long version,
-                                    String firstName, String middleName, String lastName, String displayName,
-                                    Collection<ContactDataDTO> data)
+    public ContactsApi.Contact modifyContact(ContactId contactId, long version,
+                                             String firstName, String middleName, String lastName, String displayName,
+                                             Collection<ContactsApi.ContactData> data)
             throws ContactNotFoundException, EntityConflictException {
         final Contact contact = findSecurely(contactId);
         if (contact == null) throw new ContactNotFoundException();
@@ -90,10 +89,10 @@ public class ContactsFacadeImpl implements ContactsFacade {
         return contactRepository.find(contactId);
     }
 
-    private Set<ContactData> toModel(Collection<ContactDataDTO> data) {
+    private Set<ContactData> toModel(Collection<ContactsApi.ContactData> data) {
         return data == null ? null :
                 data.stream()
-                        .map(dto -> new ContactData(dto.getMimeType(), dto.getValue(), dto.getType()))
+                        .map(dto -> new ContactData(dto.mimeType(), dto.value(), dto.type()))
                         .collect(Collectors.toSet());
     }
 }

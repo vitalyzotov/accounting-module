@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import ru.vzotov.accounting.domain.model.BudgetRuleId;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
+import ru.vzotov.accounting.interfaces.common.CommonApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +45,7 @@ public class BudgetControllerTest extends AbstractControllerTest {
                         null,
                         "40817810108290123456",
                         "M2020-01-01(1)[8]",
-                        new AccountingApi.Money(2900000, "RUR"),
+                        new CommonApi.Money(2900000, "RUR"),
                         null,
                         null
                 )),

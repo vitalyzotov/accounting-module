@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.interfaces.contacts.facade.impl.assemblers;
 
-import ru.vzotov.accounting.interfaces.contacts.facade.dto.ContactDTO;
+import ru.vzotov.accounting.interfaces.contacts.ContactsApi;
 import ru.vzotov.person.domain.model.Contact;
 import ru.vzotov.person.domain.model.ContactData;
 
@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 public class ContactDTOAssembler {
 
-    public static ContactDTO toDTO(Contact contact) {
-        return contact == null ? null : new ContactDTO(
+    public static ContactsApi.Contact toDTO(Contact contact) {
+        return contact == null ? null : new ContactsApi.Contact(
                 contact.contactId().value(),
                 contact.version(),
                 contact.owner().value(),

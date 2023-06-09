@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
-import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseIdDTO;
+import ru.vzotov.accounting.interfaces.common.CommonApi;
+import ru.vzotov.accounting.interfaces.purchases.PurchasesApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import java.time.LocalDate;
@@ -86,7 +87,7 @@ public class DealsControllerTest extends AbstractControllerTest {
                         ),
                         LocalDate.of(2018, 7, 10),
                         LocalDate.of(2018, 7, 7),
-                        new AccountingApi.Money(50000, "RUR"),
+                        new CommonApi.Money(50000, "RUR"),
                         null,
                         "4812"
                 )));
@@ -140,12 +141,12 @@ public class DealsControllerTest extends AbstractControllerTest {
                                 "deal-created-via-api",
                                 PERSON_ID,
                                 LocalDate.of(2021, 11, 21),
-                                new AccountingApi.Money(-3000, "RUR"), DEAL_DESCRIPTION, "comment of deal",
+                                new CommonApi.Money(-3000, "RUR"), DEAL_DESCRIPTION, "comment of deal",
                                 781381038049753674L,
                                 Collections.singletonList(new AccountingApi.ReceiptId("receipt-6380ff16f05e")),
                                 Collections.singletonList(new AccountingApi.OperationId("deal-operation-1")),
                                 Collections.emptyList(),
-                                Collections.singletonList(new PurchaseIdDTO("purchase-3000-1"))
+                                Collections.singletonList(new PurchasesApi.PurchaseId("purchase-3000-1"))
                         )),
                         AccountingApi.Deal.class
                 );
@@ -162,12 +163,12 @@ public class DealsControllerTest extends AbstractControllerTest {
                                 "deal-for-modification",
                                 PERSON_ID,
                                 LocalDate.of(2021, 11, 21),
-                                new AccountingApi.Money(-5000, "RUR"), "modified description", "modified comment",
+                                new CommonApi.Money(-5000, "RUR"), "modified description", "modified comment",
                                 781381038049753674L,
                                 Collections.singletonList(new AccountingApi.ReceiptId("receipt-923fe9456109")),
                                 Collections.singletonList(new AccountingApi.OperationId("deal-operation-3")),
                                 Collections.emptyList(),
-                                Collections.singletonList(new PurchaseIdDTO("purchase-5000-1"))
+                                Collections.singletonList(new PurchasesApi.PurchaseId("purchase-5000-1"))
                         )),
                         Void.class
                 );

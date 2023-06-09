@@ -56,29 +56,29 @@ public class AccountsControllerTest extends AbstractControllerTest {
 
     @Test
     public void createAccount() {
-        ResponseEntity<AccountingApi.AccountStoreResponse> exchange = this.restTemplate
+        ResponseEntity<AccountingApi.Account.Ref> exchange = this.restTemplate
                 .withBasicAuth(USER, PASSWORD)
                 .exchange(
                         "/accounting/accounts",
-                        HttpMethod.POST, new HttpEntity<>(new AccountingApi.AccountCreateRequest("00000000000000000000", "Наличные", null, "RUR", PERSON_ID, null)),
-                        AccountingApi.AccountStoreResponse.class
+                        HttpMethod.POST, new HttpEntity<>(new AccountingApi.Account.Create("00000000000000000000", "Наличные", null, "RUR", PERSON_ID, null)),
+                        AccountingApi.Account.Ref.class
                 );
         assertThat(exchange.getBody()).usingRecursiveComparison().isEqualTo(
-                new AccountingApi.AccountStoreResponse("00000000000000000000")
+                new AccountingApi.Account.Ref("00000000000000000000")
         );
     }
 
     @Test
     public void modifyAccount() {
-        ResponseEntity<AccountingApi.AccountStoreResponse> exchange = this.restTemplate
+        ResponseEntity<AccountingApi.Account.Ref> exchange = this.restTemplate
                 .withBasicAuth(USER, PASSWORD)
                 .exchange(
                         "/accounting/accounts/40817810000016123456",
-                        HttpMethod.PUT, new HttpEntity<>(new AccountingApi.AccountModifyRequest("Tinkoff", "044525974", "USD", Collections.singletonList("tinkoff_40817810000016123456"))),
-                        AccountingApi.AccountStoreResponse.class
+                        HttpMethod.PUT, new HttpEntity<>(new AccountingApi.Account.Modify("Tinkoff", "044525974", "USD", Collections.singletonList("tinkoff_40817810000016123456"))),
+                        AccountingApi.Account.Ref.class
                 );
         assertThat(exchange.getBody()).usingRecursiveComparison().isEqualTo(
-                new AccountingApi.AccountStoreResponse("40817810000016123456")
+                new AccountingApi.Account.Ref("40817810000016123456")
         );
 
         assertThat(this.restTemplate
@@ -195,7 +195,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
         ResponseEntity<AccountingApi.AccountOperation> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD)
                 .exchange(
                         "/accounting/accounts/{accountNumber}/operations",
-                        HttpMethod.POST, new HttpEntity<>(new AccountingApi.OperationCreateRequest(
+                        HttpMethod.POST, new HttpEntity<>(new AccountingApi.AccountOperation.Create(
                                 operationDate,
                                 null,
                                 txref,

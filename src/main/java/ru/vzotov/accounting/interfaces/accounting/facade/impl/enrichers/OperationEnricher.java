@@ -2,7 +2,8 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers;
 
 import ru.vzotov.accounting.domain.model.OperationRepository;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.OperationDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.OperationAssembler;
+import ru.vzotov.accounting.interfaces.common.enrichers.AbstractEnricher;
 import ru.vzotov.banking.domain.model.Operation;
 import ru.vzotov.banking.domain.model.OperationId;
 
@@ -29,7 +30,7 @@ public class OperationEnricher extends AbstractEnricher<AccountingApi.OperationR
     }
 
     public AccountingApi.AccountOperation apply(AccountingApi.OperationRef ref) {
-        return ref == null ? null : OperationDTOAssembler.toDTO(
+        return ref == null ? null : OperationAssembler.toDTO(
                 cache.computeIfAbsent(ref.operationId(), id -> repository.find(new OperationId(id)))
         );
     }

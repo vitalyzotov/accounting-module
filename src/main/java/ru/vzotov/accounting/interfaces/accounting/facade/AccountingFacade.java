@@ -1,9 +1,16 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
 import ru.vzotov.accounting.application.AccountNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Account;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.AccountBinding;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.AccountOperation;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Bank;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.BudgetCategory;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Card;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.HoldOperation;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Remain;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Transaction;
+import ru.vzotov.accounting.interfaces.common.CommonApi.Money;
 import ru.vzotov.banking.domain.model.BankId;
 import ru.vzotov.banking.domain.model.CardNumber;
 import ru.vzotov.banking.domain.model.OperationId;
@@ -21,9 +28,9 @@ public interface AccountingFacade {
     // Accounts
     //
 
-    List<AccountingApi.Account> listAccounts();
+    List<Account> listAccounts();
 
-    AccountingApi.Account getAccount(String number);
+    Account getAccount(String number);
 
     String createAccount(String number, String name, String bankId, String currency, String owner, List<String> aliases);
 
@@ -36,34 +43,34 @@ public interface AccountingFacade {
     /**
      * Finds remains for given accounts
      *
-     * @param accounts list of accounts. Use {@code null} to find remains for all accounts.
-     * @param from start date
-     * @param to end date
+     * @param accounts   list of accounts. Use {@code null} to find remains for all accounts.
+     * @param from       start date
+     * @param to         end date
      * @param recentOnly whether to find only most recent remain
      * @return remains for given criteria
      */
-    List<AccountingApi.Remain> listRemains(Collection<String> accounts, LocalDate from, LocalDate to, boolean recentOnly);
+    List<Remain> listRemains(Collection<String> accounts, LocalDate from, LocalDate to, boolean recentOnly);
 
-    List<AccountingApi.Remain> listRemains(LocalDate from, LocalDate to);
+    List<Remain> listRemains(LocalDate from, LocalDate to);
 
-    List<AccountingApi.Remain> listRemains(String accountNumber);
+    List<Remain> listRemains(String accountNumber);
 
-    AccountingApi.Remain getRemain(String remainId);
+    Remain getRemain(String remainId);
 
-    String createRemain(String accountNumber, LocalDate date, AccountingApi.Money value);
+    String createRemain(String accountNumber, LocalDate date, Money value);
 
     void deleteRemain(String remainId);
 
     //
     // Categories
     //
-    List<AccountingApi.BudgetCategory> listCategories();
+    List<BudgetCategory> listCategories();
 
-    AccountingApi.BudgetCategory getCategory(long id);
+    BudgetCategory getCategory(long id);
 
-    AccountingApi.BudgetCategory createCategory(String name, String color, String icon);
+    BudgetCategory createCategory(String name, String color, String icon);
 
-    AccountingApi.BudgetCategory modifyCategory(long id, String newName, String color, String icon) throws CategoryNotFoundException;
+    BudgetCategory modifyCategory(long id, String newName, String color, String icon) throws CategoryNotFoundException;
 
     void deleteCategory(long id) throws CategoryNotFoundException;
 
@@ -71,40 +78,40 @@ public interface AccountingFacade {
     // Operations
     //
 
-    List<AccountingApi.AccountOperation> listOperations(OperationType type, LocalDate from, LocalDate to);
+    List<AccountOperation> listOperations(OperationType type, LocalDate from, LocalDate to);
 
-    List<AccountingApi.AccountOperation> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException;
+    List<AccountOperation> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException;
 
-    AccountingApi.AccountOperation getOperation(String operationId) throws OperationNotFoundException, AccountNotFoundException;
+    AccountOperation getOperation(String operationId) throws OperationNotFoundException, AccountNotFoundException;
 
-    AccountingApi.AccountOperation createOperation(String account,
-                                                   LocalDate date,
-                                                   LocalDate authorizationDate,
-                                                   String transactionReference,
-                                                   char operationType,
-                                                   double amount,
-                                                   String currency,
-                                                   String description,
-                                                   String comment,
-                                                   Long categoryId) throws CategoryNotFoundException;
+    AccountOperation createOperation(String account,
+                                     LocalDate date,
+                                     LocalDate authorizationDate,
+                                     String transactionReference,
+                                     char operationType,
+                                     double amount,
+                                     String currency,
+                                     String description,
+                                     String comment,
+                                     Long categoryId) throws CategoryNotFoundException;
 
-    List<AccountingApi.AccountOperation> createOperations(List<AccountingApi.AccountOperation> data) throws CategoryNotFoundException;
+    List<AccountOperation> createOperations(List<AccountOperation> data) throws CategoryNotFoundException;
 
-    AccountingApi.AccountOperation deleteOperation(String operationId) throws OperationNotFoundException;
+    AccountOperation deleteOperation(String operationId) throws OperationNotFoundException;
 
-    AccountingApi.AccountOperation assignCategoryToOperation(String operationId, long categoryId) throws OperationNotFoundException, CategoryNotFoundException;
+    AccountOperation assignCategoryToOperation(String operationId, long categoryId) throws OperationNotFoundException, CategoryNotFoundException;
 
-    AccountingApi.AccountOperation modifyComment(String operationId, String comment) throws OperationNotFoundException;
+    AccountOperation modifyComment(String operationId, String comment) throws OperationNotFoundException;
 
     //
     // Holds
     //
 
-    List<AccountingApi.HoldOperation> listHolds(String accountNumber, LocalDate from, LocalDate to);
+    List<HoldOperation> listHolds(String accountNumber, LocalDate from, LocalDate to);
 
-    List<AccountingApi.HoldOperation> listHolds(OperationType type, LocalDate from, LocalDate to);
+    List<HoldOperation> listHolds(OperationType type, LocalDate from, LocalDate to);
 
-    AccountingApi.HoldOperation getHold(String holdId) throws OperationNotFoundException;
+    HoldOperation getHold(String holdId) throws OperationNotFoundException;
 
     void deleteHold(String holdId) throws OperationNotFoundException;
 
@@ -112,9 +119,9 @@ public interface AccountingFacade {
     // Banks
     //
 
-    List<AccountingApi.Bank> listBanks();
+    List<Bank> listBanks();
 
-    AccountingApi.Bank getBank(BankId bankId);
+    Bank getBank(BankId bankId);
 
     BankId createBank(BankId bankId, String name, String shortName, String longName);
 
@@ -124,13 +131,13 @@ public interface AccountingFacade {
     // Cards
     //
 
-    List<AccountingApi.Card> listCards(BankId issuer);
+    List<Card> listCards(BankId issuer);
 
-    AccountingApi.Card getCard(CardNumber cardNumber);
+    Card getCard(CardNumber cardNumber);
 
-    CardNumber createCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountingApi.AccountBinding> accounts);
+    CardNumber createCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBinding> accounts);
 
-    CardNumber modifyCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountingApi.AccountBinding> accounts);
+    CardNumber modifyCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBinding> accounts);
 
     CardNumber deleteCard(CardNumber number);
 
@@ -138,8 +145,8 @@ public interface AccountingFacade {
     // Transactions
     //
 
-    List<AccountingApi.Transaction> listTransactions(LocalDate from, LocalDate to, Integer threshold);
+    List<Transaction> listTransactions(LocalDate from, LocalDate to, Integer threshold);
 
-    AccountingApi.Transaction makeTransaction(OperationId primary, OperationId secondary);
+    Transaction makeTransaction(OperationId primary, OperationId secondary);
 
 }

@@ -1,46 +1,47 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
-import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetPlanNotFoundException;
 import ru.vzotov.accounting.domain.model.BudgetId;
 import ru.vzotov.accounting.domain.model.BudgetPlanId;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Budget;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.BudgetPlan;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.BudgetRule;
+import ru.vzotov.accounting.interfaces.common.CommonApi.Money;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface BudgetFacade {
-    List<AccountingApi.Budget> listBudgets();
+    List<Budget> listBudgets();
 
-    AccountingApi.Budget getBudget(BudgetId budgetId);
+    Budget getBudget(BudgetId budgetId);
 
-    AccountingApi.Budget createBudget(BudgetId budgetId, String name, String currency, String locale);
+    Budget createBudget(BudgetId budgetId, String name, String currency, String locale);
 
-    AccountingApi.Budget modifyBudget(BudgetId budgetId, String name, String currency, String locale) throws BudgetNotFoundException;
+    Budget modifyBudget(BudgetId budgetId, String name, String currency, String locale) throws BudgetNotFoundException;
 
-    AccountingApi.Budget deleteBudget(BudgetId budgetId) throws BudgetNotFoundException;
+    Budget deleteBudget(BudgetId budgetId) throws BudgetNotFoundException;
 
-    AccountingApi.BudgetRule getBudgetRule(BudgetId budgetId, String ruleId) throws BudgetNotFoundException;
+    BudgetRule getBudgetRule(BudgetId budgetId, String ruleId) throws BudgetNotFoundException;
 
-    AccountingApi.Budget addRuleToBudget(BudgetId budgetId, AccountingApi.BudgetRule rule) throws BudgetNotFoundException;
+    Budget addRuleToBudget(BudgetId budgetId, BudgetRule rule) throws BudgetNotFoundException;
 
-    AccountingApi.Budget deleteRuleFromBudget(BudgetId budgetId, String ruleId) throws BudgetNotFoundException;
+    Budget deleteRuleFromBudget(BudgetId budgetId, String ruleId) throws BudgetNotFoundException;
 
-    AccountingApi.Budget replaceBudgetRule(BudgetId budgetId, String ruleId, AccountingApi.BudgetRule rule) throws BudgetNotFoundException;
+    Budget replaceBudgetRule(BudgetId budgetId, String ruleId, BudgetRule rule) throws BudgetNotFoundException;
 
-    List<AccountingApi.BudgetPlan> listPlans(BudgetId budgetId);
+    List<BudgetPlan> listPlans(BudgetId budgetId);
 
-    AccountingApi.BudgetPlan getPlan(BudgetPlanId itemId);
+    BudgetPlan getPlan(BudgetPlanId itemId);
 
-    AccountingApi.BudgetPlan createPlan(
+    BudgetPlan createPlan(
             String direction, String sourceAccount, String targetAccount,
-            Long categoryId, String purchaseCategoryId, AccountingApi.Money value, String ruleId, LocalDate date
+            Long categoryId, String purchaseCategoryId, Money value, String ruleId, LocalDate date
     );
 
-    AccountingApi.BudgetPlan modifyPlan(
+    BudgetPlan modifyPlan(
             String itemId, String direction, String sourceAccount, String targetAccount,
-            Long categoryId, String purchaseCategoryId, AccountingApi.Money value, String ruleId, LocalDate date
+            Long categoryId, String purchaseCategoryId, Money value, String ruleId, LocalDate date
     ) throws BudgetPlanNotFoundException;
 
-    AccountingApi.BudgetPlan deletePlan(BudgetPlanId itemId);
+    BudgetPlan deletePlan(BudgetPlanId itemId);
 }

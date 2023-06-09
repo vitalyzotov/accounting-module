@@ -20,11 +20,12 @@ import ru.vzotov.accounting.domain.model.Calculation;
 import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.BudgetFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetPlanNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetDTOAssembler;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetPlanDTOAssembler;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetRuleDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.BudgetNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.BudgetPlanNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetPlanAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetRuleAssembler;
+import ru.vzotov.accounting.interfaces.common.CommonApi;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.calendar.domain.model.Recurrence;
@@ -49,14 +50,14 @@ public class BudgetFacadeImpl implements BudgetFacade {
     @Transactional(value = "accounting-tx", readOnly = true)
     @PreAuthorize("hasRole('ROLE_USER')")
     public List<AccountingApi.Budget> listBudgets() {
-        return budgetRepository.find(SecurityUtils.getCurrentPerson()).stream().map(BudgetDTOAssembler::toDTO).collect(Collectors.toList());
+        return budgetRepository.find(SecurityUtils.getCurrentPerson()).stream().map(BudgetAssembler::toDTO).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @PreAuthorize("hasRole('ROLE_USER')")
     public AccountingApi.Budget getBudget(BudgetId budgetId) {
-        return BudgetDTOAssembler.toDTO(findSecurely(budgetId));
+        return BudgetAssembler.toDTO(findSecurely(budgetId));
     }
 
     @PostAuthorize("hasAuthority(returnObject.owner)")
@@ -76,7 +77,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
         final Budget budget = new Budget(budgetId, SecurityUtils.getCurrentPerson(),
                 name, new HashSet<>(), Currency.getInstance(currency), locale);
         budgetRepository.store(budget);
-        return BudgetDTOAssembler.toDTO(budget);
+        return BudgetAssembler.toDTO(budget);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
         budget.setCurrency(Currency.getInstance(currency));
         budget.setLocale(locale);
         budgetRepository.store(budget);
-        return BudgetDTOAssembler.toDTO(budget);
+        return BudgetAssembler.toDTO(budget);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
     public AccountingApi.Budget deleteBudget(BudgetId budgetId) throws BudgetNotFoundException {
         final Budget budget = findSecurely(budgetId);
         if (budget == null) throw new BudgetNotFoundException();
-        return budgetRepository.delete(budgetId) ? BudgetDTOAssembler.toDTO(budget) : null;
+        return budgetRepository.delete(budgetId) ? BudgetAssembler.toDTO(budget) : null;
     }
 
     @Override
@@ -113,7 +114,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
 
         return budget.rules().stream()
                 .filter(r -> ruleId.equals(r.ruleId().value()))
-                .map(BudgetRuleDTOAssembler::toDTO)
+                .map(BudgetRuleAssembler::toDTO)
                 .findFirst()
                 .orElse(null);
     }
@@ -127,7 +128,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
         BudgetRule r = createRuleFromDTO(rule);
         budget.addRule(r);
         budgetRepository.store(budget);
-        return BudgetDTOAssembler.toDTO(findSecurely(budgetId));
+        return BudgetAssembler.toDTO(findSecurely(budgetId));
     }
 
     @Override
@@ -146,7 +147,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
                 .forEach(budget::deleteRule);
 
         budgetRepository.store(budget);
-        return BudgetDTOAssembler.toDTO(findSecurely(budgetId));
+        return BudgetAssembler.toDTO(findSecurely(budgetId));
     }
 
     @Override
@@ -166,7 +167,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
         budget.addRule(r);
 
         budgetRepository.store(budget);
-        return BudgetDTOAssembler.toDTO(findSecurely(budgetId));
+        return BudgetAssembler.toDTO(findSecurely(budgetId));
     }
 
     @Override
@@ -177,7 +178,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
         return budget.rules().stream()
                 .map(ru.vzotov.accounting.domain.model.BudgetRule::ruleId)
                 .flatMap(ruleId -> budgetPlanRepository.findForRule(ruleId).stream())
-                .map(BudgetPlanDTOAssembler::toDTO)
+                .map(BudgetPlanAssembler::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -189,7 +190,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
         final BudgetPlan plan = budgetPlanRepository.find(itemId);
         final Budget budget = findSecurely(plan.rule().ruleId());
         Validate.notNull(budget, "Budget not found");
-        return BudgetPlanDTOAssembler.toDTO(plan);
+        return BudgetPlanAssembler.toDTO(plan);
     }
 
     @Override
@@ -197,7 +198,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
     @PreAuthorize("hasRole('ROLE_USER')")
     public AccountingApi.BudgetPlan createPlan(String direction, String sourceAccount, String targetAccount,
                                                Long categoryId, String purchaseCategoryId,
-                                               AccountingApi.Money value, String ruleId, LocalDate date) {
+                                               CommonApi.Money value, String ruleId, LocalDate date) {
         Validate.notNull(ruleId);
 
         final Budget budget = findSecurely(new BudgetRuleId(ruleId));
@@ -215,7 +216,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
                 purchaseCategoryId == null ? null : new PurchaseCategoryId(purchaseCategoryId)
         );
         budgetPlanRepository.store(item);
-        return BudgetPlanDTOAssembler.toDTO(item);
+        return BudgetPlanAssembler.toDTO(item);
     }
 
     @Override
@@ -223,7 +224,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
     @PreAuthorize("hasRole('ROLE_USER')")
     public AccountingApi.BudgetPlan modifyPlan(String itemId, String direction, String sourceAccount, String targetAccount,
                                                Long categoryId, String purchaseCategoryId,
-                                               AccountingApi.Money value, String ruleId, LocalDate date) throws BudgetPlanNotFoundException {
+                                               CommonApi.Money value, String ruleId, LocalDate date) throws BudgetPlanNotFoundException {
         final Budget ruleBudget = findSecurely(new BudgetRuleId(ruleId));
         Validate.notNull(ruleBudget, "Budget for rule not found");
 
@@ -244,7 +245,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
                 purchaseCategoryId == null ? null : new PurchaseCategoryId(purchaseCategoryId)
         );
         budgetPlanRepository.store(item);
-        return BudgetPlanDTOAssembler.toDTO(item);
+        return BudgetPlanAssembler.toDTO(item);
     }
 
     @Override
@@ -258,7 +259,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
         Validate.notNull(budget, "Budget not found");
 
         budgetPlanRepository.delete(itemId);
-        return BudgetPlanDTOAssembler.toDTO(item);
+        return BudgetPlanAssembler.toDTO(item);
     }
 
     BudgetRule createRuleFromDTO(AccountingApi.BudgetRule rule) {

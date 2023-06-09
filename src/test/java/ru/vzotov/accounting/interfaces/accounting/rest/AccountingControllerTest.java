@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
-import ru.vzotov.accounting.interfaces.common.dto.MoneyDTO;
+import ru.vzotov.accounting.interfaces.common.CommonApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 import ru.vzotov.cashreceipt.application.nalogru2.ReceiptRepositoryNalogru2;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
@@ -49,9 +49,9 @@ public class AccountingControllerTest extends AbstractControllerTest {
 
     @Test
     public void getReceipts() {
-        AccountingApi.GetReceiptsResponse body = this.restTemplate
+        AccountingApi.Receipt.Many body = this.restTemplate
                 .withBasicAuth(USER, PASSWORD)
-                .getForObject("/accounting/receipts/?from=2018-06-16&to=2018-06-17", AccountingApi.GetReceiptsResponse.class);
+                .getForObject("/accounting/receipts/?from=2018-06-16&to=2018-06-17", AccountingApi.Receipt.Many.class);
         assertThat(body.receipts()).isNotEmpty();
     }
 
@@ -73,7 +73,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
                 "20180616135500_65624_8710000100313204_110992_2128735201_1",
                 new AccountingApi.QRCodeData(
                         LocalDateTime.of(2018, JUNE, 16, 13, 55, 0),
-                        new MoneyDTO(65624, "RUR"),
+                        new CommonApi.Money(65624, "RUR"),
                         "8710000100313204",
                         "110992",
                         "2128735201",
@@ -96,9 +96,9 @@ public class AccountingControllerTest extends AbstractControllerTest {
 
     @Test
     public void getReceipt() {
-        AccountingApi.GetReceiptResponse body = this.restTemplate
+        AccountingApi.Receipt.One body = this.restTemplate
                 .withBasicAuth(USER, PASSWORD)
-                .getForObject("/accounting/receipts/2128735201?t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&n=1", AccountingApi.GetReceiptResponse.class);
+                .getForObject("/accounting/receipts/2128735201?t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&n=1", AccountingApi.Receipt.One.class);
         assertThat(body.receipt().items()).hasSize(2);
     }
 
@@ -112,10 +112,10 @@ public class AccountingControllerTest extends AbstractControllerTest {
 
             given(this.nalogru.findByQRCodeData(qr)).willReturn(dataString);
 
-            AccountingApi.ReceiptRegistrationRequest request = new AccountingApi.ReceiptRegistrationRequest("t=20180717T1655&s=1350.00&fn=9288000100080483&i=944&fp=2361761706&n=1");
-            AccountingApi.ReceiptRegistrationResponse response = this.restTemplate
+            AccountingApi.Receipt.Register request = new AccountingApi.Receipt.Register("t=20180717T1655&s=1350.00&fn=9288000100080483&i=944&fp=2361761706&n=1");
+            AccountingApi.Receipt.Ref response = this.restTemplate
                     .withBasicAuth(USER, PASSWORD)
-                    .postForObject("/accounting/receipts/", request, AccountingApi.ReceiptRegistrationResponse.class);
+                    .postForObject("/accounting/receipts/", request, AccountingApi.Receipt.Ref.class);
             assertThat(response).isNotNull();
             assertThat(response.id()).isNotNull();
             verify(this.nalogru, times(0)).findByQRCodeData(any(QRCodeData.class));

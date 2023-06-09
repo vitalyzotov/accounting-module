@@ -15,16 +15,16 @@ import ru.vzotov.accounting.domain.model.TransactionRepository;
 import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.DealDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.CategoryNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.DealNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.DealAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.CardOperationEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.OperationEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.PurchaseEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.ReceiptEnricher;
 import ru.vzotov.accounting.interfaces.common.guards.OwnedGuard;
-import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
-import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
+import ru.vzotov.accounting.interfaces.purchases.PurchasesApi;
+import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseAssembler;
 import ru.vzotov.banking.domain.model.BudgetCategory;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.banking.domain.model.CardOperation;
@@ -123,7 +123,7 @@ public class DealsFacadeImpl implements DealsFacade {
         );
 
         dealRepository.store(deal);
-        return DealDTOAssembler.toDTO(deal);
+        return DealAssembler.toDTO(deal);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class DealsFacadeImpl implements DealsFacade {
         deal.setPurchases(purchases.stream().map(PurchaseId::new).collect(Collectors.toList()));
 
         dealRepository.store(deal);
-        return DealDTOAssembler.toDTO(deal);
+        return DealAssembler.toDTO(deal);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class DealsFacadeImpl implements DealsFacade {
             }
         }
         dealRepository.delete(deal);
-        return DealDTOAssembler.toDTO(deal);
+        return DealAssembler.toDTO(deal);
     }
 
     @Override
@@ -252,7 +252,7 @@ public class DealsFacadeImpl implements DealsFacade {
 
         return Stream.concat(receiptsResult.stream(), operationsResult.stream())
                 .peek(dealRepository::store)
-                .map(DealDTOAssembler::toDTO)
+                .map(DealAssembler::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -355,7 +355,7 @@ public class DealsFacadeImpl implements DealsFacade {
         deals.forEach(dealRepository::delete);
         dealRepository.store(target);
 
-        return DealDTOAssembler.toDTO(target);
+        return DealAssembler.toDTO(target);
     }
 
     private Deal findDealSecurely(DealId dealId) {
@@ -365,9 +365,9 @@ public class DealsFacadeImpl implements DealsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<PurchaseDTO> listDealPurchases(String dealId) {
+    public List<PurchasesApi.Purchase> listDealPurchases(String dealId) {
         final Deal deal = findDealSecurely(new DealId(dealId));
-        final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
+        final PurchaseAssembler assembler = new PurchaseAssembler();
         return deal.purchases().stream()
                 .map(purchaseRepository::find)
                 .map(assembler::toDTO)
@@ -416,12 +416,12 @@ public class DealsFacadeImpl implements DealsFacade {
 
         Stream<Deal> stream = request.get();
 
-        return stream.map(deal -> DealDTOAssembler.toDTO(
+        return stream.map(deal -> DealAssembler.toDTO(
                 deal,
-                expandReceipts ? (d) -> receiptEnricher.list(DealDTOAssembler.receipts(d)) : null,
-                expandOperations ? (d) -> operationEnricher.list(DealDTOAssembler.operations(d)) : null,
-                expandCardOperations ? (d) -> cardOperationEnricher.list(DealDTOAssembler.cardOperations(d)) : null,
-                expandPurchases ? (d) -> purchaseEnricher.list(DealDTOAssembler.purchases(d)) : null
+                expandReceipts ? (d) -> receiptEnricher.list(DealAssembler.receipts(d)) : null,
+                expandOperations ? (d) -> operationEnricher.list(DealAssembler.operations(d)) : null,
+                expandCardOperations ? (d) -> cardOperationEnricher.list(DealAssembler.cardOperations(d)) : null,
+                expandPurchases ? (d) -> purchaseEnricher.list(DealAssembler.purchases(d)) : null
         ));
     }
 }

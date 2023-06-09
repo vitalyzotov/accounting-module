@@ -1,7 +1,8 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers;
 
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.QRCodeDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.QRCodeAssembler;
+import ru.vzotov.accounting.interfaces.common.enrichers.AbstractEnricher;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
@@ -19,7 +20,7 @@ public class ReceiptEnricher extends AbstractEnricher<AccountingApi.ReceiptRef> 
 
     private final Map<String, QRCode> cache;
 
-    private final QRCodeDTOAssembler assembler = new QRCodeDTOAssembler();
+    private final QRCodeAssembler assembler = new QRCodeAssembler();
 
     public ReceiptEnricher(QRCodeRepository repository) {
         this(repository, Collections.emptySet());

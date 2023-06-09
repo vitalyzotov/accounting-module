@@ -53,7 +53,7 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         final String categoryName = "Новая категория";
         ResponseEntity<AccountingApi.BudgetCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories",
-                HttpMethod.POST, new HttpEntity<>(new AccountingApi.BudgetCategoryCreateRequest(categoryName, null, null), null),
+                HttpMethod.POST, new HttpEntity<>(new AccountingApi.BudgetCategory.Create(categoryName, null, null), null),
                 new ParameterizedTypeReference<AccountingApi.BudgetCategory>() {
                 }
         );
@@ -69,7 +69,7 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         final String categoryName = "Переименованная";
         ResponseEntity<AccountingApi.BudgetCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories/{categoryId}",
-                HttpMethod.PUT, new HttpEntity<>(new AccountingApi.BudgetCategoryModifyRequest(categoryName, "#00FF0000", "icon-2"), null),
+                HttpMethod.PUT, new HttpEntity<>(new AccountingApi.BudgetCategory.Modify(categoryName, "#00FF0000", "icon-2"), null),
                 new ParameterizedTypeReference<AccountingApi.BudgetCategory>() {
                 }, 1000L
         );
