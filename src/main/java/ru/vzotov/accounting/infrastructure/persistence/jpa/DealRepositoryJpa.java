@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.accounting.domain.model.Deal;
 import ru.vzotov.accounting.domain.model.DealId;
 import ru.vzotov.accounting.domain.model.DealRepository;
@@ -8,8 +10,6 @@ import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;

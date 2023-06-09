@@ -1,12 +1,12 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.accounting.domain.model.TransactionRepository;
 import ru.vzotov.banking.domain.model.OperationId;
 import ru.vzotov.banking.domain.model.Transaction;
 import ru.vzotov.person.domain.model.PersonId;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;

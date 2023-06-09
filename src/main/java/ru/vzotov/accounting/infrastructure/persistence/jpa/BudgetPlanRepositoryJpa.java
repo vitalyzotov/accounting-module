@@ -1,12 +1,12 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import ru.vzotov.accounting.domain.model.BudgetPlanRepository;
-import ru.vzotov.accounting.domain.model.BudgetPlan;
-import ru.vzotov.accounting.domain.model.BudgetPlanId;
-import ru.vzotov.accounting.domain.model.BudgetRuleId;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import ru.vzotov.accounting.domain.model.BudgetPlan;
+import ru.vzotov.accounting.domain.model.BudgetPlanId;
+import ru.vzotov.accounting.domain.model.BudgetPlanRepository;
+import ru.vzotov.accounting.domain.model.BudgetRuleId;
+
 import java.util.List;
 
 public class BudgetPlanRepositoryJpa extends JpaRepository implements BudgetPlanRepository {

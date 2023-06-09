@@ -1,11 +1,11 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.accounting.domain.model.BankRepository;
 import ru.vzotov.banking.domain.model.Bank;
 import ru.vzotov.banking.domain.model.BankId;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import java.util.List;
 
 public class BankRepositoryJpa extends JpaRepository implements BankRepository {

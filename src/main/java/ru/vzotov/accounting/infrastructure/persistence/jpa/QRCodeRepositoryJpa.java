@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.QRCodeDateTime;
@@ -8,8 +10,6 @@ import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.ReceiptState;
 import ru.vzotov.person.domain.model.PersonId;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;

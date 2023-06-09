@@ -1,12 +1,12 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.accounting.domain.model.MccDetailsRepository;
 import ru.vzotov.banking.domain.model.MccCode;
 import ru.vzotov.banking.domain.model.MccDetails;
 import ru.vzotov.banking.domain.model.MccGroupId;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import java.util.List;
 
 public class MccDetailsRepositoryJpa extends JpaRepository implements MccDetailsRepository {

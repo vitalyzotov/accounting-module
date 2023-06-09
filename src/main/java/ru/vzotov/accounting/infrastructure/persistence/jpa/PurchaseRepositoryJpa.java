@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vzotov.person.domain.model.PersonId;
@@ -7,8 +9,6 @@ import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
