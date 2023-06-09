@@ -1,9 +1,9 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.WorkCalendarDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 
 import java.time.LocalDate;
 
 public interface WorkCalendarFacade {
-    WorkCalendarDTO getCalendar(String location, LocalDate from, LocalDate to);
+    AccountingApi.WorkCalendar getCalendar(String location, LocalDate from, LocalDate to);
 }

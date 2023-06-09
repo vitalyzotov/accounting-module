@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entity-mappings version="2.1"
-                 xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+<entity-mappings version="3.1"
+                 xmlns="https://jakarta.ee/xml/ns/persistence/orm"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
+                 xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
+          https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd">
 
     <named-native-query name="operations-without-deals" result-set-mapping="OperationMapping"
                         result-class="ru.vzotov.banking.domain.model.Operation">
@@ -760,6 +761,13 @@
                 <column name="LOADED_AT" nullable="true"/>
             </basic>
 
+            <one-to-many name="sources" orphan-removal="true" fetch="LAZY">
+                <join-column nullable="false" name="QR_ID"/>
+                <cascade>
+                    <cascade-all/>
+                </cascade>
+            </one-to-many>
+
             <embedded name="data"/>
             <embedded name="receiptId">
                 <attribute-override name="value">
@@ -773,6 +781,25 @@
                 </attribute-override>
             </embedded>
 
+        </attributes>
+    </entity>
+
+    <entity name="ReceiptSource" class="ru.vzotov.cashreceipt.domain.model.ReceiptSource" access="FIELD">
+        <table name="RECEIPT_SOURCE"/>
+        <pre-persist method-name="onCreate"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="value">
+                <column name="DATA" nullable="false"/>
+                <lob/>
+            </basic>
+            <basic name="created">
+                <column name="CREATED" nullable="false"/>
+            </basic>
+            <embedded name="receiptSourceId"/>
         </attributes>
     </entity>
 
@@ -1247,6 +1274,14 @@
         <attributes>
             <basic name="value">
                 <column name="CONTACT_ID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.cashreceipt.domain.model.ReceiptSourceId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="SOURCE_UID" nullable="false" unique="true"/>
             </basic>
         </attributes>
     </embeddable>

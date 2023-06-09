@@ -1,7 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.WorkCalendarFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.WorkCalendarDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +22,7 @@ public class WorkCalendarController {
     private WorkCalendarFacade workCalendarFacade;
 
     @GetMapping("{location}")
-    public WorkCalendarDTO getCalendar(
+    public AccountingApi.WorkCalendar getCalendar(
             @PathVariable String location,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {

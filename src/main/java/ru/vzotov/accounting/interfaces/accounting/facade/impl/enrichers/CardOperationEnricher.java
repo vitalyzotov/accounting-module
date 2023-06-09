@@ -1,8 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers;
 
 import ru.vzotov.accounting.domain.model.CardOperationRepository;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CardOperationDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.OperationDTOAssembler;
 import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.OperationId;
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static java.util.function.Function.identity;
 
-public class CardOperationEnricher extends AbstractEnricher<OperationRef> {
+public class CardOperationEnricher extends AbstractEnricher<AccountingApi.OperationRef> {
 
     private final CardOperationRepository repository;
 
@@ -29,7 +28,7 @@ public class CardOperationEnricher extends AbstractEnricher<OperationRef> {
         this.cache = cache.stream().collect(Collectors.toMap(op -> op.operationId().idString(), identity()));
     }
 
-    public CardOperationDTO apply(OperationRef ref) {
+    public AccountingApi.CardOperation apply(AccountingApi.OperationRef ref) {
         return ref == null ? null : OperationDTOAssembler.toDTO(
                 cache.computeIfAbsent(ref.operationId(), id -> repository.find(new OperationId(id)))
         );

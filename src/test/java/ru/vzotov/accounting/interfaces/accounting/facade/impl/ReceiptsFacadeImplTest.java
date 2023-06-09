@@ -6,11 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.WithMockPersonUser;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
 import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
@@ -35,7 +32,7 @@ public class ReceiptsFacadeImplTest {
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void listAllReceipts() {
-        List<ReceiptDTO> receipts = facade.listAllReceipts(
+        List<AccountingApi.Receipt> receipts = facade.listAllReceipts(
                 LocalDate.of(2018, Month.JUNE, 16), LocalDate.of(2018, Month.JUNE, 17));
         Assertions.assertThat(receipts).isNotEmpty();
     }
@@ -43,7 +40,7 @@ public class ReceiptsFacadeImplTest {
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void getReceipt() {
-        ReceiptDTO receipt = facade.getReceipt("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
+        AccountingApi.Receipt receipt = facade.getReceipt("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
         assertThat(receipt).isNotNull();
         assertThat(receipt.dateTime()).isEqualTo(LocalDateTime.of(2018, Month.JUNE, 16, 13, 55, 0));
 
@@ -57,14 +54,14 @@ public class ReceiptsFacadeImplTest {
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void getNotExistingReceipt() {
-        ReceiptDTO receipt = facade.getReceipt("t=20180618T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
+        AccountingApi.Receipt receipt = facade.getReceipt("t=20180618T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
         assertThat(receipt).isNull();
     }
 
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void listAllCodes() {
-        List<QRCodeDTO> codes = facade.listAllCodes(
+        List<AccountingApi.QRCode> codes = facade.listAllCodes(
                 LocalDate.of(2018, Month.JUNE, 16), LocalDate.of(2018, Month.JUNE, 17));
         Assertions.assertThat(codes).isNotEmpty();
     }
@@ -72,7 +69,7 @@ public class ReceiptsFacadeImplTest {
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void getTimeline() {
-        TimelineDTO timeline = facade.getTimeline();
+        AccountingApi.Timeline timeline = facade.getTimeline();
         assertThat(timeline).isNotNull();
         assertThat(timeline.periods()).isNotEmpty();
     }
@@ -81,30 +78,30 @@ public class ReceiptsFacadeImplTest {
     @WithMockPersonUser(person = PERSON_ID)
     public void assignCategoryToItem() throws ReceiptNotFoundException, ReceiptItemNotFoundException {
         facade.assignCategoryToItem(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"), 1, "Табак");
-        ReceiptDTO receipt = facade.getReceipt("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
+        AccountingApi.Receipt receipt = facade.getReceipt("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
         assertThat(receipt.items().get(1).category()).isEqualTo("Табак");
     }
 
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void getAllCategories() {
-        List<PurchaseCategoryDTO> categories = facade.getAllCategories();
+        List<AccountingApi.PurchaseCategory> categories = facade.getAllCategories();
         Assertions.assertThat(categories).isNotEmpty();
     }
 
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void getCategory() {
-        PurchaseCategoryDTO category = facade.getCategory(new PurchaseCategoryId("id-Табак"));
+        AccountingApi.PurchaseCategory category = facade.getCategory(new PurchaseCategoryId("id-Табак"));
         assertThat(category.name()).isEqualTo("Табак");
     }
 
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void createNewCategory() {
-        PurchaseCategoryDTO newCategory = facade.createNewCategory("Алкоголь");
+        AccountingApi.PurchaseCategory newCategory = facade.createNewCategory("Алкоголь");
         assertThat(newCategory).isNotNull();
-        PurchaseCategoryDTO persistentCategory = facade.getCategory(new PurchaseCategoryId(newCategory.categoryId()));
+        AccountingApi.PurchaseCategory persistentCategory = facade.getCategory(new PurchaseCategoryId(newCategory.categoryId()));
         assertThat(persistentCategory).isNotNull();
         assertThat(persistentCategory.name()).isEqualTo(newCategory.name());
     }
@@ -112,10 +109,10 @@ public class ReceiptsFacadeImplTest {
     @Test
     @WithMockPersonUser(person = PERSON_ID)
     public void renameCategory() throws ReceiptNotFoundException, ReceiptItemNotFoundException {
-        PurchaseCategoryDTO category = facade.getCategory(new PurchaseCategoryId("id-12345678901234567890"));
+        AccountingApi.PurchaseCategory category = facade.getCategory(new PurchaseCategoryId("id-12345678901234567890"));
         facade.assignCategoryToItem(new ReceiptId("20180616135500_65624_8710000100313204_110992_2128735201_1"), 0, category.name());
         facade.renameCategory(new PurchaseCategoryId(category.categoryId()), "Пакеты 2");
-        ReceiptDTO receipt = facade.getReceipt("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
+        AccountingApi.Receipt receipt = facade.getReceipt("t=20180616T1355&s=656.24&fn=8710000100313204&i=110992&fp=2128735201&n=1");
         assertThat(receipt.items().get(0).category()).isEqualTo("Пакеты 2");
     }
 }

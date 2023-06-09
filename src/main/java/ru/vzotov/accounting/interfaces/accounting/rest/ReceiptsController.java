@@ -1,17 +1,12 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import org.springframework.http.ResponseEntity;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptRegistrationService;
 import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.ReceiptRegistrationRequest;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.ReceiptRegistrationResponse;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.GetReceiptResponse;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.GetReceiptsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -46,53 +41,53 @@ public class ReceiptsController {
     }
 
     @PostMapping("/accounting/receipts/")
-    public ReceiptRegistrationResponse registerReceipt(@RequestBody ReceiptRegistrationRequest request)
+    public AccountingApi.ReceiptRegistrationResponse registerReceipt(@RequestBody AccountingApi.ReceiptRegistrationRequest request)
             throws ReceiptNotFoundException, IOException {
-        final ReceiptId qrId = receiptRegistrationService.register(new QRCodeData(request.getQrcode()));
-        return new ReceiptRegistrationResponse(qrId.value());
+        final ReceiptId qrId = receiptRegistrationService.register(new QRCodeData(request.qrcode()));
+        return new AccountingApi.ReceiptRegistrationResponse(qrId.value());
     }
 
     @GetMapping("/accounting/receipts/")
-    public GetReceiptsResponse getReceipts(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        return new GetReceiptsResponse(receiptsFacade.listAllReceipts(from, to));
+    public AccountingApi.GetReceiptsResponse getReceipts(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        return new AccountingApi.GetReceiptsResponse(receiptsFacade.listAllReceipts(from, to));
     }
 
     @GetMapping(value = "/accounting/qr/")
-    public List<QRCodeDTO> getCodes(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    public List<AccountingApi.QRCode> getCodes(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         return receiptsFacade.listAllCodes(from, to);
     }
 
     @GetMapping("/accounting/qr/{receiptId}")
-    public ResponseEntity<QRCodeDTO> getCode(@PathVariable String receiptId) {
+    public ResponseEntity<AccountingApi.QRCode> getCode(@PathVariable String receiptId) {
         return ResponseEntity.of(Optional.ofNullable(receiptsFacade.getCode(receiptId)));
     }
 
     @GetMapping("/accounting/receipts/{fiscalSign}")
-    public GetReceiptResponse getReceipt(@PathVariable String fiscalSign,
-                                         @RequestParam("t") String date,
-                                         @RequestParam("s") String sum,
-                                         @RequestParam("fn") String fiscalDriveNumber,
-                                         @RequestParam("i") String fiscalDocumentNumber,
-                                         @RequestParam("n") String operationType) throws ReceiptNotFoundException {
+    public AccountingApi.GetReceiptResponse getReceipt(@PathVariable String fiscalSign,
+                                                       @RequestParam("t") String date,
+                                                       @RequestParam("s") String sum,
+                                                       @RequestParam("fn") String fiscalDriveNumber,
+                                                       @RequestParam("i") String fiscalDocumentNumber,
+                                                       @RequestParam("n") String operationType) throws ReceiptNotFoundException {
         final String query = getQrString(fiscalSign, date, sum, fiscalDriveNumber, fiscalDocumentNumber, operationType);
-        final ReceiptDTO receipt = receiptsFacade.getReceipt(query);
+        final AccountingApi.Receipt receipt = receiptsFacade.getReceipt(query);
         if (receipt == null) throw new ReceiptNotFoundException();
-        return new GetReceiptResponse(receipt);
+        return new AccountingApi.GetReceiptResponse(receipt);
     }
 
     @PutMapping("/accounting/receipts/{fiscalSign}")
-    public GetReceiptResponse loadReceiptDetails(@PathVariable String fiscalSign,
-                                                 @RequestParam("t") String date,
-                                                 @RequestParam("s") String sum,
-                                                 @RequestParam("fn") String fiscalDriveNumber,
-                                                 @RequestParam("i") String fiscalDocumentNumber,
-                                                 @RequestParam("n") String operationType) throws ReceiptNotFoundException {
+    public AccountingApi.GetReceiptResponse loadReceiptDetails(@PathVariable String fiscalSign,
+                                                               @RequestParam("t") String date,
+                                                               @RequestParam("s") String sum,
+                                                               @RequestParam("fn") String fiscalDriveNumber,
+                                                               @RequestParam("i") String fiscalDocumentNumber,
+                                                               @RequestParam("n") String operationType) throws ReceiptNotFoundException {
         final String query = getQrString(fiscalSign, date, sum, fiscalDriveNumber, fiscalDocumentNumber, operationType);
-        final ReceiptDTO receipt = receiptsFacade.loadReceiptDetails(new QRCodeData(query));
+        final AccountingApi.Receipt receipt = receiptsFacade.loadReceiptDetails(new QRCodeData(query));
         if (receipt == null) throw new ReceiptNotFoundException();
-        return new GetReceiptResponse(receipt);
+        return new AccountingApi.GetReceiptResponse(receipt);
     }
 
     private String getQrString(String fiscalSign,

@@ -1,20 +1,19 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.MccDetailsDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.MccGroupDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.banking.domain.model.MccCode;
 import ru.vzotov.banking.domain.model.MccGroupId;
 
 import java.util.List;
 
 public interface MccFacade {
-    List<MccGroupDTO> listGroups();
+    List<AccountingApi.MccGroup> listGroups();
 
-    MccGroupDTO getGroup(MccGroupId groupId);
+    AccountingApi.MccGroup getGroup(MccGroupId groupId);
 
-    MccDetailsDTO getDetails(MccCode code);
+    AccountingApi.MccDetails getDetails(MccCode code);
 
-    List<MccDetailsDTO> listGroupDetails(MccGroupId groupId);
+    List<AccountingApi.MccDetails> listGroupDetails(MccGroupId groupId);
 
-    List<MccDetailsDTO> listDetails();
+    List<AccountingApi.MccDetails> listDetails();
 }

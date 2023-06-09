@@ -1,11 +1,8 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetCategoryDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetCategoryCreateRequest;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetCategoryDeleteResponse;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetCategoryModifyRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,29 +25,29 @@ public class CategoriesController {
     private AccountingFacade accountingFacade;
 
     @GetMapping
-    public List<BudgetCategoryDTO> listCategories() {
+    public List<AccountingApi.BudgetCategory> listCategories() {
         return accountingFacade.listCategories();
     }
 
     @GetMapping("{categoryId}")
-    public BudgetCategoryDTO getCategory(@PathVariable long categoryId) {
+    public AccountingApi.BudgetCategory getCategory(@PathVariable long categoryId) {
         return accountingFacade.getCategory(categoryId);
     }
 
     @PostMapping
-    public BudgetCategoryDTO createCategory(@RequestBody BudgetCategoryCreateRequest request) {
-        return accountingFacade.createCategory(request.getName(), request.getColor(), request.getIcon());
+    public AccountingApi.BudgetCategory createCategory(@RequestBody AccountingApi.BudgetCategoryCreateRequest request) {
+        return accountingFacade.createCategory(request.name(), request.color(), request.icon());
     }
 
     @PutMapping("{categoryId}")
-    public BudgetCategoryDTO modifyCategory(@PathVariable long categoryId, @RequestBody BudgetCategoryModifyRequest request) throws CategoryNotFoundException {
-        return accountingFacade.modifyCategory(categoryId, request.getName(), request.getColor(), request.getIcon());
+    public AccountingApi.BudgetCategory modifyCategory(@PathVariable long categoryId, @RequestBody AccountingApi.BudgetCategoryModifyRequest request) throws CategoryNotFoundException {
+        return accountingFacade.modifyCategory(categoryId, request.name(), request.color(), request.icon());
     }
 
     @DeleteMapping("{categoryId}")
-    public BudgetCategoryDeleteResponse deleteCategoryById(@PathVariable long categoryId) throws CategoryNotFoundException {
+    public AccountingApi.BudgetCategoryDeleteResponse deleteCategoryById(@PathVariable long categoryId) throws CategoryNotFoundException {
         accountingFacade.deleteCategory(categoryId);
-        return new BudgetCategoryDeleteResponse(categoryId);
+        return new AccountingApi.BudgetCategoryDeleteResponse(categoryId);
     }
 
 }

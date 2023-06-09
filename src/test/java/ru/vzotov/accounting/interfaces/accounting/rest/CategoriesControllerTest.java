@@ -7,9 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetCategoryDTO;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetCategoryCreateRequest;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetCategoryModifyRequest;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import java.util.List;
@@ -24,59 +22,59 @@ public class CategoriesControllerTest extends AbstractControllerTest {
 
     @Test
     public void listCategories() {
-        ResponseEntity<List<BudgetCategoryDTO>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        ResponseEntity<List<AccountingApi.BudgetCategory>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<List<BudgetCategoryDTO>>() {
+                new ParameterizedTypeReference<List<AccountingApi.BudgetCategory>>() {
                 }
         );
         assertThat(exchange.getBody())
                 .isNotEmpty()
                 .usingElementComparatorOnFields("id", "name")
-                .contains(new BudgetCategoryDTO(781381038049753674L, PERSON_ID, "Прочие расходы"))
+                .contains(new AccountingApi.BudgetCategory(781381038049753674L, PERSON_ID, "Прочие расходы"))
         ;
     }
 
     @Test
     public void getCategory() {
-        ResponseEntity<BudgetCategoryDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        ResponseEntity<AccountingApi.BudgetCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories/{categoryId}",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<BudgetCategoryDTO>() {
+                new ParameterizedTypeReference<AccountingApi.BudgetCategory>() {
                 }, 781381038049753674L
         );
         assertThat(exchange.getBody())
                 .usingRecursiveComparison()
-                .isEqualTo(new BudgetCategoryDTO(781381038049753674L, PERSON_ID, "Прочие расходы", "#FF000000", "MyIcon"));
+                .isEqualTo(new AccountingApi.BudgetCategory(781381038049753674L, PERSON_ID, "Прочие расходы", "#FF000000", "MyIcon"));
     }
 
     @Test
     public void createCategory() {
         final String categoryName = "Новая категория";
-        ResponseEntity<BudgetCategoryDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        ResponseEntity<AccountingApi.BudgetCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories",
-                HttpMethod.POST, new HttpEntity<>(new BudgetCategoryCreateRequest(categoryName, null, null), null),
-                new ParameterizedTypeReference<BudgetCategoryDTO>() {
+                HttpMethod.POST, new HttpEntity<>(new AccountingApi.BudgetCategoryCreateRequest(categoryName, null, null), null),
+                new ParameterizedTypeReference<AccountingApi.BudgetCategory>() {
                 }
         );
         assertThat(exchange.getBody())
                 .usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(new BudgetCategoryDTO(0L, PERSON_ID, categoryName));
+                .isEqualTo(new AccountingApi.BudgetCategory(0L, PERSON_ID, categoryName));
         assertThat(exchange.getBody().id()).isPositive();
     }
 
     @Test
     public void renameCategory() {
         final String categoryName = "Переименованная";
-        ResponseEntity<BudgetCategoryDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        ResponseEntity<AccountingApi.BudgetCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories/{categoryId}",
-                HttpMethod.PUT, new HttpEntity<>(new BudgetCategoryModifyRequest(categoryName, "#00FF0000", "icon-2"), null),
-                new ParameterizedTypeReference<BudgetCategoryDTO>() {
+                HttpMethod.PUT, new HttpEntity<>(new AccountingApi.BudgetCategoryModifyRequest(categoryName, "#00FF0000", "icon-2"), null),
+                new ParameterizedTypeReference<AccountingApi.BudgetCategory>() {
                 }, 1000L
         );
         assertThat(exchange.getBody())
                 .usingRecursiveComparison()
-                .isEqualTo(new BudgetCategoryDTO(1000L, PERSON_ID, categoryName, "#00FF0000", "icon-2"));
+                .isEqualTo(new AccountingApi.BudgetCategory(1000L, PERSON_ID, categoryName, "#00FF0000", "icon-2"));
     }
 }

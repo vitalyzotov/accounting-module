@@ -12,14 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vzotov.accounting.domain.model.BudgetId;
 import ru.vzotov.accounting.domain.model.BudgetPlanId;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.BudgetFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetPlanDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetPlanNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetRuleDTO;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetCreateRequest;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BudgetModifyRequest;
 
 import java.util.List;
 
@@ -32,62 +28,62 @@ public class BudgetController {
     private BudgetFacade budgetFacade;
 
     @GetMapping("{budgetId}")
-    public BudgetDTO getBudget(@PathVariable String budgetId) {
+    public AccountingApi.Budget getBudget(@PathVariable String budgetId) {
         return budgetFacade.getBudget(new BudgetId(budgetId));
     }
 
     @DeleteMapping("{budgetId}")
-    public BudgetDTO deleteBudget(@PathVariable String budgetId) throws BudgetNotFoundException {
+    public AccountingApi.Budget deleteBudget(@PathVariable String budgetId) throws BudgetNotFoundException {
         return budgetFacade.deleteBudget(new BudgetId(budgetId));
     }
 
     @GetMapping
-    public List<BudgetDTO> listBudgets() {
+    public List<AccountingApi.Budget> listBudgets() {
         return budgetFacade.listBudgets();
     }
 
     @PostMapping
-    public BudgetDTO createBudget(@RequestBody BudgetCreateRequest request) {
-        return budgetFacade.createBudget(BudgetId.nextId(), request.getName(), request.getCurrency(), request.getLocale());
+    public AccountingApi.Budget createBudget(@RequestBody AccountingApi.BudgetCreateRequest request) {
+        return budgetFacade.createBudget(BudgetId.nextId(), request.name(), request.currency(), request.locale());
     }
 
     @PutMapping("{budgetId}")
-    public BudgetDTO modifyBudget(@PathVariable String budgetId, @RequestBody BudgetModifyRequest request) throws BudgetNotFoundException {
-        return budgetFacade.modifyBudget(new BudgetId(budgetId), request.getName(), request.getCurrency(), request.getLocale());
+    public AccountingApi.Budget modifyBudget(@PathVariable String budgetId, @RequestBody AccountingApi.BudgetModifyRequest request) throws BudgetNotFoundException {
+        return budgetFacade.modifyBudget(new BudgetId(budgetId), request.name(), request.currency(), request.locale());
     }
 
     @GetMapping("{budgetId}/rule/{ruleId}")
-    public BudgetRuleDTO getRule(@PathVariable String budgetId, @PathVariable String ruleId) throws BudgetNotFoundException {
+    public AccountingApi.BudgetRule getRule(@PathVariable String budgetId, @PathVariable String ruleId) throws BudgetNotFoundException {
         return budgetFacade.getBudgetRule(new BudgetId(budgetId), ruleId);
     }
 
     @PostMapping("{budgetId}/rule")
-    public BudgetDTO addRule(@PathVariable String budgetId, @RequestBody BudgetRuleDTO rule) throws BudgetNotFoundException {
+    public AccountingApi.Budget addRule(@PathVariable String budgetId, @RequestBody AccountingApi.BudgetRule rule) throws BudgetNotFoundException {
         return budgetFacade.addRuleToBudget(new BudgetId(budgetId), rule);
     }
 
     @DeleteMapping("{budgetId}/rule/{ruleId}")
-    public BudgetDTO deleteRule(@PathVariable String budgetId, @PathVariable String ruleId) throws BudgetNotFoundException {
+    public AccountingApi.Budget deleteRule(@PathVariable String budgetId, @PathVariable String ruleId) throws BudgetNotFoundException {
         return budgetFacade.deleteRuleFromBudget(new BudgetId(budgetId), ruleId);
     }
 
     @PutMapping("{budgetId}/rule/{ruleId}")
-    public BudgetDTO replaceRule(@PathVariable String budgetId, @PathVariable String ruleId, @RequestBody BudgetRuleDTO rule) throws BudgetNotFoundException {
+    public AccountingApi.Budget replaceRule(@PathVariable String budgetId, @PathVariable String ruleId, @RequestBody AccountingApi.BudgetRule rule) throws BudgetNotFoundException {
         return budgetFacade.replaceBudgetRule(new BudgetId(budgetId), ruleId, rule);
     }
 
     @GetMapping("{budgetId}/plan")
-    public List<BudgetPlanDTO> listPlans(@PathVariable String budgetId) {
+    public List<AccountingApi.BudgetPlan> listPlans(@PathVariable String budgetId) {
         return budgetFacade.listPlans(new BudgetId(budgetId));
     }
 
     @GetMapping("{budgetId}/plan/{itemId}")
-    public BudgetPlanDTO getPlan(@PathVariable String budgetId, @PathVariable String itemId) {
+    public AccountingApi.BudgetPlan getPlan(@PathVariable String budgetId, @PathVariable String itemId) {
         return budgetFacade.getPlan(new BudgetPlanId(itemId));
     }
 
     @PostMapping("{budgetId}/plan")
-    public BudgetPlanDTO createPlan(@PathVariable String budgetId, @RequestBody BudgetPlanDTO item) {
+    public AccountingApi.BudgetPlan createPlan(@PathVariable String budgetId, @RequestBody AccountingApi.BudgetPlan item) {
         return budgetFacade.createPlan(
                 item.direction(),
                 item.sourceAccount(),
@@ -110,8 +106,8 @@ public class BudgetController {
      * @throws BudgetPlanNotFoundException если элемент не найден
      */
     @PutMapping("{budgetId}/plan/{itemId}")
-    public BudgetPlanDTO modifyPlan(@PathVariable String budgetId, @PathVariable String itemId,
-                                    @RequestBody BudgetPlanDTO item) throws BudgetPlanNotFoundException {
+    public AccountingApi.BudgetPlan modifyPlan(@PathVariable String budgetId, @PathVariable String itemId,
+                                               @RequestBody AccountingApi.BudgetPlan item) throws BudgetPlanNotFoundException {
         return budgetFacade.modifyPlan(
                 itemId,
                 item.direction(),
@@ -133,7 +129,7 @@ public class BudgetController {
      * @return удаленный элемент плана
      */
     @DeleteMapping("{budgetId}/plan/{itemId}")
-    public BudgetPlanDTO deletePlan(@PathVariable String budgetId, @PathVariable String itemId) {
+    public AccountingApi.BudgetPlan deletePlan(@PathVariable String budgetId, @PathVariable String itemId) {
         return budgetFacade.deletePlan(new BudgetPlanId(itemId));
     }
 }

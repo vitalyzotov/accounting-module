@@ -1,7 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,7 +24,7 @@ public class TransactionsController {
     private AccountingFacade accountingFacade;
 
     @GetMapping
-    public List<TransactionDTO> listTransactions(
+    public List<AccountingApi.Transaction> listTransactions(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
             @RequestParam(required = false) Integer threshold) {
@@ -32,7 +32,7 @@ public class TransactionsController {
     }
 
     @PostMapping
-    public TransactionDTO makeTransaction(@RequestBody TransactionDTO transaction) {
+    public AccountingApi.Transaction makeTransaction(@RequestBody AccountingApi.Transaction transaction) {
         return accountingFacade.makeTransaction(
                 new OperationId(transaction.primary()),
                 new OperationId(transaction.secondary())

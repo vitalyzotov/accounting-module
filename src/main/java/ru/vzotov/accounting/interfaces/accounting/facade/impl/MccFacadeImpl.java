@@ -2,9 +2,8 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
 import ru.vzotov.accounting.domain.model.MccDetailsRepository;
 import ru.vzotov.accounting.domain.model.MccGroupRepository;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.MccFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.MccDetailsDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.MccGroupDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccDetailsDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccGroupDTOAssembler;
 import org.apache.commons.lang3.Validate;
@@ -30,7 +29,7 @@ public class MccFacadeImpl implements MccFacade {
 
     @Override
     @Transactional(value = MCC_DATASOURCE, readOnly = true)
-    public List<MccGroupDTO> listGroups() {
+    public List<AccountingApi.MccGroup> listGroups() {
         return mccGroupRepository.findAll()
                 .stream()
                 .map(MccGroupDTOAssembler::toDTO)
@@ -39,21 +38,21 @@ public class MccFacadeImpl implements MccFacade {
 
     @Override
     @Transactional(value = MCC_DATASOURCE, readOnly = true)
-    public MccGroupDTO getGroup(MccGroupId groupId) {
+    public AccountingApi.MccGroup getGroup(MccGroupId groupId) {
         Validate.notNull(groupId);
         return MccGroupDTOAssembler.toDTO(mccGroupRepository.find(groupId));
     }
 
     @Override
     @Transactional(value = MCC_DATASOURCE, readOnly = true)
-    public MccDetailsDTO getDetails(MccCode code) {
+    public AccountingApi.MccDetails getDetails(MccCode code) {
         Validate.notNull(code);
         return MccDetailsDTOAssembler.toDTO(mccDetailsRepository.find(code));
     }
 
     @Override
     @Transactional(value = MCC_DATASOURCE, readOnly = true)
-    public List<MccDetailsDTO> listGroupDetails(MccGroupId groupId) {
+    public List<AccountingApi.MccDetails> listGroupDetails(MccGroupId groupId) {
         Validate.notNull(groupId);
         return mccDetailsRepository.findByGroup(groupId)
                 .stream()
@@ -63,7 +62,7 @@ public class MccFacadeImpl implements MccFacade {
 
     @Override
     @Transactional(value = MCC_DATASOURCE, readOnly = true)
-    public List<MccDetailsDTO> listDetails() {
+    public List<AccountingApi.MccDetails> listDetails() {
         return mccDetailsRepository.findAll()
                 .stream()
                 .map(MccDetailsDTOAssembler::toDTO)

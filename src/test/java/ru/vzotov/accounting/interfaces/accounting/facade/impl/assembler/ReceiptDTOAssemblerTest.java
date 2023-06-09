@@ -2,8 +2,7 @@ package ru.vzotov.accounting.interfaces.accounting.facade.impl.assembler;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ItemDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptDTOAssembler;
 import ru.vzotov.cashreceipt.ReceiptFactory;
 import ru.vzotov.cashreceipt.domain.model.Receipt;
@@ -27,7 +26,7 @@ public class ReceiptDTOAssemblerTest {
         final ReceiptDTOAssembler assembler = new ReceiptDTOAssembler();
         final Receipt receipt = new ReceiptFactory().createReceiptFromJson(PERSON_ID, "/receipt015.json");
 
-        final ReceiptDTO dto = assembler.toDTO(receipt);
+        final AccountingApi.Receipt dto = assembler.toDTO(receipt);
 
         assertThat(dto).isNotNull();
         assertThat(dto.dateTime())
@@ -43,7 +42,7 @@ public class ReceiptDTOAssemblerTest {
         assertThat(dto.fiscalInfo().fiscalSign()).isEqualTo("2024263777");
 
         assertThat(dto.items()).hasSize(1);
-        ItemDTO item = dto.items().get(0);
+        AccountingApi.Item item = dto.items().get(0);
         assertThat(item.name()).isEqualTo("Пепси напиток 0,8л.");
         assertThat(item.quantity()).isEqualTo(1d);
         assertThat(item.price().getAmount()).isEqualTo(15000);
@@ -56,7 +55,7 @@ public class ReceiptDTOAssemblerTest {
         final Receipt receipt1 = new ReceiptFactory().createReceiptFromJson(PERSON_ID, "/receipt015.json");
         final Receipt receipt2 = new ReceiptFactory().createReceiptFromJson(PERSON_ID, "/receipt017.json");
 
-        List<ReceiptDTO> list = assembler.toDTOList(Arrays.asList(receipt1, receipt2));
+        List<AccountingApi.Receipt> list = assembler.toDTOList(Arrays.asList(receipt1, receipt2));
         Assertions.assertThat(list).hasSize(2);
     }
 }

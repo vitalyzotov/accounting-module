@@ -1,13 +1,13 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.banking.domain.model.Account;
 
 import java.util.ArrayList;
 
 public class AccountDtoAssembler {
-    public static AccountDTO assemble(Account model) {
-        return model == null ? null : new AccountDTO(
+    public static AccountingApi.Account assemble(Account model) {
+        return model == null ? null : new AccountingApi.Account(
                 model.accountNumber().number(),
                 model.name(),
                 model.bankId() == null ? null : model.bankId().value(),

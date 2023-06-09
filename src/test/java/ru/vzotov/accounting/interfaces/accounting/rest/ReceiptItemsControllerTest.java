@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.ReceiptItemCategoryPatch;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +20,7 @@ public class ReceiptItemsControllerTest extends AbstractControllerTest {
 
     @Test
     public void patchItemCategory() {
-        HttpEntity<ReceiptItemCategoryPatch> request = new HttpEntity<>(new ReceiptItemCategoryPatch("Табак"));
+        HttpEntity<AccountingApi.ReceiptItemCategoryPatch> request = new HttpEntity<>(new AccountingApi.ReceiptItemCategoryPatch("Табак"));
         ResponseEntity<Void> response = this.restTemplate.withBasicAuth(USER, PASSWORD)
                 .exchange("/accounting/receipt-items/1?receipt=20180616135500_65624_8710000100313204_110992_2128735201_1", HttpMethod.PATCH, request, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

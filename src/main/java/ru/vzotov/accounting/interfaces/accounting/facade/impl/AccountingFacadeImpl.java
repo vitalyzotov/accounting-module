@@ -19,19 +19,10 @@ import ru.vzotov.accounting.domain.model.RemainId;
 import ru.vzotov.accounting.domain.model.RemainRepository;
 import ru.vzotov.accounting.domain.model.TransactionRepository;
 import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountBindingDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BankDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetCategoryDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CardDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.HoldOperationDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.RemainDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TransactionDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.AccountDtoAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BankDTOAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.BudgetCategoryDTOAssembler;
@@ -124,7 +115,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<AccountDTO> listAccounts() {
+    public List<AccountingApi.Account> listAccounts() {
         return accountRepository.findAll(SecurityUtils.getAuthorizedPersons())
                 .stream()
                 .map(AccountDtoAssembler::assemble)
@@ -134,7 +125,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public AccountDTO getAccount(String number) {
+    public AccountingApi.Account getAccount(String number) {
         return AccountDtoAssembler.assemble(ownedGuard.accessing(
                 accountRepository.find(new AccountNumber(number))
         ));
@@ -172,7 +163,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<RemainDTO> listRemains(Collection<String> accounts, LocalDate from, LocalDate to, boolean recentOnly) {
+    public List<AccountingApi.Remain> listRemains(Collection<String> accounts, LocalDate from, LocalDate to, boolean recentOnly) {
         return remainRepository.find(
                         SecurityUtils.getAuthorizedPersons(),
                         accounts == null ? null : accounts.stream()
@@ -190,7 +181,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<RemainDTO> listRemains(LocalDate from, LocalDate to) {
+    public List<AccountingApi.Remain> listRemains(LocalDate from, LocalDate to) {
         return remainRepository.findByDate(SecurityUtils.getAuthorizedPersons(), from, to)
                 .stream()
                 .map(RemainDTOAssembler::toDTO)
@@ -200,7 +191,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<RemainDTO> listRemains(String accountNumber) {
+    public List<AccountingApi.Remain> listRemains(String accountNumber) {
         final AccountNumber account = new AccountNumber(accountNumber);
         ownedGuard.accessing(accountRepository.find(account));
         return remainRepository.findByAccountNumber(account)
@@ -212,7 +203,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public RemainDTO getRemain(String remainId) {
+    public AccountingApi.Remain getRemain(String remainId) {
         final Remain remain = remainRepository.find(new RemainId(remainId));
         ownedGuard.accessing(accountRepository.find(remain.account()));
         return RemainDTOAssembler.toDTO(remain);
@@ -221,11 +212,11 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional("accounting-tx")
     @Secured({"ROLE_USER"})
-    public String createRemain(String accountNumber, LocalDate date, MoneyDTO value) {
+    public String createRemain(String accountNumber, LocalDate date, AccountingApi.Money value) {
         final AccountNumber account = new AccountNumber(accountNumber);
         ownedGuard.accessing(accountRepository.find(account));
         Remain remain = new Remain(account, date,
-                Money.ofRaw(value.amount(), Currency.getInstance(value.currency()))
+                ru.vzotov.domain.model.Money.ofRaw(value.amount(), Currency.getInstance(value.currency()))
         );
         remainRepository.store(remain);
         return remain.remainId().value();
@@ -244,7 +235,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<AccountOperationDTO> listOperations(OperationType type, LocalDate from, LocalDate to) {
+    public List<AccountingApi.AccountOperation> listOperations(OperationType type, LocalDate from, LocalDate to) {
         Validate.notNull(from);
         Validate.notNull(to);
         final Collection<PersonId> owners = SecurityUtils.getAuthorizedPersons();
@@ -257,7 +248,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<AccountOperationDTO> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException {
+    public List<AccountingApi.AccountOperation> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException {
         final AccountNumber number = new AccountNumber(accountNumber);
         Account account = ownedGuard.accessing(accountRepository.find(number));
         if (account == null) {
@@ -272,7 +263,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public AccountOperationDTO getOperation(String operationId) throws OperationNotFoundException, AccountNotFoundException {
+    public AccountingApi.AccountOperation getOperation(String operationId) throws OperationNotFoundException, AccountNotFoundException {
         final Operation operation = operationRepository.find(new OperationId(operationId));
         if (operation == null) {
             throw new OperationNotFoundException();
@@ -288,11 +279,11 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public AccountOperationDTO createOperation(String accountNumberValue, LocalDate date, LocalDate authorizationDate,
-                                               String transactionReference, char operationType,
-                                               double amount, String currency,
-                                               String description, String comment,
-                                               Long categoryId) throws CategoryNotFoundException {
+    public AccountingApi.AccountOperation createOperation(String accountNumberValue, LocalDate date, LocalDate authorizationDate,
+                                                          String transactionReference, char operationType,
+                                                          double amount, String currency,
+                                                          String description, String comment,
+                                                          Long categoryId) throws CategoryNotFoundException {
         Validate.notNull(accountNumberValue, "Account required");
         Validate.notNull(date, "Date required");
         Validate.notNull(currency, "Currency required");
@@ -323,11 +314,11 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public List<AccountOperationDTO> createOperations(List<AccountOperationDTO> data) throws CategoryNotFoundException {
+    public List<AccountingApi.AccountOperation> createOperations(List<AccountingApi.AccountOperation> data) throws CategoryNotFoundException {
         Validate.notNull(data, "Data required");
 
-        List<AccountOperationDTO> result = new ArrayList<>(data.size());
-        for (AccountOperationDTO operation : data) {
+        List<AccountingApi.AccountOperation> result = new ArrayList<>(data.size());
+        for (AccountingApi.AccountOperation operation : data) {
             result.add(createOperation(
                     operation.account(),
                     operation.date(),
@@ -347,7 +338,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public AccountOperationDTO deleteOperation(String operationId) throws OperationNotFoundException {
+    public AccountingApi.AccountOperation deleteOperation(String operationId) throws OperationNotFoundException {
         Operation operation = operationRepository.find(new OperationId(operationId));
         if (operation == null) {
             throw new OperationNotFoundException();
@@ -362,7 +353,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional("accounting-tx")
     @Secured({"ROLE_USER"})
-    public AccountOperationDTO assignCategoryToOperation(String operationId, long categoryId) throws OperationNotFoundException, CategoryNotFoundException {
+    public AccountingApi.AccountOperation assignCategoryToOperation(String operationId, long categoryId) throws OperationNotFoundException, CategoryNotFoundException {
         Operation operation = operationRepository.find(new OperationId(operationId));
         if (operation == null) {
             throw new OperationNotFoundException();
@@ -386,7 +377,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional("accounting-tx")
     @Secured({"ROLE_USER"})
-    public AccountOperationDTO modifyComment(String operationId, String comment) throws OperationNotFoundException {
+    public AccountingApi.AccountOperation modifyComment(String operationId, String comment) throws OperationNotFoundException {
         Operation operation = operationRepository.find(new OperationId(operationId));
         if (operation == null) {
             throw new OperationNotFoundException();
@@ -398,7 +389,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
         return modifyOperationComment(comment, operation);
     }
 
-    private AccountOperationDTO modifyOperationComment(String newComment, Operation operation) {
+    private AccountingApi.AccountOperation modifyOperationComment(String newComment, Operation operation) {
         operation.setComment(newComment);
 
         operationRepository.store(operation);
@@ -408,7 +399,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<HoldOperationDTO> listHolds(String accountNumber, LocalDate from, LocalDate to) {
+    public List<AccountingApi.HoldOperation> listHolds(String accountNumber, LocalDate from, LocalDate to) {
         final Account account = ownedGuard.accessing(accountRepository.find(new AccountNumber(accountNumber)));
         return holdOperationRepository.findByAccountAndDate(account.accountNumber(), from, to)
                 .stream()
@@ -419,7 +410,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<HoldOperationDTO> listHolds(OperationType type, LocalDate from, LocalDate to) {
+    public List<AccountingApi.HoldOperation> listHolds(OperationType type, LocalDate from, LocalDate to) {
         Validate.notNull(from);
         Validate.notNull(to);
         return (type == null ? holdOperationRepository.findByDate(SecurityUtils.getAuthorizedPersons(), from, to)
@@ -445,7 +436,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public HoldOperationDTO getHold(String holdId) throws OperationNotFoundException {
+    public AccountingApi.HoldOperation getHold(String holdId) throws OperationNotFoundException {
         final HoldOperation operation = holdOperationRepository.find(new HoldId(holdId));
         if (operation == null) {
             throw new OperationNotFoundException();
@@ -458,7 +449,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<BankDTO> listBanks() {
+    public List<AccountingApi.Bank> listBanks() {
         return bankRepository.findAll()
                 .stream()
                 .map(BankDTOAssembler::toDTO)
@@ -468,7 +459,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public BankDTO getBank(BankId bankId) {
+    public AccountingApi.Bank getBank(BankId bankId) {
         return BankDTOAssembler.toDTO(bankRepository.find(bankId));
     }
 
@@ -494,7 +485,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<CardDTO> listCards(BankId issuer) {
+    public List<AccountingApi.Card> listCards(BankId issuer) {
         final PersonId currentPerson = SecurityUtils.getCurrentPerson();
         return ownedGuard.filter(issuer == null ? cardRepository.find(currentPerson) : cardRepository.findByBank(currentPerson, issuer))
                 .stream()
@@ -505,14 +496,14 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public CardDTO getCard(CardNumber cardNumber) {
+    public AccountingApi.Card getCard(CardNumber cardNumber) {
         return CardDTOAssembler.toDTO(ownedGuard.accessing(cardRepository.find(cardNumber)));
     }
 
     @Override
     @Transactional(value = "accounting-tx")
     @PreAuthorize("hasRole('ROLE_USER') and hasAuthority(#holder.authority())")
-    public CardNumber createCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBindingDTO> accounts) {
+    public CardNumber createCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountingApi.AccountBinding> accounts) {
         final Card card = new Card(number, holder, validThru, issuer);
         Optional.ofNullable(accounts).map(Collection::stream).orElse(Stream.empty())
                 .forEach(b -> card.bindToAccount(
@@ -527,7 +518,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @PreAuthorize("hasRole('ROLE_USER') and hasAuthority(#holder.authority())")
-    public CardNumber modifyCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBindingDTO> accounts) {
+    public CardNumber modifyCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountingApi.AccountBinding> accounts) {
         final Card card = cardRepository.find(number);
         Validate.notNull(card, "Card not found");
         Validate.isTrue(card.owner().equals(holder), "Card holder cannot be modified");
@@ -554,7 +545,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public List<TransactionDTO> listTransactions(LocalDate from, LocalDate to, Integer threshold) {
+    public List<AccountingApi.Transaction> listTransactions(LocalDate from, LocalDate to, Integer threshold) {
 //        final List<Operation> operations = threshold == null ?
 //                Collections.emptyList() :
 //                operationRepository.findByDate(from, to);
@@ -573,7 +564,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public TransactionDTO makeTransaction(OperationId primaryId, OperationId secondaryId) {
+    public AccountingApi.Transaction makeTransaction(OperationId primaryId, OperationId secondaryId) {
         Operation primary = operationRepository.find(primaryId);
         Validate.notNull(primary);
         Validate.notNull(ownedGuard.accessing(accountRepository.find(primary.account())), "Primary account not found");
@@ -597,7 +588,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<BudgetCategoryDTO> listCategories() {
+    public List<AccountingApi.BudgetCategory> listCategories() {
         return budgetCategoryRepository.findAll(SecurityUtils.getCurrentPerson())
                 .stream()
                 .map(BudgetCategoryDTOAssembler::toDTO)
@@ -607,7 +598,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public BudgetCategoryDTO getCategory(long id) {
+    public AccountingApi.BudgetCategory getCategory(long id) {
         return BudgetCategoryDTOAssembler.toDTO(
                 ownedGuard.accessing(budgetCategoryRepository.find(new BudgetCategoryId(id)))
         );
@@ -616,7 +607,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public BudgetCategoryDTO createCategory(String name, String color, String icon) {
+    public AccountingApi.BudgetCategory createCategory(String name, String color, String icon) {
         BudgetCategory category = new BudgetCategory(BudgetCategoryId.of(name), SecurityUtils.getCurrentPerson(),
                 name, decodeColor(color), icon);
         budgetCategoryRepository.store(category);
@@ -626,7 +617,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public BudgetCategoryDTO modifyCategory(long id, String newName, String color, String icon) throws CategoryNotFoundException {
+    public AccountingApi.BudgetCategory modifyCategory(long id, String newName, String color, String icon) throws CategoryNotFoundException {
         final BudgetCategory category = ownedGuard.accessing(budgetCategoryRepository.find(new BudgetCategoryId(id)));
         if (category == null) {
             throw new CategoryNotFoundException();

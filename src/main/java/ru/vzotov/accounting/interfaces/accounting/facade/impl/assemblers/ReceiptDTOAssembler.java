@@ -1,17 +1,17 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
-import ru.vzotov.cashreceipt.domain.model.Receipt;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.common.assembler.AbstractAssembler;
 import ru.vzotov.accounting.interfaces.common.assembler.MoneyDTOAssembler;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
 
-public class ReceiptDTOAssembler extends AbstractAssembler<ReceiptDTO, Receipt> {
+public class ReceiptDTOAssembler extends AbstractAssembler<AccountingApi.Receipt, Receipt> {
 
     @Override
-    public ReceiptDTO toDTO(Receipt receipt) {
+    public AccountingApi.Receipt toDTO(Receipt receipt) {
         if (receipt == null) return null;
         MoneyDTOAssembler moneyDTOAssembler = new MoneyDTOAssembler();
-        return new ReceiptDTO(
+        return new AccountingApi.Receipt(
                 receipt.owner().value(),
                 receipt.receiptId().value(),
                 new FiscalInfoDTOAssembler().toDTO(receipt.fiscalInfo()),

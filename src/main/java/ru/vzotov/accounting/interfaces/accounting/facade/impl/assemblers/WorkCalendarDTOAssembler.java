@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.WorkCalendarDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.calendar.domain.model.SpecialDay;
 import ru.vzotov.calendar.domain.model.WorkCalendar;
 
@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 public class WorkCalendarDTOAssembler {
 
-    public static WorkCalendarDTO toDTO(WorkCalendar domain) {
-        return domain == null ? null : new WorkCalendarDTO(
+    public static AccountingApi.WorkCalendar toDTO(WorkCalendar domain) {
+        return domain == null ? null : new AccountingApi.WorkCalendar(
                 domain.from(),
                 domain.to(),
                 domain.location(),

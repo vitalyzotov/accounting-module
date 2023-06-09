@@ -1,10 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CardOperationDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.HoldOperationDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationIdDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.banking.domain.model.CardOperation;
 import ru.vzotov.banking.domain.model.HoldOperation;
 import ru.vzotov.banking.domain.model.Operation;
@@ -12,16 +8,16 @@ import ru.vzotov.banking.domain.model.OperationId;
 
 public class OperationDTOAssembler {
 
-    public static OperationRef toRef(Operation model) {
-        return model == null ? null : new OperationIdDTO(model.operationId().idString());
+    public static AccountingApi.OperationRef toRef(Operation model) {
+        return model == null ? null : new AccountingApi.OperationId(model.operationId().idString());
     }
 
-    public static OperationRef toRef(OperationId model) {
-        return model == null ? null : new OperationIdDTO(model.idString());
+    public static AccountingApi.OperationRef toRef(OperationId model) {
+        return model == null ? null : new AccountingApi.OperationId(model.idString());
     }
 
-    public static AccountOperationDTO toDTO(Operation model) {
-        return model == null ? null : new AccountOperationDTO(
+    public static AccountingApi.AccountOperation toDTO(Operation model) {
+        return model == null ? null : new AccountingApi.AccountOperation(
                 model.account().number(),
                 model.date(),
                 model.authorizationDate(),
@@ -36,8 +32,8 @@ public class OperationDTOAssembler {
         );
     }
 
-    public static CardOperationDTO toDTO(CardOperation model) {
-        return model == null ? null : new CardOperationDTO(
+    public static AccountingApi.CardOperation toDTO(CardOperation model) {
+        return model == null ? null : new AccountingApi.CardOperation(
                 model.operationId().idString(),
                 model.cardNumber().value(),
                 PosTerminalDTOAssembler.toDTO(model.terminal()), //nullable
@@ -49,8 +45,8 @@ public class OperationDTOAssembler {
         );
     }
 
-    public static HoldOperationDTO toDTO(HoldOperation hold) {
-        return hold == null ? null : new HoldOperationDTO(
+    public static AccountingApi.HoldOperation toDTO(HoldOperation hold) {
+        return hold == null ? null : new AccountingApi.HoldOperation(
                 hold.holdId().value(),
                 hold.account().number(),
                 hold.date(),

@@ -13,15 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTOExpansion;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.DealsMetadataResponse;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.PatchDealsRequest;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 
 import java.time.LocalDate;
@@ -42,29 +37,29 @@ public class DealsController {
     private DealsFacade dealsFacade;
 
     @GetMapping
-    public List<DealDTO> listDeals(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
-                                   @RequestParam(required = false) String query,
-                                   @RequestParam(required = false) List<String> expand) {
+    public List<AccountingApi.Deal> listDeals(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                              @RequestParam(required = false) String query,
+                                              @RequestParam(required = false) List<String> expand) {
         return dealsFacade.listDeals(query, from, to,
-                expand == null ? emptySet() : expand.stream().map(DealDTOExpansion::of).collect(toSet()));
+                expand == null ? emptySet() : expand.stream().map(AccountingApi.Deal.Expansion::of).collect(toSet()));
     }
 
     @GetMapping("metadata")
-    public DealsMetadataResponse getDealsMeta() {
+    public AccountingApi.DealsMetadataResponse getDealsMeta() {
         final LocalDate[] dates = dealsFacade.getMinMaxDealDates();
-        return new DealsMetadataResponse(dates[0], dates[1]);
+        return new AccountingApi.DealsMetadataResponse(dates[0], dates[1]);
     }
 
     @GetMapping("{dealId}")
-    public DealDTO getDeal(@PathVariable String dealId, @RequestParam(required = false) List<String> expand) throws DealNotFoundException {
-        return dealsFacade.getDeal(dealId, expand == null ? emptySet() : expand.stream().map(DealDTOExpansion::of).collect(toSet()));
+    public AccountingApi.Deal getDeal(@PathVariable String dealId, @RequestParam(required = false) List<String> expand) throws DealNotFoundException {
+        return dealsFacade.getDeal(dealId, expand == null ? emptySet() : expand.stream().map(AccountingApi.Deal.Expansion::of).collect(toSet()));
     }
 
     @DeleteMapping("{dealId}")
-    public List<DealDTO> deleteDeal(@PathVariable String dealId,
-                                    @RequestParam(required = false, defaultValue = "false") boolean split,
-                                    @RequestParam(required=false, defaultValue = "false") boolean receipt) throws DealNotFoundException {
+    public List<AccountingApi.Deal> deleteDeal(@PathVariable String dealId,
+                                               @RequestParam(required = false, defaultValue = "false") boolean split,
+                                               @RequestParam(required=false, defaultValue = "false") boolean receipt) throws DealNotFoundException {
         if (split) {
             return dealsFacade.splitDeal(dealId);
         } else {
@@ -74,7 +69,7 @@ public class DealsController {
     }
 
     @PostMapping
-    public DealDTO createDeal(@RequestBody DealDTO deal) throws CategoryNotFoundException {
+    public AccountingApi.Deal createDeal(@RequestBody AccountingApi.Deal deal) throws CategoryNotFoundException {
         return dealsFacade.createDeal(
                 deal.date(),
                 deal.amount().amount(),
@@ -82,13 +77,13 @@ public class DealsController {
                 deal.description(),
                 deal.comment(),
                 deal.category(),
-                ofNullable(deal.receipts()).orElse(emptyList()).stream().map(ReceiptRef::receiptId).collect(toSet()),
-                ofNullable(deal.operations()).orElse(emptyList()).stream().map(OperationRef::operationId).collect(toSet()),
+                ofNullable(deal.receipts()).orElse(emptyList()).stream().map(AccountingApi.ReceiptRef::receiptId).collect(toSet()),
+                ofNullable(deal.operations()).orElse(emptyList()).stream().map(AccountingApi.OperationRef::operationId).collect(toSet()),
                 ofNullable(deal.purchases()).orElse(emptyList()).stream().map(PurchaseRef::purchaseId).toList());
     }
 
     @PutMapping("{dealId}")
-    public void modifyDeal(@PathVariable String dealId, @RequestBody DealDTO deal
+    public void modifyDeal(@PathVariable String dealId, @RequestBody AccountingApi.Deal deal
     ) throws DealNotFoundException, CategoryNotFoundException {
         dealsFacade.modifyDeal(
                 dealId,
@@ -98,13 +93,13 @@ public class DealsController {
                 deal.description(),
                 deal.comment(),
                 deal.category(),
-                ofNullable(deal.receipts()).orElse(emptyList()).stream().map(ReceiptRef::receiptId).collect(toSet()),
-                ofNullable(deal.operations()).orElse(emptyList()).stream().map(OperationRef::operationId).collect(toSet()),
+                ofNullable(deal.receipts()).orElse(emptyList()).stream().map(AccountingApi.ReceiptRef::receiptId).collect(toSet()),
+                ofNullable(deal.operations()).orElse(emptyList()).stream().map(AccountingApi.OperationRef::operationId).collect(toSet()),
                 ofNullable(deal.purchases()).orElse(emptyList()).stream().map(PurchaseRef::purchaseId).toList());
     }
 
     @PatchMapping
-    public DealDTO patchDeals(@RequestBody PatchDealsRequest body) {
-        return dealsFacade.mergeDeals(body.getDeals());
+    public AccountingApi.Deal patchDeals(@RequestBody AccountingApi.PatchDealsRequest body) {
+        return dealsFacade.mergeDeals(body.deals());
     }
 }

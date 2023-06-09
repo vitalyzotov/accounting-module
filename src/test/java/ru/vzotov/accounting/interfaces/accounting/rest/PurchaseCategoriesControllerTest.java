@@ -10,7 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import java.util.List;
@@ -26,23 +26,23 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
 
     @Test
     public void listCategories() {
-        ResponseEntity<List<PurchaseCategoryDTO>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        ResponseEntity<List<AccountingApi.PurchaseCategory>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<List<PurchaseCategoryDTO>>() {
+                new ParameterizedTypeReference<List<AccountingApi.PurchaseCategory>>() {
                 }
         );
         Assertions.assertThat(exchange.getBody())
                 .isNotEmpty()
-                .have(new Condition<PurchaseCategoryDTO>() {
+                .have(new Condition<AccountingApi.PurchaseCategory>() {
                     @Override
-                    public boolean matches(PurchaseCategoryDTO value) {
+                    public boolean matches(AccountingApi.PurchaseCategory value) {
                         return value.categoryId() != null && !value.categoryId().isEmpty();
                     }
                 })
-                .haveExactly(1, new Condition<PurchaseCategoryDTO>() {
+                .haveExactly(1, new Condition<AccountingApi.PurchaseCategory>() {
                     @Override
-                    public boolean matches(PurchaseCategoryDTO value) {
+                    public boolean matches(AccountingApi.PurchaseCategory value) {
                         return value.name().equals("Табак");
                     }
                 })
@@ -52,32 +52,32 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
     @Test
     public void getCategory() {
         final String catId = "id-Табак";
-        ResponseEntity<PurchaseCategoryDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        ResponseEntity<AccountingApi.PurchaseCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories/" + catId,
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<PurchaseCategoryDTO>() {
+                new ParameterizedTypeReference<AccountingApi.PurchaseCategory>() {
                 }
         );
         assertThat(exchange.getBody())
                 .isNotNull()
                 .usingRecursiveComparison()
-                .isEqualTo(new PurchaseCategoryDTO(catId, PERSON_ID, "Табак"));
+                .isEqualTo(new AccountingApi.PurchaseCategory(catId, PERSON_ID, "Табак"));
     }
 
     @Test
     public void createNewCategory() {
         final String newCategoryName = "Новая категория";
-        ResponseEntity<PurchaseCategoryDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        ResponseEntity<AccountingApi.PurchaseCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories",
-                HttpMethod.POST, new HttpEntity<>(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName)),
-                new ParameterizedTypeReference<PurchaseCategoryDTO>() {
+                HttpMethod.POST, new HttpEntity<>(new AccountingApi.PurchaseCategory(null, PERSON_ID, newCategoryName)),
+                new ParameterizedTypeReference<AccountingApi.PurchaseCategory>() {
                 }
         );
         assertThat(exchange.getBody())
                 .isNotNull()
                 .usingRecursiveComparison()
                 .ignoringFields("categoryId")
-                .isEqualTo(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName));
+                .isEqualTo(new AccountingApi.PurchaseCategory(null, PERSON_ID, newCategoryName));
         assertThat(exchange.getBody().categoryId())
                 .isNotEmpty();
     }
@@ -86,23 +86,23 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
     public void renameCategory() {
         final String newCategoryName = "Новая категория";
         final String newCategoryName2 = "категория переименованная";
-        PurchaseCategoryDTO mycat = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        AccountingApi.PurchaseCategory mycat = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories",
-                HttpMethod.POST, new HttpEntity<>(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName)),
-                new ParameterizedTypeReference<PurchaseCategoryDTO>() {
+                HttpMethod.POST, new HttpEntity<>(new AccountingApi.PurchaseCategory(null, PERSON_ID, newCategoryName)),
+                new ParameterizedTypeReference<AccountingApi.PurchaseCategory>() {
                 }
         ).getBody();
 
-        ResponseEntity<PurchaseCategoryDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        ResponseEntity<AccountingApi.PurchaseCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories/" + mycat.categoryId(),
-                HttpMethod.PATCH, new HttpEntity<>(new PurchaseCategoryDTO(null, PERSON_ID, newCategoryName2)),
-                new ParameterizedTypeReference<PurchaseCategoryDTO>() {
+                HttpMethod.PATCH, new HttpEntity<>(new AccountingApi.PurchaseCategory(null, PERSON_ID, newCategoryName2)),
+                new ParameterizedTypeReference<AccountingApi.PurchaseCategory>() {
                 }
         );
 
         assertThat(exchange.getBody())
                 .isNotNull()
                 .usingRecursiveComparison()
-                .isEqualTo(new PurchaseCategoryDTO(mycat.categoryId(), PERSON_ID, newCategoryName2));
+                .isEqualTo(new AccountingApi.PurchaseCategory(mycat.categoryId(), PERSON_ID, newCategoryName2));
     }
 }

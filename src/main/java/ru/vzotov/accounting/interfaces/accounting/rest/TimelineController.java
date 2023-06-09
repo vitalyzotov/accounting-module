@@ -1,7 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ public class TimelineController {
     }
 
     @GetMapping
-    public TimelineDTO getTimeline() {
+    public AccountingApi.Timeline getTimeline() {
         return receiptsFacade.getTimeline();
     }
 

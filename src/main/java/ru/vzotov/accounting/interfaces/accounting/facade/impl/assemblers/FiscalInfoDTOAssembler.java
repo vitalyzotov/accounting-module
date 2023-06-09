@@ -1,15 +1,15 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
-import ru.vzotov.cashreceipt.domain.model.FiscalInfo;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.FiscalInfoDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.common.assembler.AbstractAssembler;
+import ru.vzotov.cashreceipt.domain.model.FiscalInfo;
 
-public class FiscalInfoDTOAssembler extends AbstractAssembler<FiscalInfoDTO, FiscalInfo> {
+public class FiscalInfoDTOAssembler extends AbstractAssembler<AccountingApi.FiscalInfo, FiscalInfo> {
 
     @Override
-    public FiscalInfoDTO toDTO(FiscalInfo fiscalInfo) {
+    public AccountingApi.FiscalInfo toDTO(FiscalInfo fiscalInfo) {
         if (fiscalInfo == null) return null;
-        return new FiscalInfoDTO(
+        return new AccountingApi.FiscalInfo(
                 fiscalInfo.kktNumber(),
                 fiscalInfo.kktRegId(),
                 String.valueOf(fiscalInfo.fiscalSign().value()),

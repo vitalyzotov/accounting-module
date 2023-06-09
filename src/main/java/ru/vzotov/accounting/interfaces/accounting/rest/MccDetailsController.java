@@ -1,7 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.MccFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.MccDetailsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,17 +22,17 @@ public class MccDetailsController {
     private MccFacade mccFacade;
 
     @GetMapping(params = {"!group"})
-    public List<MccDetailsDTO> listAllDetails() {
+    public List<AccountingApi.MccDetails> listAllDetails() {
         return mccFacade.listDetails();
     }
 
     @GetMapping(params = {"group"})
-    public List<MccDetailsDTO> listGroupDetails(@RequestParam("group") String group) {
+    public List<AccountingApi.MccDetails> listGroupDetails(@RequestParam("group") String group) {
         return mccFacade.listGroupDetails(new MccGroupId(group));
     }
 
     @GetMapping("{code}")
-    public MccDetailsDTO getDetails(@PathVariable String code) {
+    public AccountingApi.MccDetails getDetails(@PathVariable String code) {
         return mccFacade.getDetails(new MccCode(code));
     }
 

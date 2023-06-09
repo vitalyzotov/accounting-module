@@ -1,9 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BankDTO;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BankCreateRequest;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.BankStoreResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,29 +24,29 @@ public class BanksController {
     private AccountingFacade accountingFacade;
 
     @GetMapping
-    public List<BankDTO> listBanks() {
+    public List<AccountingApi.Bank> listBanks() {
         return accountingFacade.listBanks();
     }
 
     @GetMapping("{bankId}")
-    public BankDTO getBank(@PathVariable String bankId) {
+    public AccountingApi.Bank getBank(@PathVariable String bankId) {
         return accountingFacade.getBank(new BankId(bankId));
     }
 
     @PostMapping
-    public BankStoreResponse createBank(@RequestBody BankCreateRequest bank) {
+    public AccountingApi.BankStoreResponse createBank(@RequestBody AccountingApi.BankCreateRequest bank) {
         BankId bankId = accountingFacade.createBank(
-                new BankId(bank.getBankId()),
-                bank.getName(), bank.getShortName(), bank.getLongName());
-        return new BankStoreResponse(bankId.value());
+                new BankId(bank.bankId()),
+                bank.name(), bank.shortName(), bank.longName());
+        return new AccountingApi.BankStoreResponse(bankId.value());
     }
 
     @PutMapping("{bankId}")
-    public BankStoreResponse modifyBank(@PathVariable String bankId, @RequestBody BankCreateRequest bank) {
+    public AccountingApi.BankStoreResponse modifyBank(@PathVariable String bankId, @RequestBody AccountingApi.BankCreateRequest bank) {
         BankId id = accountingFacade.modifyBank(
                 new BankId(bankId),
-                bank.getName(), bank.getShortName(), bank.getLongName());
-        return new BankStoreResponse(id.value());
+                bank.name(), bank.shortName(), bank.longName());
+        return new AccountingApi.BankStoreResponse(id.value());
     }
 
 }

@@ -16,6 +16,7 @@
 
         <!-- Spring -->
         <spring.boot.version>3.1.0</spring.boot.version>
+        <liquibase.version>4.20.0</liquibase.version>
 
         <!-- own modules -->
         <ddd.version>1.4</ddd.version>
@@ -242,7 +243,7 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.5.0</version>
+                <version>${liquibase.version}</version>
                 <configuration>
                     <changeLogFile>db/accounting/changelog/db.changelog-master.xml</changeLogFile>
                     <url>jdbc:mysql://localhost:3306/accounting?useUnicode=true&amp;characterEncoding=utf8</url>

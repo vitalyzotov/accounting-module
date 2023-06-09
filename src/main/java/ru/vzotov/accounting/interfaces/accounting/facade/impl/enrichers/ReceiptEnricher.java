@@ -1,6 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.QRCodeDTOAssembler;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static java.util.function.Function.identity;
 
-public class ReceiptEnricher extends AbstractEnricher<ReceiptRef> {
+public class ReceiptEnricher extends AbstractEnricher<AccountingApi.ReceiptRef> {
 
     private final QRCodeRepository repository;
 
@@ -32,7 +32,7 @@ public class ReceiptEnricher extends AbstractEnricher<ReceiptRef> {
 
 
     @Override
-    public ReceiptRef apply(ReceiptRef ref) {
+    public AccountingApi.ReceiptRef apply(AccountingApi.ReceiptRef ref) {
         return ref == null ? null : assembler.toDTO(
                 cache.computeIfAbsent(ref.receiptId(), id -> repository.find(new ReceiptId(id)))
         );

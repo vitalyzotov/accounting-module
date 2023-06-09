@@ -7,7 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CardDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import java.util.List;
@@ -20,10 +20,10 @@ public class CardsControllerTest extends AbstractControllerTest {
 
     @Test
     public void listCards() {
-        ResponseEntity<List<CardDTO>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        ResponseEntity<List<AccountingApi.Card>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/cards",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<List<CardDTO>>() {
+                new ParameterizedTypeReference<List<AccountingApi.Card>>() {
                 }
         );
         assertThat(exchange.getBody()).isNotEmpty();

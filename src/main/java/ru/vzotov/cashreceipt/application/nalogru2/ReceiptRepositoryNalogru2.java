@@ -20,6 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -30,6 +31,13 @@ import java.util.function.Supplier;
 public class ReceiptRepositoryNalogru2 {
 
     private static final Logger log = LoggerFactory.getLogger(ReceiptRepositoryNalogru2.class);
+
+    private static final int MAX_RETRIES = 2;
+    public static final String HEADER_CLIENT_VERSION = "ClientVersion";
+    public static final String HEADER_DEVICE_ID = "Device-Id";
+    public static final String HEADER_DEVICE_OS = "Device-OS";
+    public static final String HEADER_USER_AGENT = "User-Agent";
+    public static final String HEADER_SESSION_ID = "sessionId";
 
     @Value("${nalogru2.address:https://irkkt-mobile.nalog.ru:8888}")
     private String address;
@@ -70,16 +78,14 @@ public class ReceiptRepositoryNalogru2 {
     private final RestTemplateBuilder restTemplateBuilder;
 
     public ReceiptRepositoryNalogru2(RestTemplateBuilder restTemplateBuilder
-                                     //        , @Qualifier("extraInterceptors") List<ClientHttpRequestInterceptor> extraInterceptors
     ) {
         this.restTemplateBuilder = restTemplateBuilder;
-        //this.extraInterceptors = extraInterceptors;
     }
 
     public String findByQRCodeData(QRCodeData data) {
         try {
             log.info("Find in nalog.ru by qr code {}", data);
-            Ticket ticket = findTicket(data);
+            NalogRu2Api.Ticket ticket = findTicket(data);
             return getTicketInfoAsString(ticket);
         } catch (IllegalArgumentException e) {
             log.error("Unable to load receipt from nalog.ru", e);
@@ -113,12 +119,8 @@ public class ReceiptRepositoryNalogru2 {
         final RestTemplate r = restTemplateBuilder
                 .additionalInterceptors((request, body, execution) -> {
                     final HttpHeaders headers = request.getHeaders();
-
-                    headers.add("ClientVersion", clientVersion);
-                    headers.add("Device-Id", deviceId);
-                    headers.add("Device-OS", deviceOs);
-                    headers.add("sessionId", sessionId);
-                    headers.add("User-Agent", userAgent);
+                    addCommonHeaders(headers);
+                    headers.add(HEADER_SESSION_ID, sessionId);
 
                     return execution.execute(request, body);
                 })
@@ -128,30 +130,34 @@ public class ReceiptRepositoryNalogru2 {
         return r;
     }
 
+    private void addCommonHeaders(HttpHeaders headers) {
+        headers.add(HEADER_CLIENT_VERSION, this.clientVersion);
+        headers.add(HEADER_DEVICE_ID, this.deviceId);
+        headers.add(HEADER_DEVICE_OS, this.deviceOs);
+        headers.add(HEADER_USER_AGENT, this.userAgent);
+    }
+
     private RestTemplate getRestTemplate() {
         if (this.restTemplate == null) {
             // создаем RestTemplate для аутентификации
             final RestTemplateBuilder builder = restTemplateBuilder
-                    .additionalInterceptors((ClientHttpRequestInterceptor) (request, body, execution) -> {
+                    .additionalInterceptors((request, body, execution) -> {
                         final HttpHeaders headers = request.getHeaders();
 
-                        headers.add("ClientVersion", this.clientVersion);
-                        headers.add("Device-Id", deviceId);
-                        headers.add("Device-OS", deviceOs);
-                        headers.add("User-Agent", userAgent);
+                        addCommonHeaders(headers);
 
                         return execution.execute(request, body);
                     });
             RestTemplate r = builder.build();
 
             final String url = address + "/v2/mobile/users/lkfl/auth";
-            final AuthRequest authRequest = new AuthRequest(clientSecret, username, password);
-            final ResponseEntity<AuthResponse> response = r.postForEntity(url, authRequest, AuthResponse.class);
+            final NalogRu2Api.AuthRequest authRequest = new NalogRu2Api.AuthRequest(clientSecret, username, password);
+            final ResponseEntity<NalogRu2Api.AuthResponse> response = r.postForEntity(url, authRequest, NalogRu2Api.AuthResponse.class);
             Validate.isTrue(response.getStatusCode().is2xxSuccessful(), "Not successful auth");
 
-            final AuthResponse session = response.getBody();
-            this.sessionId = session.sessionId;
-            this.refreshToken = session.refresh_token;
+            final NalogRu2Api.AuthResponse session = Objects.requireNonNull(response.getBody());
+            this.sessionId = session.sessionId();
+            this.refreshToken = session.refresh_token();
             this.restTemplate = buildRestTemplate();
         }
         return this.restTemplate;
@@ -163,19 +169,19 @@ public class ReceiptRepositoryNalogru2 {
         this.refreshToken = null;
     }
 
-    private Ticket findTicket(QRCodeData data) {
+    private NalogRu2Api.Ticket findTicket(QRCodeData data) {
         final String url = address + "/v2/ticket";
-        final TicketRequest request = new TicketRequest(data.toString());
-        final ResponseEntity<Ticket> response = doInSession(() ->
-                getRestTemplate().postForEntity(url, request, Ticket.class));
+        final NalogRu2Api.TicketRequest request = new NalogRu2Api.TicketRequest(data.toString());
+        final ResponseEntity<NalogRu2Api.Ticket> response = doInSession(() ->
+                getRestTemplate().postForEntity(url, request, NalogRu2Api.Ticket.class));
         Validate.isTrue(response.getStatusCode().is2xxSuccessful(), "Ticket not found");
         return response.getBody();
     }
 
-    private String getTicketInfoAsString(Ticket ticket) {
+    private String getTicketInfoAsString(NalogRu2Api.Ticket ticket) {
         final String url = address + "/v2/tickets/{ticketId}";
         final ResponseEntity<String> response = doInSession(() ->
-                getRestTemplate().getForEntity(url, String.class, ticket.id));
+                getRestTemplate().getForEntity(url, String.class, ticket.id()));
         Validate.isTrue(response.getStatusCode().is2xxSuccessful(), "Ticket info not loaded");
         return response.getBody();
     }
@@ -183,7 +189,7 @@ public class ReceiptRepositoryNalogru2 {
     private <T> ResponseEntity<T> doInSession(Supplier<ResponseEntity<T>> op) {
         ResponseEntity<T> response = null;
 
-        for (int i = 0; i <= 1; i++) {
+        for (int i = 0; i < MAX_RETRIES; i++) {
             try {
                 response = op.get();
                 if (HttpStatus.UNAUTHORIZED.equals(response.getStatusCode())) {

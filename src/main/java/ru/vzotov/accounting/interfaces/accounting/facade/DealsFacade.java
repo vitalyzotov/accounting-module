@@ -1,9 +1,8 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
 import ru.vzotov.accounting.domain.model.DealId;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTOExpansion;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.purchase.domain.model.PurchaseId;
@@ -14,18 +13,18 @@ import java.util.List;
 import java.util.Set;
 
 public interface DealsFacade {
-    DealDTO createDeal(LocalDate date, long amount, String currency, String description, String comment,
-                       Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases) throws CategoryNotFoundException;
+    AccountingApi.Deal createDeal(LocalDate date, long amount, String currency, String description, String comment,
+                                  Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases) throws CategoryNotFoundException;
 
-    DealDTO modifyDeal(String dealId, LocalDate date, long amount, String currency, String description, String comment,
-                       Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases) throws DealNotFoundException, CategoryNotFoundException;
+    AccountingApi.Deal modifyDeal(String dealId, LocalDate date, long amount, String currency, String description, String comment,
+                                  Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases) throws DealNotFoundException, CategoryNotFoundException;
 
-    DealDTO deleteDeal(String dealId, boolean deleteReceipts) throws DealNotFoundException;
-    List<DealDTO> splitDeal(String dealId) throws DealNotFoundException;
+    AccountingApi.Deal deleteDeal(String dealId, boolean deleteReceipts) throws DealNotFoundException;
+    List<AccountingApi.Deal> splitDeal(String dealId) throws DealNotFoundException;
 
-    List<DealDTO> listDeals(String query, LocalDate from, LocalDate to, Set<DealDTOExpansion> expand);
+    List<AccountingApi.Deal> listDeals(String query, LocalDate from, LocalDate to, Set<AccountingApi.Deal.Expansion> expand);
 
-    DealDTO getDeal(String dealId, Set<DealDTOExpansion> expand) throws DealNotFoundException;
+    AccountingApi.Deal getDeal(String dealId, Set<AccountingApi.Deal.Expansion> expand) throws DealNotFoundException;
 
     List<PurchaseDTO> listDealPurchases(String dealId);
 
@@ -35,5 +34,5 @@ public interface DealsFacade {
     LocalDate getMaxDealDate();
     LocalDate[] getMinMaxDealDates();
 
-    DealDTO mergeDeals(List<String> dealsIds);
+    AccountingApi.Deal mergeDeals(List<String> dealsIds);
 }

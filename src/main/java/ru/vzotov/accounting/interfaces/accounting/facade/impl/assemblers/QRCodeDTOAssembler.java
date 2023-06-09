@@ -1,27 +1,25 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptIdDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.common.assembler.AbstractAssembler;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 
-public class QRCodeDTOAssembler extends AbstractAssembler<QRCodeDTO, QRCode> {
+public class QRCodeDTOAssembler extends AbstractAssembler<AccountingApi.QRCode, QRCode> {
 
     private final QRCodeDataDTOAssembler assembler = new QRCodeDataDTOAssembler();
 
-    public ReceiptRef toRef(ReceiptId model) {
-        return model == null ? null : new ReceiptIdDTO(model.value());
+    public AccountingApi.ReceiptRef toRef(ReceiptId model) {
+        return model == null ? null : new AccountingApi.ReceiptId(model.value());
     }
 
-    public ReceiptRef toRef(QRCode code) {
+    public AccountingApi.ReceiptRef toRef(QRCode code) {
         return code == null ? null : toRef(code.receiptId());
     }
 
     @Override
-    public QRCodeDTO toDTO(QRCode code) {
-        return code == null ? null : new QRCodeDTO(
+    public AccountingApi.QRCode toDTO(QRCode code) {
+        return code == null ? null : new AccountingApi.QRCode(
                 code.receiptId().value(),
                 assembler.toDTO(code.code()),
                 code.state().name(),

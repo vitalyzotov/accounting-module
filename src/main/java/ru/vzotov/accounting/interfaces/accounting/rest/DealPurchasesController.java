@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vzotov.accounting.domain.model.DealId;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.DealReference;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
@@ -32,7 +32,7 @@ public class DealPurchasesController {
     }
 
     @PutMapping("{purchaseId}")
-    public void moveDealPurchase(@PathVariable String dealId, @PathVariable String purchaseId, @RequestBody DealReference target) {
-        dealsFacade.movePurchase(new PurchaseId(purchaseId), new DealId(dealId), new DealId(target.getDealId()));
+    public void moveDealPurchase(@PathVariable String dealId, @PathVariable String purchaseId, @RequestBody AccountingApi.DealReference target) {
+        dealsFacade.movePurchase(new PurchaseId(purchaseId), new DealId(dealId), new DealId(target.dealId()));
     }
 }

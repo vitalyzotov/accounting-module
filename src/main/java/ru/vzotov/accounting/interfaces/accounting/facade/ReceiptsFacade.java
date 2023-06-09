@@ -1,14 +1,11 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +19,7 @@ public interface ReceiptsFacade {
      * @param toDate   end date (inclusive)
      * @return list of cash receipts
      */
-    List<ReceiptDTO> listAllReceipts(LocalDate fromDate, LocalDate toDate);
+    List<AccountingApi.Receipt> listAllReceipts(LocalDate fromDate, LocalDate toDate);
 
     /**
      * Get list of all QR codes within date range
@@ -31,14 +28,14 @@ public interface ReceiptsFacade {
      * @param toDate   end date (inclusive)
      * @return list of all QR codes
      */
-    List<QRCodeDTO> listAllCodes(LocalDate fromDate, LocalDate toDate);
+    List<AccountingApi.QRCode> listAllCodes(LocalDate fromDate, LocalDate toDate);
 
     /**
      * Get QR code by cash receipt ID
      * @param receiptId ID of cash receipt
      * @return QR code
      */
-    QRCodeDTO getCode(String receiptId);
+    AccountingApi.QRCode getCode(String receiptId);
 
     /**
      * Calculate timeline.
@@ -46,7 +43,7 @@ public interface ReceiptsFacade {
      *
      * @return timeline data
      */
-    TimelineDTO getTimeline();
+    AccountingApi.Timeline getTimeline();
 
     /**
      * Get receipt from persistent storage
@@ -56,7 +53,7 @@ public interface ReceiptsFacade {
      * @deprecated use getReceipt(String qrCodeData)
      */
     @Deprecated
-    ReceiptDTO loadReceipt(String qrCodeData);
+    AccountingApi.Receipt loadReceipt(String qrCodeData);
 
     /**
      * Get receipt from persistent storage
@@ -64,7 +61,7 @@ public interface ReceiptsFacade {
      * @param qrCodeData QR code
      * @return cash receipt
      */
-    ReceiptDTO getReceipt(String qrCodeData);
+    AccountingApi.Receipt getReceipt(String qrCodeData);
 
     /**
      * Try loading cash receipt from external systems
@@ -72,7 +69,7 @@ public interface ReceiptsFacade {
      * @param qrCodeData QR data to identify the receipt
      * @return cash receipt if loaded successfully, <code>null</code> otherwise
      */
-    ReceiptDTO loadReceiptDetails(QRCodeData qrCodeData);
+    AccountingApi.Receipt loadReceiptDetails(QRCodeData qrCodeData);
 
     /**
      * Assign category to receipt item
@@ -92,7 +89,7 @@ public interface ReceiptsFacade {
      *
      * @return list of purchase categories
      */
-    List<PurchaseCategoryDTO> getAllCategories();
+    List<AccountingApi.PurchaseCategory> getAllCategories();
 
     /**
      * Get purchase category by ID
@@ -100,7 +97,7 @@ public interface ReceiptsFacade {
      * @param id category ID
      * @return category DTO
      */
-    PurchaseCategoryDTO getCategory(PurchaseCategoryId id);
+    AccountingApi.PurchaseCategory getCategory(PurchaseCategoryId id);
 
     /**
      * Create new purchase category
@@ -108,7 +105,7 @@ public interface ReceiptsFacade {
      * @param name category name
      * @return category DTO
      */
-    PurchaseCategoryDTO createNewCategory(String name);
+    AccountingApi.PurchaseCategory createNewCategory(String name);
 
     /**
      * Rename purchase category
@@ -117,5 +114,5 @@ public interface ReceiptsFacade {
      * @param newName new category name
      * @return category DTO
      */
-    PurchaseCategoryDTO renameCategory(PurchaseCategoryId id, String newName);
+    AccountingApi.PurchaseCategory renameCategory(PurchaseCategoryId id, String newName);
 }

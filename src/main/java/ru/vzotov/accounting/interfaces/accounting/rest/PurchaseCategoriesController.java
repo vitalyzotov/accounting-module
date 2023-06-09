@@ -1,8 +1,8 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,22 +28,22 @@ public class PurchaseCategoriesController {
     }
 
     @GetMapping
-    public List<PurchaseCategoryDTO> listCategories() {
+    public List<AccountingApi.PurchaseCategory> listCategories() {
         return receiptsFacade.getAllCategories();
     }
 
     @GetMapping("/{categoryId}")
-    public PurchaseCategoryDTO getCategory(@PathVariable String categoryId) {
+    public AccountingApi.PurchaseCategory getCategory(@PathVariable String categoryId) {
         return receiptsFacade.getCategory(new PurchaseCategoryId(categoryId));
     }
 
     @PostMapping
-    public PurchaseCategoryDTO createNewCategory(@RequestBody PurchaseCategoryDTO category) {
+    public AccountingApi.PurchaseCategory createNewCategory(@RequestBody AccountingApi.PurchaseCategory category) {
         return receiptsFacade.createNewCategory(category.name());
     }
 
     @PatchMapping("/{categoryId}")
-    public PurchaseCategoryDTO renameCategory(@PathVariable String categoryId, @RequestBody PurchaseCategoryDTO category) {
+    public AccountingApi.PurchaseCategory renameCategory(@PathVariable String categoryId, @RequestBody AccountingApi.PurchaseCategory category) {
         return receiptsFacade.renameCategory(new PurchaseCategoryId(categoryId), category.name());
     }
 }

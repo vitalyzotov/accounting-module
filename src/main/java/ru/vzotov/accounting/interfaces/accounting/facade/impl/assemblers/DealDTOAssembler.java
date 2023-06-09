@@ -1,9 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers;
 
 import ru.vzotov.accounting.domain.model.Deal;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationRef;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptRef;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
 import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
 
@@ -17,16 +15,16 @@ public class DealDTOAssembler {
     private static final QRCodeDTOAssembler receiptAssembler = new QRCodeDTOAssembler();
     private static final PurchaseDTOAssembler purchaseAssembler = new PurchaseDTOAssembler();
 
-    public static DealDTO toDTO(Deal deal) {
+    public static AccountingApi.Deal toDTO(Deal deal) {
         return toDTO(deal, null, null, null, null);
     }
 
-    public static DealDTO toDTO(Deal deal,
-                                Function<Deal, List<ReceiptRef>> receipts,
-                                Function<Deal, List<OperationRef>> operations,
-                                Function<Deal, List<OperationRef>> cardOperations,
-                                Function<Deal, List<PurchaseRef>> purchases) {
-        return deal == null ? null : new DealDTO(
+    public static AccountingApi.Deal toDTO(Deal deal,
+                                           Function<Deal, List<AccountingApi.ReceiptRef>> receipts,
+                                           Function<Deal, List<AccountingApi.OperationRef>> operations,
+                                           Function<Deal, List<AccountingApi.OperationRef>> cardOperations,
+                                           Function<Deal, List<PurchaseRef>> purchases) {
+        return deal == null ? null : new AccountingApi.Deal(
                 deal.dealId().value(),
                 deal.owner().value(),
                 deal.date(),
@@ -41,15 +39,15 @@ public class DealDTOAssembler {
         );
     }
 
-    public static List<ReceiptRef> receipts(Deal deal) {
+    public static List<AccountingApi.ReceiptRef> receipts(Deal deal) {
         return deal.receipts().stream().map(receiptAssembler::toRef).toList();
     }
 
-    public static List<OperationRef> operations(Deal deal) {
+    public static List<AccountingApi.OperationRef> operations(Deal deal) {
         return deal.operations().stream().map(OperationDTOAssembler::toRef).toList();
     }
 
-    public static List<OperationRef> cardOperations(Deal deal) {
+    public static List<AccountingApi.OperationRef> cardOperations(Deal deal) {
         return deal.cardOperations().stream().map(OperationDTOAssembler::toRef).toList();
     }
 

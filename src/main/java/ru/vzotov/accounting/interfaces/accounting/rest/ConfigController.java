@@ -1,8 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.cashreceipt.application.events.PreAuthEvent;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.NalogPreAuthRequest;
-import org.apache.commons.lang3.Validate;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,11 +21,11 @@ public class ConfigController {
     }
 
     @PutMapping("/nalog-auth")
-    public void authenticateNalogRu(@RequestBody NalogPreAuthRequest auth) {
+    public void authenticateNalogRu(@RequestBody AccountingApi.NalogPreAuthRequest auth) {
         //fixme: rework, use any multi-user solution
-        if(auth == null || auth.getSessionId() == null || auth.getRefreshToken() == null) {
+        if(auth == null || auth.sessionId() == null || auth.refreshToken() == null) {
             throw new IllegalArgumentException();
         }
-        this.eventPublisher.publishEvent(new PreAuthEvent(this, auth.getSessionId(), auth.getRefreshToken()));
+        this.eventPublisher.publishEvent(new PreAuthEvent(this, auth.sessionId(), auth.refreshToken()));
     }
 }

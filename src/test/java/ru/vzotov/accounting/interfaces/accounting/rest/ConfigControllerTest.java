@@ -8,8 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.NalogPreAuthRequest;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,7 +25,7 @@ public class ConfigControllerTest extends AbstractControllerTest {
 
     @Test
     public void testBadRequest() {
-        HttpEntity<NalogPreAuthRequest> request = new HttpEntity<>(new NalogPreAuthRequest());
+        HttpEntity<Map<String, String>> request = new HttpEntity<>(new HashMap<>());
         ResponseEntity<Void> response = this.restTemplate.withBasicAuth(USER, PASSWORD)
                 .exchange(ACCOUNTING_CONFIG_NALOG_AUTH, HttpMethod.PUT, request, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -30,7 +33,7 @@ public class ConfigControllerTest extends AbstractControllerTest {
 
     @Test
     public void testValidRequest() {
-        HttpEntity<NalogPreAuthRequest> request = new HttpEntity<>(new NalogPreAuthRequest("test_session", "test_refresh"));
+        HttpEntity<AccountingApi.NalogPreAuthRequest> request = new HttpEntity<>(new AccountingApi.NalogPreAuthRequest("test_session", "test_refresh"));
         ResponseEntity<Void> response = this.restTemplate.withBasicAuth(USER, PASSWORD)
                 .exchange(ACCOUNTING_CONFIG_NALOG_AUTH, HttpMethod.PUT, request, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

@@ -59,7 +59,7 @@ public class ReceiptRepositoryNalogru {
         try {
             response = restTemplate.getForEntity(url, Void.class, parameters);
             if (response.getStatusCode().is4xxClientError()) {
-                throw new RestClientException("Error " + response.getStatusCodeValue());
+                throw new RestClientException("Error " + response.getStatusCode());
             }
             final Void ignored = response.getBody();
         } catch (RestClientException e) {
@@ -103,22 +103,15 @@ public class ReceiptRepositoryNalogru {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class, parameters);
 
             switch (HttpStatus.valueOf(response.getStatusCode().value())) {
-                case ACCEPTED:
-                    log.info("Receipt request accepted, wait for nalog.ru to prepare data");
-                    break;
-
-                case NOT_ACCEPTABLE:
-                    log.info("Got 406 Not Acceptable from nalog.ru");
-                    break;
-
-                case OK:
+                case ACCEPTED -> log.info("Receipt request accepted, wait for nalog.ru to prepare data");
+                case NOT_ACCEPTABLE -> log.info("Got 406 Not Acceptable from nalog.ru");
+                case OK -> {
                     final String receiptJson = response.getBody();
                     log.info(receiptJson);
                     return receiptJson;
-
-                default:
-                    log.info("Receipt not loaded. Try loading again later. HTTP Status {}", response.getStatusCodeValue());
-                    break;
+                }
+                default ->
+                        log.info("Receipt not loaded. Try loading again later. HTTP Status {}", response.getStatusCode());
             }
         } catch (HttpStatusCodeException e) {
             final HttpStatusCode status = e.getStatusCode();

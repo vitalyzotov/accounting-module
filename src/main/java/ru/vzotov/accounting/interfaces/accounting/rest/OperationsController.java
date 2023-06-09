@@ -1,8 +1,8 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import ru.vzotov.accounting.application.AccountNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
 import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationNotFoundException;
 import org.apache.commons.lang3.Validate;
@@ -33,31 +33,31 @@ public class OperationsController {
     private AccountingFacade accountingFacade;
 
     @GetMapping
-    public List<AccountOperationDTO> listOperations(@RequestParam(required = false) String type,
-                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    public List<AccountingApi.AccountOperation> listOperations(@RequestParam(required = false) String type,
+                                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         return accountingFacade.listOperations(
                 type == null ? null : OperationType.of(type.charAt(0)),
                 from, to);
     }
 
     @GetMapping("{operationId}")
-    public AccountOperationDTO getOperation(@PathVariable String operationId) throws OperationNotFoundException, AccountNotFoundException {
+    public AccountingApi.AccountOperation getOperation(@PathVariable String operationId) throws OperationNotFoundException, AccountNotFoundException {
         return accountingFacade.getOperation(operationId);
     }
 
     @DeleteMapping("{operationId}")
-    public AccountOperationDTO deleteOperation(@PathVariable String operationId) throws OperationNotFoundException {
+    public AccountingApi.AccountOperation deleteOperation(@PathVariable String operationId) throws OperationNotFoundException {
         return accountingFacade.deleteOperation(operationId);
     }
 
     @PatchMapping("{operationId}")
-    public AccountOperationDTO patchOperation(@PathVariable String operationId,
-                                              @RequestBody HashMap<String, Object> patch)
+    public AccountingApi.AccountOperation patchOperation(@PathVariable String operationId,
+                                                         @RequestBody HashMap<String, Object> patch)
             throws OperationNotFoundException, CategoryNotFoundException {
         Validate.notEmpty(operationId);
 
-        AccountOperationDTO result = null;
+        AccountingApi.AccountOperation result = null;
         if (patch.containsKey("categoryId")) {
             Long categoryId = (Long) patch.get("categoryId");
             if (categoryId == null) throw new IllegalArgumentException("categoryId is null");
