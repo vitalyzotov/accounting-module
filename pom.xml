@@ -19,7 +19,7 @@
         <liquibase.version>4.20.0</liquibase.version>
 
         <!-- own modules -->
-        <ddd.version>1.4</ddd.version>
+        <ddd.version>2.0</ddd.version>
         <money.model.version>2.0</money.model.version>
         <banking.model.version>2.0</banking.model.version>
         <cashreceipt.model.version>2.0</cashreceipt.model.version>
