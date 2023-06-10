@@ -10,11 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Remain;
 import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.RemainDTO;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.RemainCreateRequest;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.RemainCreateResponse;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.RemainDeleteResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,28 +28,29 @@ public class RemainsController {
     }
 
     @GetMapping
-    public List<RemainDTO> listRemains(@RequestParam(name = "account", required = false) List<String> accounts,
-                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
-                                       @RequestParam(required = false, defaultValue = "false") boolean recent) {
+    public List<Remain> listRemains(
+            @RequestParam(name = "account", required = false) List<String> accounts,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false, defaultValue = "false") boolean recent) {
         return accountingFacade.listRemains(accounts, from, to, recent);
     }
 
     @GetMapping("{remainId}")
-    public RemainDTO getRemain(@PathVariable String remainId) {
+    public Remain getRemain(@PathVariable String remainId) {
         return accountingFacade.getRemain(remainId);
     }
 
     @DeleteMapping("{remainId}")
-    public RemainDeleteResponse deleteRemainById(@PathVariable String remainId) {
+    public Remain.Ref deleteRemainById(@PathVariable String remainId) {
         accountingFacade.deleteRemain(remainId);
-        return new RemainDeleteResponse(remainId);
+        return new Remain.Ref(remainId);
     }
 
     @PostMapping
-    public RemainCreateResponse newRemain(@RequestBody RemainCreateRequest remain) {
-        String remainId = accountingFacade.createRemain(remain.getAccountNumber(), remain.getDate(), remain.getValue());
-        return new RemainCreateResponse(remainId);
+    public Remain.Ref newRemain(@RequestBody Remain.Create remain) {
+        String remainId = accountingFacade.createRemain(remain.accountNumber(), remain.date(), remain.value());
+        return new Remain.Ref(remainId);
     }
 
 

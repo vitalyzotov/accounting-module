@@ -1,10 +1,10 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
 import ru.vzotov.accounting.domain.model.WorkCalendarRepository;
 import ru.vzotov.calendar.domain.model.SpecialDay;
 import ru.vzotov.calendar.domain.model.WorkCalendar;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDate;
 
 public class WorkCalendarRepositoryJpa extends JpaRepository implements WorkCalendarRepository {

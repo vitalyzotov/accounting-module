@@ -1,7 +1,8 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers;
 
-import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseRef;
-import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
+import ru.vzotov.accounting.interfaces.common.enrichers.AbstractEnricher;
+import ru.vzotov.accounting.interfaces.purchases.PurchasesApi;
+import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseAssembler;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
@@ -13,13 +14,13 @@ import java.util.stream.Collectors;
 
 import static java.util.function.Function.identity;
 
-public class PurchaseEnricher extends AbstractEnricher<PurchaseRef> {
+public class PurchaseEnricher extends AbstractEnricher<PurchasesApi.PurchaseRef> {
 
     private final PurchaseRepository repository;
 
     private final Map<String, Purchase> cache;
 
-    private final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
+    private final PurchaseAssembler assembler = new PurchaseAssembler();
 
     public PurchaseEnricher(PurchaseRepository repository) {
         this(repository, Collections.emptySet());
@@ -31,9 +32,9 @@ public class PurchaseEnricher extends AbstractEnricher<PurchaseRef> {
     }
 
     @Override
-    public PurchaseRef apply(PurchaseRef ref) {
+    public PurchasesApi.PurchaseRef apply(PurchasesApi.PurchaseRef ref) {
         return ref == null ? null : assembler.toDTO(
-                cache.computeIfAbsent(ref.getPurchaseId(), id -> repository.find(new PurchaseId(id)))
+                cache.computeIfAbsent(ref.purchaseId(), id -> repository.find(new PurchaseId(id)))
         );
     }
 }

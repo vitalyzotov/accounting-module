@@ -20,7 +20,6 @@ import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 
 @SpringBootApplication(
         scanBasePackages = {
-                "ru.vzotov.cashreceipt.interfaces",
                 "ru.vzotov.cashreceipt.application",
                 "ru.vzotov.cashreceipt.application.impl"}
 )

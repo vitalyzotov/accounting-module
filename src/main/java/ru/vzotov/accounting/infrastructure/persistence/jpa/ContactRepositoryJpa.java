@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vzotov.accounting.domain.model.ContactRepository;
@@ -7,8 +9,6 @@ import ru.vzotov.person.domain.model.Contact;
 import ru.vzotov.person.domain.model.ContactId;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.util.List;
 
 public class ContactRepositoryJpa extends JpaRepository implements ContactRepository {
@@ -40,7 +40,7 @@ public class ContactRepositoryJpa extends JpaRepository implements ContactReposi
 
     @Override
     public void store(Contact contact) {
-        if (hasId(contact, "id")) {
+        if (em.contains(contact)) {
             em.merge(contact);
             em.flush();
         } else {

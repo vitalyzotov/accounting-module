@@ -1,9 +1,6 @@
 package ru.vzotov.cashreceipt.nalogru;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vzotov.cashreceipt.ReceiptFactory;
@@ -12,9 +9,9 @@ import ru.vzotov.person.domain.model.PersonId;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@RunWith(JUnit4.class)
 public class ReceiptParsingServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(ReceiptParsingServiceTest.class);
@@ -55,10 +52,10 @@ public class ReceiptParsingServiceTest {
     public void parse010() throws IOException {
         Receipt receipt = new ReceiptFactory().createReceiptFromJson(PERSON_ID, "/receipt010.json");
         log.info("Parsed receipt {}", receipt);
-
-        Assert.assertEquals("user not trimmed", 14, receipt.retailPlace().user().length());
-        Assert.assertEquals("kkt reg id not trimmed", 16, receipt.fiscalInfo().kktRegId().length());
-
+        assertThat(receipt.retailPlace().user().length())
+                .as("user not trimmed").isEqualTo(14);
+        assertThat(receipt.fiscalInfo().kktRegId().length())
+                .as("kkt reg id not trimmed").isEqualTo(16);
     }
 
     @Test

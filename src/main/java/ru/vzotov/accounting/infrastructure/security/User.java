@@ -22,17 +22,15 @@ public class User extends org.springframework.security.core.userdetails.User {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getName()).append(" [");
-        sb.append("Username=").append(this.getUsername()).append(", ");
-        sb.append("Password=[PROTECTED], ");
-        sb.append("Enabled=").append(this.isEnabled()).append(", ");
-        sb.append("AccountNonExpired=").append(this.isAccountNonExpired()).append(", ");
-        sb.append("credentialsNonExpired=").append(this.isCredentialsNonExpired()).append(", ");
-        sb.append("AccountNonLocked=").append(this.isAccountNonLocked()).append(", ");
-        sb.append("Main Authority=").append(this.getMainAuthority()).append(", ");
-        sb.append("Granted Authorities=").append(this.getAuthorities()).append("]");
-        return sb.toString();
+        return getClass().getName() + " [" +
+                "Username=" + this.getUsername() + ", " +
+                "Password=[PROTECTED], " +
+                "Enabled=" + this.isEnabled() + ", " +
+                "AccountNonExpired=" + this.isAccountNonExpired() + ", " +
+                "credentialsNonExpired=" + this.isCredentialsNonExpired() + ", " +
+                "AccountNonLocked=" + this.isAccountNonLocked() + ", " +
+                "Main Authority=" + this.getMainAuthority() + ", " +
+                "Granted Authorities=" + this.getAuthorities() + "]";
     }
 
 }

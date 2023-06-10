@@ -1,0 +1,32 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.12.xsd">
+
+
+    <changeSet id="acc-86" author="vzotov">
+        <createTable tableName="RECEIPT_SOURCE">
+            <column name="ID" type="BIGINT(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="SOURCE_UID" type="VARCHAR(64)" remarks="Business key">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="DATA" type="LONGTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="QR_ID" type="BIGINT(20)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="FK_SOURCE_QR"
+                                 baseTableName="RECEIPT_SOURCE" baseColumnNames="QR_ID"
+                                 referencedTableName="QR_CODE" referencedColumnNames="ID"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

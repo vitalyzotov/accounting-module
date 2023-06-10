@@ -1,14 +1,14 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
-import ru.vzotov.cashreceipt.domain.model.ReceiptId;
-import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
-import ru.vzotov.cashreceipt.domain.model.QRCodeData;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.PurchaseCategory;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.QRCode;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Receipt;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Timeline;
 import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
+import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
+import ru.vzotov.cashreceipt.domain.model.QRCodeData;
+import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +22,7 @@ public interface ReceiptsFacade {
      * @param toDate   end date (inclusive)
      * @return list of cash receipts
      */
-    List<ReceiptDTO> listAllReceipts(LocalDate fromDate, LocalDate toDate);
+    List<Receipt> listAllReceipts(LocalDate fromDate, LocalDate toDate);
 
     /**
      * Get list of all QR codes within date range
@@ -31,14 +31,15 @@ public interface ReceiptsFacade {
      * @param toDate   end date (inclusive)
      * @return list of all QR codes
      */
-    List<QRCodeDTO> listAllCodes(LocalDate fromDate, LocalDate toDate);
+    List<QRCode> listAllCodes(LocalDate fromDate, LocalDate toDate);
 
     /**
      * Get QR code by cash receipt ID
+     *
      * @param receiptId ID of cash receipt
      * @return QR code
      */
-    QRCodeDTO getCode(String receiptId);
+    QRCode getCode(String receiptId);
 
     /**
      * Calculate timeline.
@@ -46,17 +47,17 @@ public interface ReceiptsFacade {
      *
      * @return timeline data
      */
-    TimelineDTO getTimeline();
+    Timeline getTimeline();
 
     /**
      * Get receipt from persistent storage
      *
-     * @param qrCodeData
-     * @return
+     * @param qrCodeData text representation of QR code
+     * @return receipt
      * @deprecated use getReceipt(String qrCodeData)
      */
     @Deprecated
-    ReceiptDTO loadReceipt(String qrCodeData);
+    Receipt loadReceipt(String qrCodeData);
 
     /**
      * Get receipt from persistent storage
@@ -64,7 +65,7 @@ public interface ReceiptsFacade {
      * @param qrCodeData QR code
      * @return cash receipt
      */
-    ReceiptDTO getReceipt(String qrCodeData);
+    Receipt getReceipt(String qrCodeData);
 
     /**
      * Try loading cash receipt from external systems
@@ -72,7 +73,7 @@ public interface ReceiptsFacade {
      * @param qrCodeData QR data to identify the receipt
      * @return cash receipt if loaded successfully, <code>null</code> otherwise
      */
-    ReceiptDTO loadReceiptDetails(QRCodeData qrCodeData);
+    Receipt loadReceiptDetails(QRCodeData qrCodeData);
 
     /**
      * Assign category to receipt item
@@ -92,7 +93,7 @@ public interface ReceiptsFacade {
      *
      * @return list of purchase categories
      */
-    List<PurchaseCategoryDTO> getAllCategories();
+    List<PurchaseCategory> getAllCategories();
 
     /**
      * Get purchase category by ID
@@ -100,7 +101,7 @@ public interface ReceiptsFacade {
      * @param id category ID
      * @return category DTO
      */
-    PurchaseCategoryDTO getCategory(PurchaseCategoryId id);
+    PurchaseCategory getCategory(PurchaseCategoryId id);
 
     /**
      * Create new purchase category
@@ -108,14 +109,14 @@ public interface ReceiptsFacade {
      * @param name category name
      * @return category DTO
      */
-    PurchaseCategoryDTO createNewCategory(String name);
+    PurchaseCategory createNewCategory(String name);
 
     /**
      * Rename purchase category
      *
-     * @param id category ID
+     * @param id      category ID
      * @param newName new category name
      * @return category DTO
      */
-    PurchaseCategoryDTO renameCategory(PurchaseCategoryId id, String newName);
+    PurchaseCategory renameCategory(PurchaseCategoryId id, String newName);
 }

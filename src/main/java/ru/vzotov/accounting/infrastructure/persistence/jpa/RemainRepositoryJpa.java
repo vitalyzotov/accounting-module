@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vzotov.accounting.domain.model.Remain;
@@ -8,8 +10,6 @@ import ru.vzotov.accounting.domain.model.RemainRepository;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -70,7 +70,7 @@ public class RemainRepositoryJpa extends JpaRepository implements RemainReposito
 
     @Override
     public void store(Remain remain) {
-        if (hasId(remain, "id")) {
+        if (em.contains(remain)) {
             em.detach(remain);
             em.merge(remain);
             em.flush();

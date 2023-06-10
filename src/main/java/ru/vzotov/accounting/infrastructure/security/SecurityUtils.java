@@ -24,21 +24,12 @@ public class SecurityUtils {
 
     public static PersonId getCurrentPerson() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-
         log.trace("Current authentication: {}", authentication);
 
         User user = (authentication.getPrincipal() instanceof User) ? (User) authentication.getPrincipal() :
                 (authentication.getDetails() instanceof User) ? (User) authentication.getDetails() :
                         null;
         return user != null ? PersonId.fromAuthority(user.getMainAuthority().getAuthority()) : null;
-
-        /* return authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(PersonId::isValidAuthority)
-                .findFirst()
-                .map(PersonId::fromAuthority)
-                .orElse(null); */
     }
 
     public static Collection<PersonId> getAuthorizedPersons() {

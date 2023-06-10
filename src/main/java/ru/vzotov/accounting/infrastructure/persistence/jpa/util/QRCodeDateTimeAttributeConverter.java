@@ -2,7 +2,7 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa.util;
 
 import ru.vzotov.cashreceipt.domain.model.QRCodeDateTime;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 import java.sql.Timestamp;
 
 public class QRCodeDateTimeAttributeConverter implements AttributeConverter<QRCodeDateTime, Timestamp> {

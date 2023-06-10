@@ -1,18 +1,16 @@
 package ru.vzotov.accounting.interfaces.accounting.facade;
 
 import ru.vzotov.accounting.application.AccountNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountBindingDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BankDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetCategoryDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CardDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.HoldOperationDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.RemainDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TransactionDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Account;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.AccountBinding;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.AccountOperation;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Bank;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.BudgetCategory;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Card;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.HoldOperation;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Remain;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Transaction;
+import ru.vzotov.accounting.interfaces.common.CommonApi.Money;
 import ru.vzotov.banking.domain.model.BankId;
 import ru.vzotov.banking.domain.model.CardNumber;
 import ru.vzotov.banking.domain.model.OperationId;
@@ -30,9 +28,9 @@ public interface AccountingFacade {
     // Accounts
     //
 
-    List<AccountDTO> listAccounts();
+    List<Account> listAccounts();
 
-    AccountDTO getAccount(String number);
+    Account getAccount(String number);
 
     String createAccount(String number, String name, String bankId, String currency, String owner, List<String> aliases);
 
@@ -45,34 +43,34 @@ public interface AccountingFacade {
     /**
      * Finds remains for given accounts
      *
-     * @param accounts list of accounts. Use {@code null} to find remains for all accounts.
-     * @param from start date
-     * @param to end date
+     * @param accounts   list of accounts. Use {@code null} to find remains for all accounts.
+     * @param from       start date
+     * @param to         end date
      * @param recentOnly whether to find only most recent remain
      * @return remains for given criteria
      */
-    List<RemainDTO> listRemains(Collection<String> accounts, LocalDate from, LocalDate to, boolean recentOnly);
+    List<Remain> listRemains(Collection<String> accounts, LocalDate from, LocalDate to, boolean recentOnly);
 
-    List<RemainDTO> listRemains(LocalDate from, LocalDate to);
+    List<Remain> listRemains(LocalDate from, LocalDate to);
 
-    List<RemainDTO> listRemains(String accountNumber);
+    List<Remain> listRemains(String accountNumber);
 
-    RemainDTO getRemain(String remainId);
+    Remain getRemain(String remainId);
 
-    String createRemain(String accountNumber, LocalDate date, MoneyDTO value);
+    String createRemain(String accountNumber, LocalDate date, Money value);
 
     void deleteRemain(String remainId);
 
     //
     // Categories
     //
-    List<BudgetCategoryDTO> listCategories();
+    List<BudgetCategory> listCategories();
 
-    BudgetCategoryDTO getCategory(long id);
+    BudgetCategory getCategory(long id);
 
-    BudgetCategoryDTO createCategory(String name, String color, String icon);
+    BudgetCategory createCategory(String name, String color, String icon);
 
-    BudgetCategoryDTO modifyCategory(long id, String newName, String color, String icon) throws CategoryNotFoundException;
+    BudgetCategory modifyCategory(long id, String newName, String color, String icon) throws CategoryNotFoundException;
 
     void deleteCategory(long id) throws CategoryNotFoundException;
 
@@ -80,40 +78,40 @@ public interface AccountingFacade {
     // Operations
     //
 
-    List<AccountOperationDTO> listOperations(OperationType type, LocalDate from, LocalDate to);
+    List<AccountOperation> listOperations(OperationType type, LocalDate from, LocalDate to);
 
-    List<AccountOperationDTO> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException;
+    List<AccountOperation> listOperations(String accountNumber, LocalDate from, LocalDate to) throws AccountNotFoundException;
 
-    AccountOperationDTO getOperation(String operationId) throws OperationNotFoundException, AccountNotFoundException;
+    AccountOperation getOperation(String operationId) throws OperationNotFoundException, AccountNotFoundException;
 
-    AccountOperationDTO createOperation(String account,
-                                        LocalDate date,
-                                        LocalDate authorizationDate,
-                                        String transactionReference,
-                                        char operationType,
-                                        double amount,
-                                        String currency,
-                                        String description,
-                                        String comment,
-                                        Long categoryId) throws CategoryNotFoundException;
+    AccountOperation createOperation(String account,
+                                     LocalDate date,
+                                     LocalDate authorizationDate,
+                                     String transactionReference,
+                                     char operationType,
+                                     double amount,
+                                     String currency,
+                                     String description,
+                                     String comment,
+                                     Long categoryId) throws CategoryNotFoundException;
 
-    List<AccountOperationDTO> createOperations(List<AccountOperationDTO> data) throws CategoryNotFoundException;
+    List<AccountOperation> createOperations(List<AccountOperation> data) throws CategoryNotFoundException;
 
-    AccountOperationDTO deleteOperation(String operationId) throws OperationNotFoundException;
+    AccountOperation deleteOperation(String operationId) throws OperationNotFoundException;
 
-    AccountOperationDTO assignCategoryToOperation(String operationId, long categoryId) throws OperationNotFoundException, CategoryNotFoundException;
+    AccountOperation assignCategoryToOperation(String operationId, long categoryId) throws OperationNotFoundException, CategoryNotFoundException;
 
-    AccountOperationDTO modifyComment(String operationId, String comment) throws OperationNotFoundException;
+    AccountOperation modifyComment(String operationId, String comment) throws OperationNotFoundException;
 
     //
     // Holds
     //
 
-    List<HoldOperationDTO> listHolds(String accountNumber, LocalDate from, LocalDate to);
+    List<HoldOperation> listHolds(String accountNumber, LocalDate from, LocalDate to);
 
-    List<HoldOperationDTO> listHolds(OperationType type, LocalDate from, LocalDate to);
+    List<HoldOperation> listHolds(OperationType type, LocalDate from, LocalDate to);
 
-    HoldOperationDTO getHold(String holdId) throws OperationNotFoundException;
+    HoldOperation getHold(String holdId) throws OperationNotFoundException;
 
     void deleteHold(String holdId) throws OperationNotFoundException;
 
@@ -121,9 +119,9 @@ public interface AccountingFacade {
     // Banks
     //
 
-    List<BankDTO> listBanks();
+    List<Bank> listBanks();
 
-    BankDTO getBank(BankId bankId);
+    Bank getBank(BankId bankId);
 
     BankId createBank(BankId bankId, String name, String shortName, String longName);
 
@@ -133,13 +131,13 @@ public interface AccountingFacade {
     // Cards
     //
 
-    List<CardDTO> listCards(BankId issuer);
+    List<Card> listCards(BankId issuer);
 
-    CardDTO getCard(CardNumber cardNumber);
+    Card getCard(CardNumber cardNumber);
 
-    CardNumber createCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBindingDTO> accounts);
+    CardNumber createCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBinding> accounts);
 
-    CardNumber modifyCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBindingDTO> accounts);
+    CardNumber modifyCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountBinding> accounts);
 
     CardNumber deleteCard(CardNumber number);
 
@@ -147,8 +145,8 @@ public interface AccountingFacade {
     // Transactions
     //
 
-    List<TransactionDTO> listTransactions(LocalDate from, LocalDate to, Integer threshold);
+    List<Transaction> listTransactions(LocalDate from, LocalDate to, Integer threshold);
 
-    TransactionDTO makeTransaction(OperationId primary, OperationId secondary);
+    Transaction makeTransaction(OperationId primary, OperationId secondary);
 
 }

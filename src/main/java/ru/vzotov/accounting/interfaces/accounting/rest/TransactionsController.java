@@ -1,8 +1,5 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
-import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TransactionDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Transaction;
+import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
 import ru.vzotov.banking.domain.model.OperationId;
 
 import java.time.LocalDate;
@@ -20,11 +19,14 @@ import java.util.List;
 @RequestMapping("/accounting/tx")
 @CrossOrigin
 public class TransactionsController {
-    @Autowired
-    private AccountingFacade accountingFacade;
+    private final AccountingFacade accountingFacade;
+
+    public TransactionsController(AccountingFacade accountingFacade) {
+        this.accountingFacade = accountingFacade;
+    }
 
     @GetMapping
-    public List<TransactionDTO> listTransactions(
+    public List<Transaction> listTransactions(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
             @RequestParam(required = false) Integer threshold) {
@@ -32,10 +34,10 @@ public class TransactionsController {
     }
 
     @PostMapping
-    public TransactionDTO makeTransaction(@RequestBody TransactionDTO transaction) {
+    public Transaction makeTransaction(@RequestBody Transaction transaction) {
         return accountingFacade.makeTransaction(
-                new OperationId(transaction.getPrimary()),
-                new OperationId(transaction.getSecondary())
+                new OperationId(transaction.primary()),
+                new OperationId(transaction.secondary())
         );
     }
 

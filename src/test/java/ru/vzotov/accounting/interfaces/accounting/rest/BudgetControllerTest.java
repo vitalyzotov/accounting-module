@@ -1,23 +1,21 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
 import org.assertj.core.api.Condition;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.accounting.domain.model.BudgetRuleId;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.BudgetRuleDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.MoneyDTO;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
+import ru.vzotov.accounting.interfaces.common.CommonApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
+
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 public class BudgetControllerTest extends AbstractControllerTest {
@@ -25,23 +23,23 @@ public class BudgetControllerTest extends AbstractControllerTest {
     @Test
     public void getRule() {
         final String budgetId = "test-budget-1";
-        final ResponseEntity<BudgetRuleDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        final ResponseEntity<AccountingApi.BudgetRule> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}/rule/{ruleId}",
                 HttpMethod.GET, new HttpEntity<>(null),
-                BudgetRuleDTO.class,
+                AccountingApi.BudgetRule.class,
                 budgetId,
                 new BudgetRuleId("004").value()
         );
 
-        assertThat(exchange.getBody().getCategoryId()).isEqualTo(781381038049753674L);
+        assertThat(Objects.requireNonNull(exchange.getBody()).categoryId()).isEqualTo(781381038049753674L);
     }
 
     @Test
     public void replaceRule() {
         final String budgetId = "test-budget-1";
-        final ResponseEntity<BudgetDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        final ResponseEntity<AccountingApi.Budget> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}/rule/{ruleId}",
-                HttpMethod.PUT, new HttpEntity<>(new BudgetRuleDTO(
+                HttpMethod.PUT, new HttpEntity<>(new AccountingApi.BudgetRule(
                         "001",
                         "+", "Заработная плата 2",
                         null,
@@ -49,30 +47,30 @@ public class BudgetControllerTest extends AbstractControllerTest {
                         null,
                         "40817810108290123456",
                         "M2020-01-01(1)[8]",
-                        new MoneyDTO(2900000, "RUR"),
+                        new CommonApi.Money(2900000, "RUR"),
                         null,
                         null
                 )),
-                BudgetDTO.class,
+                AccountingApi.Budget.class,
                 budgetId,
                 new BudgetRuleId("001").value()
         );
 
-        assertThat(exchange.getBody().getRules()).isNotEmpty();
+        assertThat(Objects.requireNonNull(exchange.getBody()).rules()).isNotEmpty();
 
-        assertThat(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        assertThat(Objects.requireNonNull(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}",
                 HttpMethod.GET, new HttpEntity<>(null),
-                BudgetDTO.class, budgetId
-        ).getBody().getRules()).doNotHave(new Condition<BudgetRuleDTO>() {
+                AccountingApi.Budget.class, budgetId
+        ).getBody()).rules()).doNotHave(new Condition<>() {
             @Override
-            public boolean matches(BudgetRuleDTO rule) {
-                return rule.getName().equals("Заработная плата");
+            public boolean matches(AccountingApi.BudgetRule rule) {
+                return rule.name().equals("Заработная плата");
             }
-        }).haveExactly(1, new Condition<BudgetRuleDTO>() {
+        }).haveExactly(1, new Condition<>() {
             @Override
-            public boolean matches(BudgetRuleDTO rule) {
-                return rule.getName().equals("Заработная плата 2");
+            public boolean matches(AccountingApi.BudgetRule rule) {
+                return rule.name().equals("Заработная плата 2");
             }
         });
     }
@@ -80,29 +78,29 @@ public class BudgetControllerTest extends AbstractControllerTest {
     @Test
     public void deleteRule() {
         final String budgetId = "test-budget-1";
-        final ResponseEntity<BudgetDTO> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        final ResponseEntity<AccountingApi.Budget> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}/rule/{ruleId}",
                 HttpMethod.DELETE, new HttpEntity<>(null),
-                BudgetDTO.class,
+                AccountingApi.Budget.class,
                 budgetId,
                 new BudgetRuleId("003").value() //.ruleIdOf("Гипермаркет")
         );
 
-        assertThat(exchange.getBody().getRules()).isNotEmpty();
+        assertThat(Objects.requireNonNull(exchange.getBody()).rules()).isNotEmpty();
 
-        assertThat(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        assertThat(Objects.requireNonNull(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}",
                 HttpMethod.GET, new HttpEntity<>(null),
-                BudgetDTO.class, budgetId
-        ).getBody().getRules()).doNotHave(new Condition<BudgetRuleDTO>() {
+                AccountingApi.Budget.class, budgetId
+        ).getBody()).rules()).doNotHave(new Condition<>() {
             @Override
-            public boolean matches(BudgetRuleDTO rule) {
-                return rule.getName().equals("Гипермаркет");
+            public boolean matches(AccountingApi.BudgetRule rule) {
+                return rule.name().equals("Гипермаркет");
             }
-        }).haveExactly(1, new Condition<BudgetRuleDTO>() {
+        }).haveExactly(1, new Condition<>() {
             @Override
-            public boolean matches(BudgetRuleDTO rule) {
-                return rule.getName().equals("Аванс");
+            public boolean matches(AccountingApi.BudgetRule rule) {
+                return rule.name().equals("Аванс");
             }
         });
     }

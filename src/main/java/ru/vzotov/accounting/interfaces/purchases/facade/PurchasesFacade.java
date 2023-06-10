@@ -2,8 +2,8 @@ package ru.vzotov.accounting.interfaces.purchases.facade;
 
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.domain.model.DealId;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
-import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
+import ru.vzotov.accounting.interfaces.accounting.facade.DealNotFoundException;
+import ru.vzotov.accounting.interfaces.purchases.PurchasesApi.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import java.time.LocalDateTime;
@@ -15,19 +15,19 @@ import java.util.List;
  */
 public interface PurchasesFacade {
 
-    PurchaseDTO getPurchaseById(String purchaseId);
+    Purchase getPurchaseById(String purchaseId);
 
     PurchaseId deletePurchaseById(String purchaseId);
 
-    List<PurchaseDTO> findPurchases(LocalDateTime from, LocalDateTime to);
+    List<Purchase> findPurchases(LocalDateTime from, LocalDateTime to);
 
 
-    void modifyPurchase(PurchaseDTO purchase);
+    void modifyPurchase(Purchase purchase);
 
-    List<PurchaseId> createPurchase(Collection<PurchaseDTO> purchases, DealId dealId);
+    List<PurchaseId> createPurchase(Collection<Purchase> purchases, DealId dealId);
 
-    List<PurchaseDTO> createPurchasesFromReceipt(String receiptId);
+    List<Purchase> createPurchasesFromReceipt(String receiptId);
 
     @Transactional(value = "accounting-tx")
-    List<PurchaseDTO> createPurchasesFromDealReceipts(String dealId) throws DealNotFoundException;
+    List<Purchase> createPurchasesFromDealReceipts(String dealId) throws DealNotFoundException;
 }

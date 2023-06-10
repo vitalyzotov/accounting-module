@@ -1,20 +1,17 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import ru.vzotov.accounting.config.DatasourceConfig;
-import ru.vzotov.accounting.domain.model.BudgetRepository;
 import org.assertj.core.api.Condition;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
+import ru.vzotov.accounting.config.DatasourceConfig;
 import ru.vzotov.accounting.domain.model.Budget;
 import ru.vzotov.accounting.domain.model.BudgetId;
+import ru.vzotov.accounting.domain.model.BudgetRepository;
 import ru.vzotov.accounting.domain.model.BudgetRule;
 import ru.vzotov.accounting.domain.model.BudgetRuleId;
 import ru.vzotov.accounting.domain.model.BudgetRuleType;
@@ -25,7 +22,7 @@ import ru.vzotov.calendar.domain.model.RecurrenceUnit;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.HashSet;
@@ -33,7 +30,6 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({DatasourceConfig.class, JpaConfig.class})
@@ -100,7 +96,7 @@ public class BudgetRepositoryJpaTest {
         assertThat(budget).isNotNull();
         assertThat(budget.rules())
                 .hasSize(4)
-                .are(new Condition<BudgetRule>() {
+                .are(new Condition<>() {
                     @Override
                     public boolean matches(BudgetRule value) {
                         return value.sourceAccount() != null || value.targetAccount() != null;

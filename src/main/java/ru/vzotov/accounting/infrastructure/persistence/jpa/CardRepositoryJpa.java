@@ -1,13 +1,13 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.accounting.domain.model.CardRepository;
 import ru.vzotov.banking.domain.model.BankId;
 import ru.vzotov.banking.domain.model.Card;
 import ru.vzotov.banking.domain.model.CardNumber;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.util.List;
 
 public class CardRepositoryJpa extends JpaRepository implements CardRepository {
@@ -57,7 +57,7 @@ public class CardRepositoryJpa extends JpaRepository implements CardRepository {
 
     @Override
     public void store(Card card) {
-        if (hasId(card, "id")) {
+        if (em.contains(card)) {
             em.detach(card);
             em.merge(card);
             em.flush();

@@ -1,14 +1,14 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
-import ru.vzotov.accounting.domain.model.BudgetRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.accounting.domain.model.Budget;
 import ru.vzotov.accounting.domain.model.BudgetId;
+import ru.vzotov.accounting.domain.model.BudgetRepository;
 import ru.vzotov.accounting.domain.model.BudgetRule;
 import ru.vzotov.accounting.domain.model.BudgetRuleId;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.util.List;
 
 public class BudgetRepositoryJpa extends JpaRepository implements BudgetRepository {
@@ -64,7 +64,7 @@ public class BudgetRepositoryJpa extends JpaRepository implements BudgetReposito
 
     @Override
     public void store(Budget budget) {
-        if (hasId(budget, "id")) {
+        if (em.contains(budget)) {
             //em.detach(budget);
             em.merge(budget);
             em.flush();

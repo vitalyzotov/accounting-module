@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -23,6 +24,8 @@ public class ReceiptRepositoryNalogru {
     private static final Logger log = LoggerFactory.getLogger(ReceiptRepositoryNalogru.class);
     private static final String MOSCOW_ZONE_ID = "Europe/Moscow";
     private static final ZoneId MOSCOW_ZONE = ZoneId.of(MOSCOW_ZONE_ID);
+    private static final String HEADER_DEVICE_OS = "device-os";
+    private static final String HEADER_DEVICE_ID = "device-id";
 
     @Value("${nalogru.address}")
     private String address;
@@ -36,8 +39,8 @@ public class ReceiptRepositoryNalogru {
         this.restTemplate = restTemplateBuilder
                 .basicAuthentication(username, password)
                 .additionalInterceptors((request, body, execution) -> {
-                    request.getHeaders().add("device-os", "");
-                    request.getHeaders().add("device-id", "");
+                    request.getHeaders().add(HEADER_DEVICE_OS, "");
+                    request.getHeaders().add(HEADER_DEVICE_ID, "");
                     return execution.execute(request, body);
                 })
                 .build();
@@ -58,7 +61,7 @@ public class ReceiptRepositoryNalogru {
         try {
             response = restTemplate.getForEntity(url, Void.class, parameters);
             if (response.getStatusCode().is4xxClientError()) {
-                throw new RestClientException("Error " + response.getStatusCodeValue());
+                throw new RestClientException("Error " + response.getStatusCode());
             }
             final Void ignored = response.getBody();
         } catch (RestClientException e) {
@@ -101,27 +104,20 @@ public class ReceiptRepositoryNalogru {
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class, parameters);
 
-            switch (response.getStatusCode()) {
-                case ACCEPTED:
-                    log.info("Receipt request accepted, wait for nalog.ru to prepare data");
-                    break;
-
-                case NOT_ACCEPTABLE:
-                    log.info("Got 406 Not Acceptable from nalog.ru");
-                    break;
-
-                case OK:
+            switch (HttpStatus.valueOf(response.getStatusCode().value())) {
+                case ACCEPTED -> log.info("Receipt request accepted, wait for nalog.ru to prepare data");
+                case NOT_ACCEPTABLE -> log.info("Got 406 Not Acceptable from nalog.ru");
+                case OK -> {
                     final String receiptJson = response.getBody();
                     log.info(receiptJson);
                     return receiptJson;
-
-                default:
-                    log.info("Receipt not loaded. Try loading again later. HTTP Status {}", response.getStatusCodeValue());
-                    break;
+                }
+                default ->
+                        log.info("Receipt not loaded. Try loading again later. HTTP Status {}", response.getStatusCode());
             }
         } catch (HttpStatusCodeException e) {
-            final HttpStatus status = e.getStatusCode();
-            if (HttpStatus.PAYMENT_REQUIRED.equals(status)) {
+            final HttpStatusCode status = e.getStatusCode();
+            if (HttpStatus.PAYMENT_REQUIRED.isSameCodeAs(status)) {
                 limitRestrictionDate = now;
             }
         } catch (RestClientException e) {

@@ -2,7 +2,7 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa.util;
 
 import ru.vzotov.banking.domain.model.Country;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 public class CountryAttributeConverter implements AttributeConverter<Country, String> {
     @Override

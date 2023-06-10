@@ -10,6 +10,7 @@
         <properties>
             <property name="exclude-unlisted-classes" value="true"/>
             <property name="hibernate.archive.autodetection" value="hbm" />
+            <property name="hibernate.globally_quoted_identifiers" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

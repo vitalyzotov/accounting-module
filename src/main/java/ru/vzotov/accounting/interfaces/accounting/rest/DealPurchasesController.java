@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vzotov.accounting.domain.model.DealId;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.Deal;
 import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
-import ru.vzotov.accounting.interfaces.accounting.rest.dto.DealReference;
-import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
+import ru.vzotov.accounting.interfaces.purchases.PurchasesApi.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 
 import java.util.List;
@@ -27,12 +27,13 @@ public class DealPurchasesController {
     }
 
     @GetMapping
-    public List<PurchaseDTO> listDealPurchases(@PathVariable String dealId) {
+    public List<Purchase> listDealPurchases(@PathVariable String dealId) {
         return dealsFacade.listDealPurchases(dealId);
     }
 
     @PutMapping("{purchaseId}")
-    public void moveDealPurchase(@PathVariable String dealId, @PathVariable String purchaseId, @RequestBody DealReference target) {
-        dealsFacade.movePurchase(new PurchaseId(purchaseId), new DealId(dealId), new DealId(target.getDealId()));
+    public void moveDealPurchase(@PathVariable String dealId, @PathVariable String purchaseId,
+                                 @RequestBody Deal.Ref target) {
+        dealsFacade.movePurchase(new PurchaseId(purchaseId), new DealId(dealId), new DealId(target.dealId()));
     }
 }

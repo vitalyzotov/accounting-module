@@ -1,6 +1,6 @@
 package ru.vzotov.cashreceipt.application.impl;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +16,8 @@ import ru.vzotov.cashreceipt.application.nalogru2.ReceiptRepositoryNalogru2;
 import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
+import ru.vzotov.cashreceipt.domain.model.ReceiptSource;
+import ru.vzotov.cashreceipt.domain.model.ReceiptSourceId;
 import ru.vzotov.cashreceipt.domain.model.ReceiptState;
 import ru.vzotov.cashreceipt.domain.model.QRCodeCreatedEvent;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
@@ -28,7 +30,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationService {
@@ -37,25 +38,23 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
     private static final int MAX_LOAD_SIZE = 10;
 
     /**
-     * Максимальная частота попыток загрузки чека в часах.
-     * Чек не будет отправляться на загрузку чаще чем указанное значение
+     * Maximum frequency of attempts to load a receipt in hours.
+     * We will not attempt to download a receipt more often than the specified value.
      */
     private static final int LOADING_FREQUENCY_MAX = 12;
 
     /**
-     * Репозиторий загруженных чеков.
-     * Позволяет работать с чеками в БД.
+     * Repository (database) of downloaded receipts.
      */
     private final ReceiptRepository receiptRepository;
 
     /**
-     * Репозиторий зарегистрированных QR кодов.
-     * Позволяет работать с QR кодами в БД.
+     * Repository (database) of registered QR codes.
      */
     private final QRCodeRepository qrCodeRepository;
 
     /**
-     * Сервис парсинга данных чека.
+     * Receipt data parsing service.
      */
     private final ReceiptParsingService receiptParsingService;
 
@@ -108,7 +107,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
             return receipt.receiptId();
         }
 
-        QRCode qrCode = qrCodeRepository.findByQRCodeData(qrCodeData);
+        final QRCode qrCode = qrCodeRepository.findByQRCodeData(qrCodeData);
         if (qrCode == null) {
             throw new ReceiptNotFoundException("QR code is not yet registered");
         }
@@ -121,6 +120,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
                 if (receiptData == null) {
                     throw new ReceiptNotFoundException();
                 }
+                qrCode.addSource(new ReceiptSource(ReceiptSourceId.nextId(), receiptData));
 
                 receipt = receiptParsingService.parse(qrCode.owner(), receiptData);
                 if (receipt == null) {
@@ -157,7 +157,7 @@ public class ReceiptRegistrationServiceImpl implements ReceiptRegistrationServic
         final List<QRCode> allNewCodes = qrCodeRepository.findAllInState(ReceiptState.NEW).stream()
                 // Select receipts, that we never tried to load, or that we tried to load before threshold
                 .filter((code) -> (code.loadedAt() == null || code.loadedAt().isBefore(threshold)) && (code.loadingTryCount() < maxTryCount))
-                .collect(Collectors.toList());
+                .toList();
         log.info("Found {} new receipts", allNewCodes.size());
 
         if (allNewCodes.isEmpty()) {

@@ -2,7 +2,7 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa.util;
 
 import ru.vzotov.cashreceipt.domain.model.ReceiptOperationType;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 public class ReceiptOperationTypeAttributeConverter implements AttributeConverter<ReceiptOperationType, String> {
     @Override

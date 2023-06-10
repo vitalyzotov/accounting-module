@@ -1,13 +1,13 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -54,7 +54,7 @@ public class ReceiptRepositoryJpa extends JpaRepository implements ReceiptReposi
 
     @Override
     public void store(Receipt receipt) {
-        if (hasId(receipt, "id")) {
+        if (em.contains(receipt)) {
             em.detach(receipt);
             em.merge(receipt);
             em.flush();

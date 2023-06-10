@@ -1,21 +1,17 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.ReceiptsFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.PurchaseCategoryDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.QRCodeDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.ReceiptDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimePeriodDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.TimelineDTO;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.PurchaseCategoryAssembler;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.QRCodeDTOAssembler;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.QRCodeAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.ReceiptAssembler;
 import ru.vzotov.accounting.interfaces.common.guards.OwnedGuard;
 import ru.vzotov.accounting.interfaces.common.assembler.Assembler;
 import ru.vzotov.cashreceipt.application.ReceiptItemNotFoundException;
@@ -72,32 +68,32 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<ReceiptDTO> listAllReceipts(LocalDate fromDate, LocalDate toDate) {
+    public List<AccountingApi.Receipt> listAllReceipts(LocalDate fromDate, LocalDate toDate) {
         List<Receipt> receipts = receiptRepository.findByDate(SecurityUtils.getAuthorizedPersons(), fromDate, toDate);
-        return receipts.stream().map(receipt -> new ReceiptDTOAssembler().toDTO(receipt)).collect(Collectors.toList());
+        return receipts.stream().map(receipt -> new ReceiptAssembler().toDTO(receipt)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<QRCodeDTO> listAllCodes(LocalDate fromDate, LocalDate toDate) {
+    public List<AccountingApi.QRCode> listAllCodes(LocalDate fromDate, LocalDate toDate) {
         List<QRCode> codes = codeRepository.findByDate(SecurityUtils.getAuthorizedPersons(), fromDate, toDate);
-        return codes.stream().map(code -> new QRCodeDTOAssembler().toDTO(code)).collect(Collectors.toList());
+        return codes.stream().map(code -> new QRCodeAssembler().toDTO(code)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public QRCodeDTO getCode(String receiptId) {
+    public AccountingApi.QRCode getCode(String receiptId) {
         QRCode code = ownedGuard.accessing(codeRepository.find(new ReceiptId(receiptId)));
-        return new QRCodeDTOAssembler().toDTO(code);
+        return new QRCodeAssembler().toDTO(code);
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public TimelineDTO getTimeline() {
-        final TimelineDTO result = new TimelineDTO();
+    public AccountingApi.Timeline getTimeline() {
+        final AccountingApi.Timeline result = new AccountingApi.Timeline();
         final ZoneId zoneId = ZoneId.systemDefault().normalized();
         final LocalDate today = LocalDate.now();
         final Collection<PersonId> authorizedPersons = SecurityUtils.getAuthorizedPersons();
@@ -112,12 +108,12 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
                 log.debug("Count receipts from {} to {}", startOfMonth, endOfMonth);
 
                 final long count = receiptRepository.countByDate(authorizedPersons, startOfMonth, endOfMonth);
-                final TimePeriodDTO period = new TimePeriodDTO(
+                final AccountingApi.TimePeriod period = new AccountingApi.TimePeriod(
                         startOfMonth,
                         endOfMonth,
                         count
                 );
-                result.getPeriods().add(period);
+                result.periods().add(period);
 
                 startOfMonth = startOfMonth.plusMonths(1);
             } while (endOfMonth.isBefore(today));
@@ -129,28 +125,28 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Deprecated
-    public ReceiptDTO loadReceipt(String qrCodeData) {
+    public AccountingApi.Receipt loadReceipt(String qrCodeData) {
         Receipt receipt = receiptRepository.findByQRCodeData(new QRCodeData(qrCodeData));
-        return receipt == null ? null : new ReceiptDTOAssembler().toDTO(receipt);
+        return receipt == null ? null : new ReceiptAssembler().toDTO(receipt);
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public ReceiptDTO getReceipt(String qrCodeData) {
+    public AccountingApi.Receipt getReceipt(String qrCodeData) {
         Receipt receipt = ownedGuard.accessing(receiptRepository.findByQRCodeData(new QRCodeData(qrCodeData)));
-        return new ReceiptDTOAssembler().toDTO(receipt);
+        return new ReceiptAssembler().toDTO(receipt);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public ReceiptDTO loadReceiptDetails(QRCodeData qrCodeData) {
+    public AccountingApi.Receipt loadReceiptDetails(QRCodeData qrCodeData) {
         Validate.notNull(qrCodeData);
         try {
             ownedGuard.accessing(codeRepository.findByQRCodeData(qrCodeData));
             ReceiptId receiptId = receiptRegistrationService.loadDetails(qrCodeData);
-            return new ReceiptDTOAssembler().toDTO(ownedGuard.accessing(receiptRepository.find(receiptId)));
+            return new ReceiptAssembler().toDTO(ownedGuard.accessing(receiptRepository.find(receiptId)));
         } catch (ReceiptNotFoundException | IOException e) {
             log.error("Unable to load receipt details", e);
         }
@@ -181,24 +177,24 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<PurchaseCategoryDTO> getAllCategories() {
-        Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
+    public List<AccountingApi.PurchaseCategory> getAllCategories() {
+        Assembler<AccountingApi.PurchaseCategory, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
         return assembler.toDTOList(categoryRepository.findAll(SecurityUtils.getCurrentPerson()));
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public PurchaseCategoryDTO getCategory(PurchaseCategoryId id) {
-        Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
+    public AccountingApi.PurchaseCategory getCategory(PurchaseCategoryId id) {
+        Assembler<AccountingApi.PurchaseCategory, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
         return assembler.toDTO(ownedGuard.accessing(categoryRepository.findById(id)));
     }
 
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public PurchaseCategoryDTO createNewCategory(String name) {
-        Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
+    public AccountingApi.PurchaseCategory createNewCategory(String name) {
+        Assembler<AccountingApi.PurchaseCategory, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
         PurchaseCategory category = new PurchaseCategory(PurchaseCategoryId.nextId(), SecurityUtils.getCurrentPerson(), name);
         categoryRepository.store(category);
         return assembler.toDTO(category);
@@ -207,8 +203,8 @@ public class ReceiptsFacadeImpl implements ReceiptsFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public PurchaseCategoryDTO renameCategory(PurchaseCategoryId id, String newName) {
-        final Assembler<PurchaseCategoryDTO, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
+    public AccountingApi.PurchaseCategory renameCategory(PurchaseCategoryId id, String newName) {
+        final Assembler<AccountingApi.PurchaseCategory, PurchaseCategory> assembler = new PurchaseCategoryAssembler();
         final PurchaseCategory category = ownedGuard.accessing(categoryRepository.findById(id));
         category.rename(newName);
         categoryRepository.store(category);

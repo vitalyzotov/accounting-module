@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategory;
@@ -7,8 +9,6 @@ import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryId;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.util.List;
 
 public class PurchaseCategoryRepositoryJpa extends JpaRepository implements PurchaseCategoryRepository {
@@ -51,7 +51,7 @@ public class PurchaseCategoryRepositoryJpa extends JpaRepository implements Purc
 
     @Override
     public void store(PurchaseCategory category) {
-        if (hasId(category, "id")) {
+        if (em.contains(category)) {
             em.merge(category);
             em.flush();
         } else {

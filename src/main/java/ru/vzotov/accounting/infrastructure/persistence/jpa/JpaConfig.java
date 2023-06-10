@@ -1,9 +1,18 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import ru.vzotov.accounting.domain.model.AccountRepository;
 import ru.vzotov.accounting.domain.model.BankRepository;
-import ru.vzotov.accounting.domain.model.BudgetPlanRepository;
 import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
+import ru.vzotov.accounting.domain.model.BudgetPlanRepository;
 import ru.vzotov.accounting.domain.model.BudgetRepository;
 import ru.vzotov.accounting.domain.model.CardOperationRepository;
 import ru.vzotov.accounting.domain.model.CardRepository;
@@ -16,21 +25,13 @@ import ru.vzotov.accounting.domain.model.OperationRepository;
 import ru.vzotov.accounting.domain.model.RemainRepository;
 import ru.vzotov.accounting.domain.model.TransactionRepository;
 import ru.vzotov.accounting.domain.model.WorkCalendarRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Objects;
 
 @Configuration("jpa-accounting")
 public class JpaConfig {
@@ -177,6 +178,7 @@ public class JpaConfig {
     }
 
     @Bean("accounting-emf")
+    @Qualifier("accounting-emf")
     public LocalContainerEntityManagerFactoryBean accountingEntityManagerFactory(EntityManagerFactoryBuilder builder) {
         return builder
                 .dataSource(dataSource)
@@ -186,9 +188,7 @@ public class JpaConfig {
 
     @Bean("accounting-tx")
     public JpaTransactionManager transactionManager(@Qualifier("accounting-emf") final EntityManagerFactory emf) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(emf);
-        return transactionManager;
+        return new JpaTransactionManager(Objects.requireNonNull(emf));
     }
 
 }

@@ -1,12 +1,12 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
 import ru.vzotov.banking.domain.model.BudgetCategory;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.util.List;
 
 public class BudgetCategoryRepositoryJpa extends JpaRepository implements BudgetCategoryRepository {

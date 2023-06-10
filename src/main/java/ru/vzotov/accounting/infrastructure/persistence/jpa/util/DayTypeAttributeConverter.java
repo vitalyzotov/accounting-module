@@ -2,7 +2,7 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa.util;
 
 import ru.vzotov.calendar.domain.model.DayType;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 public class DayTypeAttributeConverter implements AttributeConverter<DayType, String> {
     @Override

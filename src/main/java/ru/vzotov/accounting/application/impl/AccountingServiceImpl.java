@@ -1,9 +1,8 @@
 package ru.vzotov.accounting.application.impl;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +32,6 @@ import ru.vzotov.domain.model.Money;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -41,20 +39,27 @@ public class AccountingServiceImpl implements AccountingService {
 
     private static final Logger log = LoggerFactory.getLogger(AccountingServiceImpl.class);
 
-    @Autowired
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-    @Autowired
-    private OperationRepository operationRepository;
+    private final OperationRepository operationRepository;
 
-    @Autowired
-    private CardOperationRepository cardOperationRepository;
+    private final CardOperationRepository cardOperationRepository;
 
-    @Autowired
-    private HoldOperationRepository holdOperationRepository;
+    private final HoldOperationRepository holdOperationRepository;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
+
+    public AccountingServiceImpl(AccountRepository accountRepository,
+                                 OperationRepository operationRepository,
+                                 CardOperationRepository cardOperationRepository,
+                                 HoldOperationRepository holdOperationRepository,
+                                 ApplicationEventPublisher eventPublisher) {
+        this.accountRepository = accountRepository;
+        this.operationRepository = operationRepository;
+        this.cardOperationRepository = cardOperationRepository;
+        this.holdOperationRepository = holdOperationRepository;
+        this.eventPublisher = eventPublisher;
+    }
 
     @Override
     @Transactional("accounting-tx")
@@ -110,7 +115,7 @@ public class AccountingServiceImpl implements AccountingService {
                                              MccCode mcc) {
         Validate.notNull(operationId);
         Validate.notNull(cardNumber);
-        // Validate.notNull(terminal); // may be null
+        // Validate.notNull(terminal); // allowed to be null
         Validate.notNull(authDate);
         Validate.notNull(purchaseDate);
         Validate.notNull(amount);
@@ -168,7 +173,7 @@ public class AccountingServiceImpl implements AccountingService {
                         cardOperation == null ? null : cardOperation.purchaseDate()
                 )
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
 
         LocalDate from = dates.stream().min(LocalDate::compareTo).orElse(operation.date());
         LocalDate to = dates.stream().max(LocalDate::compareTo).orElse(operation.date());

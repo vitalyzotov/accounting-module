@@ -2,8 +2,7 @@ package ru.vzotov.accounting.test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -20,7 +19,7 @@ public abstract class AbstractControllerTest {
     @Autowired
     protected ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setup() {
         // PATCH support
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());

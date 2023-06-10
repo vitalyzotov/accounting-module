@@ -35,8 +35,8 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
     @Override
     public Receipt parse(PersonId owner, InputStream in) throws IOException {
         ObjectMapper mapper = createMapper();
-        NalogRuRoot root = mapper.readValue(in, NalogRuRoot.class);
-        ru.vzotov.cashreceipt.application.nalogru.Receipt receipt = root.document.receipt;
+        NalogRuApi.NalogRuRoot root = mapper.readValue(in, NalogRuApi.NalogRuRoot.class);
+        NalogRuApi.Receipt receipt = root.document().receipt();
 
         return parse(owner, receipt);
     }
@@ -44,49 +44,49 @@ public class ReceiptParsingServiceImpl implements ReceiptParsingService {
     @Override
     public Receipt parse(PersonId owner, String data) throws IOException {
         ObjectMapper mapper = createMapper();
-        NalogRuRoot root = mapper.readValue(data, NalogRuRoot.class);
-        ru.vzotov.cashreceipt.application.nalogru.Receipt receipt = root.document.receipt;
+        NalogRuApi.NalogRuRoot root = mapper.readValue(data, NalogRuApi.NalogRuRoot.class);
+        NalogRuApi.Receipt receipt = root.document().receipt();
 
         return parse(owner, receipt);
     }
 
-    private Receipt parse(PersonId owner, ru.vzotov.cashreceipt.application.nalogru.Receipt receipt) {
+    private Receipt parse(PersonId owner, NalogRuApi.Receipt receipt) {
         final ZoneId moscowZone = ZoneId.systemDefault();
 
-        Function<List<Item>, List<ru.vzotov.cashreceipt.domain.model.Item>> itemsMapper =
+        Function<List<NalogRuApi.Item>, List<ru.vzotov.cashreceipt.domain.model.Item>> itemsMapper =
                 (items) -> IntStream.range(0, items.size()).mapToObj((index) -> {
-                    Item i = items.get(index);
-                    return new ru.vzotov.cashreceipt.domain.model.Item(i.name, Money.kopecks(i.price), i.quantity, Money.kopecks(i.sum), index);
+                    NalogRuApi.Item i = items.get(index);
+                    return new ru.vzotov.cashreceipt.domain.model.Item(i.name(), Money.kopecks(i.price()), i.quantity(), Money.kopecks(i.sum()), index);
                 }).collect(Collectors.toList());
 
         final Products products = new Products(
-                Optional.ofNullable(receipt.items).map(itemsMapper).orElse(Collections.emptyList()),
-                Optional.ofNullable(receipt.stornoItems).map(itemsMapper).orElse(Collections.emptyList()),
-                Money.kopecks(receipt.totalSum)
+                Optional.ofNullable(receipt.items()).map(itemsMapper).orElse(Collections.emptyList()),
+                Optional.ofNullable(receipt.stornoItems()).map(itemsMapper).orElse(Collections.emptyList()),
+                Money.kopecks(receipt.totalSum())
         );
-        final PaymentInfo paymentInfo = new PaymentInfo(Money.kopecks(receipt.cashTotalSum), Money.kopecks(receipt.ecashTotalSum));
+        final PaymentInfo paymentInfo = new PaymentInfo(Money.kopecks(receipt.cashTotalSum()), Money.kopecks(receipt.ecashTotalSum()));
         final FiscalInfo fiscalInfo = new FiscalInfo(
                 null,
-                receipt.kktRegId.trim(),
-                new FiscalSign(receipt.fiscalSign),
-                receipt.fiscalDocumentNumber.toString(),
-                receipt.fiscalDriveNumber
+                receipt.kktRegId().trim(),
+                new FiscalSign(receipt.fiscalSign()),
+                receipt.fiscalDocumentNumber().toString(),
+                receipt.fiscalDriveNumber()
         );
 
         final RetailPlace place = new RetailPlace(
-                receipt.user == null ? null : receipt.user.trim(),
-                new Inn(receipt.userInn),
-                receipt.retailPlaceAddress == null ? null : new Address(receipt.retailPlaceAddress),
-                receipt.taxationType
+                receipt.user() == null ? null : receipt.user().trim(),
+                new Inn(receipt.userInn()),
+                receipt.retailPlaceAddress() == null ? null : new Address(receipt.retailPlaceAddress()),
+                receipt.taxationType()
         );
         return new Receipt(
                 owner,
-                receipt.dateTime.atZone(moscowZone).toLocalDateTime(),
-                ReceiptOperationType.of(receipt.operationType),
-                receipt.requestNumber,
+                receipt.dateTime().atZone(moscowZone).toLocalDateTime(),
+                ReceiptOperationType.of(receipt.operationType()),
+                receipt.requestNumber(),
                 fiscalInfo,
                 Marketing.emptyMarketing(),
-                new ShiftInfo(receipt.shiftNumber, receipt.operator),
+                new ShiftInfo(receipt.shiftNumber(), receipt.operator()),
                 place,
                 products,
                 paymentInfo

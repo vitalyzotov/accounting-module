@@ -1,12 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
-import ru.vzotov.accounting.application.AccountNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.AccountOperationDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.OperationNotFoundException;
-import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.Validate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.vzotov.accounting.application.AccountNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi.AccountOperation;
+import ru.vzotov.accounting.interfaces.accounting.facade.AccountingFacade;
+import ru.vzotov.accounting.interfaces.accounting.facade.CategoryNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.OperationNotFoundException;
 import ru.vzotov.banking.domain.model.OperationType;
 
 import java.time.LocalDate;
@@ -29,35 +28,41 @@ import java.util.Objects;
 @CrossOrigin
 public class OperationsController {
 
-    @Autowired
-    private AccountingFacade accountingFacade;
+    private final AccountingFacade accountingFacade;
+
+    public OperationsController(AccountingFacade accountingFacade) {
+        this.accountingFacade = accountingFacade;
+    }
 
     @GetMapping
-    public List<AccountOperationDTO> listOperations(@RequestParam(required = false) String type,
-                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    public List<AccountOperation> listOperations(
+            @RequestParam(required = false) String type,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         return accountingFacade.listOperations(
                 type == null ? null : OperationType.of(type.charAt(0)),
                 from, to);
     }
 
     @GetMapping("{operationId}")
-    public AccountOperationDTO getOperation(@PathVariable String operationId) throws OperationNotFoundException, AccountNotFoundException {
+    public AccountOperation getOperation(@PathVariable String operationId)
+            throws OperationNotFoundException, AccountNotFoundException {
         return accountingFacade.getOperation(operationId);
     }
 
     @DeleteMapping("{operationId}")
-    public AccountOperationDTO deleteOperation(@PathVariable String operationId) throws OperationNotFoundException {
+    public AccountOperation deleteOperation(@PathVariable String operationId)
+            throws OperationNotFoundException {
         return accountingFacade.deleteOperation(operationId);
     }
 
     @PatchMapping("{operationId}")
-    public AccountOperationDTO patchOperation(@PathVariable String operationId,
-                                              @RequestBody HashMap<String, Object> patch)
+    public AccountOperation patchOperation(@PathVariable String operationId,
+                                           @RequestBody HashMap<String, Object> patch)
             throws OperationNotFoundException, CategoryNotFoundException {
         Validate.notEmpty(operationId);
 
-        AccountOperationDTO result = null;
+        AccountOperation result = null;
         if (patch.containsKey("categoryId")) {
             Long categoryId = (Long) patch.get("categoryId");
             if (categoryId == null) throw new IllegalArgumentException("categoryId is null");

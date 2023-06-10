@@ -13,19 +13,18 @@ import ru.vzotov.accounting.domain.model.DealRepository;
 import ru.vzotov.accounting.domain.model.OperationRepository;
 import ru.vzotov.accounting.domain.model.TransactionRepository;
 import ru.vzotov.accounting.infrastructure.security.SecurityUtils;
+import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.DealsFacade;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.CategoryNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTO;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealDTOExpansion;
-import ru.vzotov.accounting.interfaces.accounting.facade.dto.DealNotFoundException;
-import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.DealDTOAssembler;
+import ru.vzotov.accounting.interfaces.accounting.facade.CategoryNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.DealNotFoundException;
+import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.DealAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.CardOperationEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.OperationEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.PurchaseEnricher;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.enrichers.ReceiptEnricher;
 import ru.vzotov.accounting.interfaces.common.guards.OwnedGuard;
-import ru.vzotov.accounting.interfaces.purchases.facade.dto.PurchaseDTO;
-import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseDTOAssembler;
+import ru.vzotov.accounting.interfaces.purchases.PurchasesApi;
+import ru.vzotov.accounting.interfaces.purchases.facade.impl.assembler.PurchaseAssembler;
 import ru.vzotov.banking.domain.model.BudgetCategory;
 import ru.vzotov.banking.domain.model.BudgetCategoryId;
 import ru.vzotov.banking.domain.model.CardOperation;
@@ -96,8 +95,8 @@ public class DealsFacadeImpl implements DealsFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public DealDTO createDeal(LocalDate date, long amount, String currency, String description, String comment,
-                              Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases
+    public AccountingApi.Deal createDeal(LocalDate date, long amount, String currency, String description, String comment,
+                                         Long categoryId, Collection<String> receipts, Collection<String> operations, Collection<String> purchases
     ) throws CategoryNotFoundException {
         Validate.notNull(receipts);
         Validate.notNull(operations);
@@ -124,15 +123,15 @@ public class DealsFacadeImpl implements DealsFacade {
         );
 
         dealRepository.store(deal);
-        return DealDTOAssembler.toDTO(deal);
+        return DealAssembler.toDTO(deal);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public DealDTO modifyDeal(String dealId, LocalDate date, long amount, String currency,
-                              String description, String comment, Long categoryId,
-                              Collection<String> receipts, Collection<String> operations, Collection<String> purchases
+    public AccountingApi.Deal modifyDeal(String dealId, LocalDate date, long amount, String currency,
+                                         String description, String comment, Long categoryId,
+                                         Collection<String> receipts, Collection<String> operations, Collection<String> purchases
     ) throws DealNotFoundException, CategoryNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
@@ -153,31 +152,31 @@ public class DealsFacadeImpl implements DealsFacade {
         deal.setPurchases(purchases.stream().map(PurchaseId::new).collect(Collectors.toList()));
 
         dealRepository.store(deal);
-        return DealDTOAssembler.toDTO(deal);
+        return DealAssembler.toDTO(deal);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public DealDTO deleteDeal(String dealId, boolean deleteReceipts) throws DealNotFoundException {
+    public AccountingApi.Deal deleteDeal(String dealId, boolean deleteReceipts) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
         ownedGuard.accessing(deal);
 
-        if(deleteReceipts) {
-            for(ReceiptId receiptId: deal.receipts()) {
+        if (deleteReceipts) {
+            for (ReceiptId receiptId : deal.receipts()) {
                 receiptRepository.delete(receiptId);
                 qrCodeRepository.delete(receiptId);
             }
         }
         dealRepository.delete(deal);
-        return DealDTOAssembler.toDTO(deal);
+        return DealAssembler.toDTO(deal);
     }
 
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public List<DealDTO> splitDeal(String dealId) throws DealNotFoundException {
+    public List<AccountingApi.Deal> splitDeal(String dealId) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
         ownedGuard.accessing(deal);
@@ -236,10 +235,10 @@ public class DealsFacadeImpl implements DealsFacade {
         // move purchases to the most appropriate deal
         final Deal purchaseTarget = receiptsResult.stream()
                 .filter(d -> d.amount().rawAmount() < 0)
-                .min(comparing(Deal::amount))
+                .min(comparing(ru.vzotov.accounting.domain.model.Deal::amount))
                 .orElseGet(() -> operationsResult.stream()
                         .filter(d -> d.amount().rawAmount() < 0)
-                        .min(comparing(Deal::amount))
+                        .min(comparing(ru.vzotov.accounting.domain.model.Deal::amount))
                         .orElseGet(() -> Stream.concat(operationsResult.stream(), receiptsResult.stream())
                                 .findAny()
                                 .orElseThrow(IllegalArgumentException::new)
@@ -253,19 +252,19 @@ public class DealsFacadeImpl implements DealsFacade {
 
         return Stream.concat(receiptsResult.stream(), operationsResult.stream())
                 .peek(dealRepository::store)
-                .map(DealDTOAssembler::toDTO)
+                .map(DealAssembler::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<DealDTO> listDeals(String query, LocalDate from, LocalDate to, Set<DealDTOExpansion> expand) {
+    public List<AccountingApi.Deal> listDeals(String query, LocalDate from, LocalDate to, Set<AccountingApi.Deal.Expansion> expand) {
         final Collection<PersonId> owners = SecurityUtils.getAuthorizedPersons();
 
-        final Supplier<Stream<DealDTO>> dealsSupplier = StringUtils.isBlank(query) ?
-                () -> dealRepository.findByDate(owners, from, to).stream().map(DealDTOAssembler::toDTO):
-                () -> dealRepository.findByDate(owners, query, from, to).stream().map(DealDTOAssembler::toDTO);
+        final Supplier<Stream<Deal>> dealsSupplier = StringUtils.isBlank(query) ?
+                () -> dealRepository.findByDate(owners, from, to).stream() :
+                () -> dealRepository.findByDate(owners, query, from, to).stream();
 
         return expandDeals(owners, expand, from, to, dealsSupplier).collect(Collectors.toList());
     }
@@ -273,11 +272,11 @@ public class DealsFacadeImpl implements DealsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public DealDTO getDeal(String dealId, Set<DealDTOExpansion> expand) throws DealNotFoundException {
+    public AccountingApi.Deal getDeal(String dealId, Set<AccountingApi.Deal.Expansion> expand) throws DealNotFoundException {
         final Deal deal = dealRepository.find(new DealId(dealId));
         if (deal == null) throw new DealNotFoundException();
         ownedGuard.accessing(deal);
-        return expandDeals(Collections.emptySet(), expand, null, null, () -> Stream.of(DealDTOAssembler.toDTO(deal)))
+        return expandDeals(Collections.emptySet(), expand, null, null, () -> Stream.of(deal))
                 .findFirst()
                 .orElseThrow(DealNotFoundException::new);
     }
@@ -306,7 +305,7 @@ public class DealsFacadeImpl implements DealsFacade {
     @Override
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
-    public DealDTO mergeDeals(List<String> dealIds) {
+    public AccountingApi.Deal mergeDeals(List<String> dealIds) {
         Validate.notNull(dealIds);
         Validate.isTrue(dealIds.size() >= 2);
 
@@ -315,27 +314,27 @@ public class DealsFacadeImpl implements DealsFacade {
                 .map(this::findDealSecurely)
                 .collect(Collectors.toCollection(LinkedList::new));
 
-        final Deal earliestDeal = deals.stream().min(comparing(Deal::date))
+        final Deal earliestDeal = deals.stream().min(comparing(ru.vzotov.accounting.domain.model.Deal::date))
                 .orElseThrow(NullPointerException::new);
 
         final Deal target = deals.removeFirst();
 
         final Deal firstOperationDeal = Stream.concat(Stream.of(target), deals.stream())
                 .filter(deal -> !deal.operations().isEmpty())
-                .min(comparing(Deal::date))
+                .min(comparing(ru.vzotov.accounting.domain.model.Deal::date))
                 .orElseThrow(NullPointerException::new);
 
         deals.forEach(target::join);
         deals.forEach(dealRepository::store);
 
         Stream.concat(Stream.of(target), deals.stream())
-                .map(Deal::comment)
+                .map(ru.vzotov.accounting.domain.model.Deal::comment)
                 .filter(StringUtils::isNotBlank)
                 .findFirst()
                 .ifPresent(target::setComment);
 
         Stream.concat(Stream.of(target), deals.stream())
-                .map(Deal::category)
+                .map(ru.vzotov.accounting.domain.model.Deal::category)
                 .filter(Objects::nonNull)
                 .findFirst()
                 .ifPresent(target::assignCategory);
@@ -345,15 +344,11 @@ public class DealsFacadeImpl implements DealsFacade {
 
         Money amount = target.operations().stream()
                 .map(operationRepository::find)
-                .map(op -> {
-                    switch (op.type()) {
-                        case DEPOSIT:
-                            return op.amount();
-                        case WITHDRAW:
-                            return op.amount().negate();
-                        default:
-                            throw new IllegalArgumentException();
-                    }
+                .map(op -> switch (op.type()) {
+                    case DEPOSIT -> op.amount();
+                    case WITHDRAW -> op.amount().negate();
+                    //noinspection UnnecessaryDefault
+                    default -> throw new IllegalArgumentException();
                 })
                 .reduce(Money::add).orElseThrow(IllegalArgumentException::new);
         target.setAmount(amount);
@@ -361,7 +356,7 @@ public class DealsFacadeImpl implements DealsFacade {
         deals.forEach(dealRepository::delete);
         dealRepository.store(target);
 
-        return DealDTOAssembler.toDTO(target);
+        return DealAssembler.toDTO(target);
     }
 
     private Deal findDealSecurely(DealId dealId) {
@@ -371,9 +366,9 @@ public class DealsFacadeImpl implements DealsFacade {
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
     @Secured({"ROLE_USER"})
-    public List<PurchaseDTO> listDealPurchases(String dealId) {
+    public List<PurchasesApi.Purchase> listDealPurchases(String dealId) {
         final Deal deal = findDealSecurely(new DealId(dealId));
-        final PurchaseDTOAssembler assembler = new PurchaseDTOAssembler();
+        final PurchaseAssembler assembler = new PurchaseAssembler();
         return deal.purchases().stream()
                 .map(purchaseRepository::find)
                 .map(assembler::toDTO)
@@ -397,12 +392,13 @@ public class DealsFacadeImpl implements DealsFacade {
         dealRepository.store(target);
     }
 
-    private Stream<DealDTO> expandDeals(Collection<PersonId> owners, Set<DealDTOExpansion> expand, LocalDate cacheFrom, LocalDate cacheTo, Supplier<Stream<DealDTO>> request) {
+    private Stream<AccountingApi.Deal> expandDeals(Collection<PersonId> owners, Set<AccountingApi.Deal.Expansion> expand,
+                                                   LocalDate cacheFrom, LocalDate cacheTo, Supplier<Stream<Deal>> request) {
         Validate.notNull(expand);
-        final boolean expandReceipts = expand.contains(DealDTOExpansion.RECEIPTS);
-        final boolean expandOperations = expand.contains(DealDTOExpansion.OPERATIONS);
-        final boolean expandCardOperations = expand.contains(DealDTOExpansion.CARD_OPERATIONS);
-        final boolean expandPurchases = expand.contains(DealDTOExpansion.PURCHASES);
+        final boolean expandReceipts = expand.contains(AccountingApi.Deal.Expansion.RECEIPTS);
+        final boolean expandOperations = expand.contains(AccountingApi.Deal.Expansion.OPERATIONS);
+        final boolean expandCardOperations = expand.contains(AccountingApi.Deal.Expansion.CARD_OPERATIONS);
+        final boolean expandPurchases = expand.contains(AccountingApi.Deal.Expansion.PURCHASES);
         final boolean cache = cacheFrom != null && cacheTo != null;
 
         final List<Operation> operations = cache && expandOperations ?
@@ -419,15 +415,14 @@ public class DealsFacadeImpl implements DealsFacade {
         final ReceiptEnricher receiptEnricher = new ReceiptEnricher(qrCodeRepository, receipts);
         final PurchaseEnricher purchaseEnricher = new PurchaseEnricher(purchaseRepository, purchases);
 
-        Stream<DealDTO> stream = request.get();
-        if (expandOperations)
-            stream = stream.peek(dto -> dto.setOperations(operationEnricher.list(dto.getOperations())));
-        if (expandCardOperations)
-            stream = stream.peek(dto -> dto.setCardOperations(cardOperationEnricher.list(dto.getCardOperations())));
-        if (expandReceipts)
-            stream = stream.peek(dto -> dto.setReceipts(receiptEnricher.list(dto.getReceipts())));
-        if (expandPurchases)
-            stream = stream.peek(dto -> dto.setPurchases(purchaseEnricher.list(dto.getPurchases())));
-        return stream;
+        Stream<Deal> stream = request.get();
+
+        return stream.map(deal -> DealAssembler.toDTO(
+                deal,
+                expandReceipts ? (d) -> receiptEnricher.list(DealAssembler.receipts(d)) : null,
+                expandOperations ? (d) -> operationEnricher.list(DealAssembler.operations(d)) : null,
+                expandCardOperations ? (d) -> cardOperationEnricher.list(DealAssembler.cardOperations(d)) : null,
+                expandPurchases ? (d) -> purchaseEnricher.list(DealAssembler.purchases(d)) : null
+        ));
     }
 }

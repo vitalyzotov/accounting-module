@@ -1,17 +1,14 @@
 package ru.vzotov.cashreceipt.billchecker;
 
-import ru.vzotov.cashreceipt.domain.model.Receipt;
-import ru.vzotov.cashreceipt.ReceiptFactory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vzotov.cashreceipt.ReceiptFactory;
+import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.person.domain.model.PersonId;
 
 import java.io.IOException;
 
-@RunWith(JUnit4.class)
 public class ReceiptParsingServiceTest {
     private static final Logger log = LoggerFactory.getLogger(ReceiptParsingServiceTest.class);
 

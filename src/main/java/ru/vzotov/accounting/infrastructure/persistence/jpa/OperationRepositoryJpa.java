@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import ru.vzotov.accounting.domain.model.OperationRepository;
 import ru.vzotov.banking.domain.model.AccountNumber;
 import ru.vzotov.banking.domain.model.Operation;
@@ -8,8 +10,6 @@ import ru.vzotov.banking.domain.model.OperationType;
 import ru.vzotov.domain.model.Money;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;

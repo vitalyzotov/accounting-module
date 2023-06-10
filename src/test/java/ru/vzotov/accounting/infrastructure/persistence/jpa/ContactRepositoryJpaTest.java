@@ -1,15 +1,13 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
 import org.assertj.core.api.Condition;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.vzotov.accounting.config.DatasourceConfig;
 import ru.vzotov.accounting.domain.model.ContactRepository;
 import ru.vzotov.person.domain.model.Contact;
@@ -17,14 +15,13 @@ import ru.vzotov.person.domain.model.ContactData;
 import ru.vzotov.person.domain.model.ContactId;
 import ru.vzotov.person.domain.model.PersonId;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({DatasourceConfig.class, JpaConfig.class})
@@ -54,7 +51,7 @@ public class ContactRepositoryJpaTest {
         assertThat(contact).isNotNull();
         assertThat(contact.data())
                 .hasSize(2)
-                .are(new Condition<ContactData>() {
+                .are(new Condition<>() {
                     @Override
                     public boolean matches(ContactData value) {
                         return value.mimeType() != null || value.value() != null;
@@ -67,7 +64,7 @@ public class ContactRepositoryJpaTest {
     public void testFindByOwner() {
         final PersonId owner = new PersonId("08d834ae-5bc3-439c-81ee-ad8169e8588b");
         final List<Contact> contacts = contactRepository.find(owner);
-        assertThat(contacts).hasSize(1).are(new Condition<Contact>() {
+        assertThat(contacts).hasSize(1).are(new Condition<>() {
             @Override
             public boolean matches(Contact value) {
                 return value.owner().equals(owner);
