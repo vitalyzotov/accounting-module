@@ -20,9 +20,10 @@ public class RandomSelectionStrategy implements ReceiptSelectionStrategy {
     /**
      * Выбираем из списка элементы в случайном порядке, используя нормальное распределение,
      * чтобы повысить вероятность выбора чеков с минимальным счетчиком загрузок
-     * @param from список всех элементов
+     *
+     * @param from  список всех элементов
      * @param count сколько элементов нужно выбрать
-     * @param <T> тип
+     * @param <T>   тип
      * @return набор выбранных элементов
      */
     private <T extends QRCode> Set<T> getRandomElements(final Collection<T> from, final int count) {
@@ -35,7 +36,7 @@ public class RandomSelectionStrategy implements ReceiptSelectionStrategy {
             Random random = new Random();
             for (int i = 0; i < count; i++) {
                 double v = random.nextGaussian();
-                int index = Math.min(0, Math.max((int) Math.abs(v) * source.size(), source.size()));
+                int index = Math.max(0, Math.min((int) (Math.abs(v) * source.size()), source.size()));
                 result.add(source.remove(index));
             }
         }

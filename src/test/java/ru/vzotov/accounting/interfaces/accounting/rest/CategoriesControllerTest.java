@@ -11,6 +11,7 @@ import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,12 +26,12 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         ResponseEntity<List<AccountingApi.BudgetCategory>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<List<AccountingApi.BudgetCategory>>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
         assertThat(exchange.getBody())
                 .isNotEmpty()
-                .usingElementComparatorOnFields("id", "name")
+                .usingRecursiveFieldByFieldElementComparatorOnFields("id", "name")
                 .contains(new AccountingApi.BudgetCategory(781381038049753674L, PERSON_ID, "Прочие расходы"))
         ;
     }
@@ -40,7 +41,7 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         ResponseEntity<AccountingApi.BudgetCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories/{categoryId}",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<AccountingApi.BudgetCategory>() {
+                new ParameterizedTypeReference<>() {
                 }, 781381038049753674L
         );
         assertThat(exchange.getBody())
@@ -54,14 +55,14 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         ResponseEntity<AccountingApi.BudgetCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories",
                 HttpMethod.POST, new HttpEntity<>(new AccountingApi.BudgetCategory.Create(categoryName, null, null), null),
-                new ParameterizedTypeReference<AccountingApi.BudgetCategory>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
         assertThat(exchange.getBody())
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(new AccountingApi.BudgetCategory(0L, PERSON_ID, categoryName));
-        assertThat(exchange.getBody().id()).isPositive();
+        assertThat(Objects.requireNonNull(exchange.getBody()).id()).isPositive();
     }
 
     @Test
@@ -70,7 +71,7 @@ public class CategoriesControllerTest extends AbstractControllerTest {
         ResponseEntity<AccountingApi.BudgetCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/categories/{categoryId}",
                 HttpMethod.PUT, new HttpEntity<>(new AccountingApi.BudgetCategory.Modify(categoryName, "#00FF0000", "icon-2"), null),
-                new ParameterizedTypeReference<AccountingApi.BudgetCategory>() {
+                new ParameterizedTypeReference<>() {
                 }, 1000L
         );
         assertThat(exchange.getBody())

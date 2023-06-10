@@ -23,7 +23,7 @@ public class CardsControllerTest extends AbstractControllerTest {
         ResponseEntity<List<AccountingApi.Card>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/cards",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<List<AccountingApi.Card>>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
         assertThat(exchange.getBody()).isNotEmpty();

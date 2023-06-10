@@ -44,16 +44,14 @@ public class AccountingServiceImplTest {
         account = accountRepository.find(accountNumber);
         assertThat(account).isNull();
 
-        assertThatThrownBy(() -> {
-            accountingService.registerOperation(
-                    accountNumber,
-                    LocalDate.of(2018, Month.JANUARY, 23),
-                    new TransactionReference("REF001"),
-                    OperationType.WITHDRAW,
-                    Money.kopecks(10),
-                    "Тестовая операция"
-            );
-        }).isInstanceOf(AccountNotFoundException.class);
+        assertThatThrownBy(() -> accountingService.registerOperation(
+                accountNumber,
+                LocalDate.of(2018, Month.JANUARY, 23),
+                new TransactionReference("REF001"),
+                OperationType.WITHDRAW,
+                Money.kopecks(10),
+                "Тестовая операция"
+        )).isInstanceOf(AccountNotFoundException.class);
     }
 
     @Test

@@ -24,6 +24,8 @@ public class ReceiptRepositoryNalogru {
     private static final Logger log = LoggerFactory.getLogger(ReceiptRepositoryNalogru.class);
     private static final String MOSCOW_ZONE_ID = "Europe/Moscow";
     private static final ZoneId MOSCOW_ZONE = ZoneId.of(MOSCOW_ZONE_ID);
+    private static final String HEADER_DEVICE_OS = "device-os";
+    private static final String HEADER_DEVICE_ID = "device-id";
 
     @Value("${nalogru.address}")
     private String address;
@@ -37,8 +39,8 @@ public class ReceiptRepositoryNalogru {
         this.restTemplate = restTemplateBuilder
                 .basicAuthentication(username, password)
                 .additionalInterceptors((request, body, execution) -> {
-                    request.getHeaders().add("device-os", "");
-                    request.getHeaders().add("device-id", "");
+                    request.getHeaders().add(HEADER_DEVICE_OS, "");
+                    request.getHeaders().add(HEADER_DEVICE_ID, "");
                     return execution.execute(request, body);
                 })
                 .build();

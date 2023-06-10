@@ -347,6 +347,7 @@ public class DealsFacadeImpl implements DealsFacade {
                 .map(op -> switch (op.type()) {
                     case DEPOSIT -> op.amount();
                     case WITHDRAW -> op.amount().negate();
+                    //noinspection UnnecessaryDefault
                     default -> throw new IllegalArgumentException();
                 })
                 .reduce(Money::add).orElseThrow(IllegalArgumentException::new);

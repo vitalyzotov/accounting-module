@@ -1,7 +1,6 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
 import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -40,11 +39,15 @@ import java.util.stream.Collectors;
 @Service
 public class BudgetFacadeImpl implements BudgetFacade {
 
-    @Autowired
-    private BudgetRepository budgetRepository;
+    private final BudgetRepository budgetRepository;
 
-    @Autowired
-    private BudgetPlanRepository budgetPlanRepository;
+    private final BudgetPlanRepository budgetPlanRepository;
+
+    public BudgetFacadeImpl(BudgetRepository budgetRepository,
+                            BudgetPlanRepository budgetPlanRepository) {
+        this.budgetRepository = budgetRepository;
+        this.budgetPlanRepository = budgetPlanRepository;
+    }
 
     @Override
     @Transactional(value = "accounting-tx", readOnly = true)
@@ -143,7 +146,7 @@ public class BudgetFacadeImpl implements BudgetFacade {
 
         budget.rules().stream()
                 .filter(r -> ruleId.equals(r.ruleId().value()))
-                .collect(Collectors.toList())
+                .toList()
                 .forEach(budget::deleteRule);
 
         budgetRepository.store(budget);

@@ -188,11 +188,7 @@ public class JpaConfig {
 
     @Bean("accounting-tx")
     public JpaTransactionManager transactionManager(@Qualifier("accounting-emf") final EntityManagerFactory emf) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager(
-                Objects.requireNonNull(emf)
-        );
-//        transactionManager.setEntityManagerFactory(emf);
-        return transactionManager;
+        return new JpaTransactionManager(Objects.requireNonNull(emf));
     }
 
 }

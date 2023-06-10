@@ -506,7 +506,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @PreAuthorize("hasRole('ROLE_USER') and hasAuthority(#holder.authority())")
     public CardNumber createCard(CardNumber number, PersonId holder, YearMonth validThru, BankId issuer, Collection<AccountingApi.AccountBinding> accounts) {
         final Card card = new Card(number, holder, validThru, issuer);
-        Optional.ofNullable(accounts).map(Collection::stream).orElse(Stream.empty())
+        Optional.ofNullable(accounts).stream().flatMap(Collection::stream)
                 .forEach(b -> card.bindToAccount(
                         new AccountNumber(b.accountNumber()),
                         b.from(),
@@ -547,17 +547,8 @@ public class AccountingFacadeImpl implements AccountingFacade {
     @Transactional(value = "accounting-tx")
     @Secured({"ROLE_USER"})
     public List<AccountingApi.Transaction> listTransactions(LocalDate from, LocalDate to, Integer threshold) {
-//        final List<Operation> operations = threshold == null ?
-//                Collections.emptyList() :
-//                operationRepository.findByDate(from, to);
-//
-//        final List<Transaction> transactions = threshold == null ?
-//                Collections.emptyList() :
-//                Transaction.matchOperations(operations, threshold, null);
-
         final List<Transaction> knownTransactions = transactionRepository.findByDate(SecurityUtils.getAuthorizedPersons(), from, to);
-        return knownTransactions.stream()//, transactions.stream())
-                //.distinct()
+        return knownTransactions.stream()
                 .map(TransactionAssembler::toDTO)
                 .collect(Collectors.toList());
     }

@@ -52,8 +52,8 @@ public interface ReceiptsFacade {
     /**
      * Get receipt from persistent storage
      *
-     * @param qrCodeData
-     * @return
+     * @param qrCodeData text representation of QR code
+     * @return receipt
      * @deprecated use getReceipt(String qrCodeData)
      */
     @Deprecated

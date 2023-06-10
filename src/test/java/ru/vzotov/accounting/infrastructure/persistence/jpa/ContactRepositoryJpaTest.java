@@ -51,7 +51,7 @@ public class ContactRepositoryJpaTest {
         assertThat(contact).isNotNull();
         assertThat(contact.data())
                 .hasSize(2)
-                .are(new Condition<ContactData>() {
+                .are(new Condition<>() {
                     @Override
                     public boolean matches(ContactData value) {
                         return value.mimeType() != null || value.value() != null;
@@ -64,7 +64,7 @@ public class ContactRepositoryJpaTest {
     public void testFindByOwner() {
         final PersonId owner = new PersonId("08d834ae-5bc3-439c-81ee-ad8169e8588b");
         final List<Contact> contacts = contactRepository.find(owner);
-        assertThat(contacts).hasSize(1).are(new Condition<Contact>() {
+        assertThat(contacts).hasSize(1).are(new Condition<>() {
             @Override
             public boolean matches(Contact value) {
                 return value.owner().equals(owner);

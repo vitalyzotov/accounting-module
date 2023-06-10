@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +48,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/accounts",
                         HttpMethod.GET, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<List<AccountingApi.Account>>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -100,7 +101,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/accounts/40817810108290123456/operations?from=2017-07-10&to=2017-07-10",
                         HttpMethod.GET, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<List<AccountingApi.AccountOperation>>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         assertThat(exchange.getBody()).isNotEmpty();
@@ -113,7 +114,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/accounts/40817810108290123456/holds?from=2020-02-27&to=2020-02-29",
                         HttpMethod.GET, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<List<AccountingApi.HoldOperation>>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         assertThat(exchange.getBody()).isNotEmpty();
@@ -130,7 +131,10 @@ public class AccountsControllerTest extends AbstractControllerTest {
                         AccountingApi.AccountOperation.class,
                         operationId
                 );
-        assertThat(exchange.getBody()).isEqualToComparingOnlyGivenFields(new AccountingApi.AccountOperation(
+        assertThat(exchange.getBody())
+                .usingRecursiveComparison()
+                .comparingOnlyFields("account", "date", "authorizationDate", "operationId", "operationType", "currency", "description")
+                .isEqualTo(new AccountingApi.AccountOperation(
                 "40817810108290123456",
                 LocalDate.of(2018, 8, 1),
                 null,
@@ -142,7 +146,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 "перевод на ГПБ",
                 null,
                 null
-        ), "account", "date", "authorizationDate", "operationId", "operationType", "currency", "description");
+        ));
     }
 
     @Test
@@ -175,7 +179,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                         HttpMethod.GET, new HttpEntity<>(null),
                         new ParameterizedTypeReference<List<AccountingApi.AccountOperation>>() {
                         }
-                ).getBody()).isNotEmpty().doNotHave(new Condition<AccountingApi.AccountOperation>() {
+                ).getBody()).isNotEmpty().doNotHave(new Condition<>() {
             @Override
             public boolean matches(AccountingApi.AccountOperation value) {
                 return "will-be-removed".equalsIgnoreCase(value.operationId());
@@ -209,7 +213,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                         AccountingApi.AccountOperation.class,
                         accountNumber
                 );
-        final String operationId = exchange.getBody().operationId();
+        final String operationId = Objects.requireNonNull(exchange.getBody()).operationId();
         assertThat(exchange.getBody()).usingRecursiveComparison().isEqualTo(new AccountingApi.AccountOperation(
                 accountNumber,
                 operationDate,
@@ -235,7 +239,7 @@ public class AccountsControllerTest extends AbstractControllerTest {
                         operationDate.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE)
                 ).getBody())
                 .isNotEmpty()
-                .haveExactly(1, new Condition<AccountingApi.AccountOperation>() {
+                .haveExactly(1, new Condition<>() {
                     @Override
                     public boolean matches(AccountingApi.AccountOperation value) {
                         return operationId.equalsIgnoreCase(value.operationId());
@@ -251,11 +255,11 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/operations/{operationId}",
                         HttpMethod.PATCH, new HttpEntity<>(new OperationCategoryPatch(781381038049753674L), null),
-                        new ParameterizedTypeReference<AccountingApi.AccountOperation>() {
+                        new ParameterizedTypeReference<>() {
                         },
                         operationId
                 );
-        assertThat(exchange.getBody().categoryId()).isEqualTo(781381038049753674L);
+        assertThat(Objects.requireNonNull(exchange.getBody()).categoryId()).isEqualTo(781381038049753674L);
     }
 
     @Test
@@ -270,11 +274,11 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/operations/{operationId}",
                         HttpMethod.PATCH, new HttpEntity<>(body, null),
-                        new ParameterizedTypeReference<AccountingApi.AccountOperation>() {
+                        new ParameterizedTypeReference<>() {
                         },
                         operationId
                 );
-        assertThat(exchange.getBody().comment()).isEqualTo("my comment");
+        assertThat(Objects.requireNonNull(exchange.getBody()).comment()).isEqualTo("my comment");
     }
 
     private static class OperationCategoryPatch {

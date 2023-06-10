@@ -12,6 +12,8 @@ import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.common.CommonApi;
 import ru.vzotov.accounting.test.AbstractControllerTest;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -29,7 +31,7 @@ public class BudgetControllerTest extends AbstractControllerTest {
                 new BudgetRuleId("004").value()
         );
 
-        assertThat(exchange.getBody().categoryId()).isEqualTo(781381038049753674L);
+        assertThat(Objects.requireNonNull(exchange.getBody()).categoryId()).isEqualTo(781381038049753674L);
     }
 
     @Test
@@ -54,18 +56,18 @@ public class BudgetControllerTest extends AbstractControllerTest {
                 new BudgetRuleId("001").value()
         );
 
-        assertThat(exchange.getBody().rules()).isNotEmpty();
+        assertThat(Objects.requireNonNull(exchange.getBody()).rules()).isNotEmpty();
 
-        assertThat(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        assertThat(Objects.requireNonNull(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}",
                 HttpMethod.GET, new HttpEntity<>(null),
                 AccountingApi.Budget.class, budgetId
-        ).getBody().rules()).doNotHave(new Condition<AccountingApi.BudgetRule>() {
+        ).getBody()).rules()).doNotHave(new Condition<>() {
             @Override
             public boolean matches(AccountingApi.BudgetRule rule) {
                 return rule.name().equals("Заработная плата");
             }
-        }).haveExactly(1, new Condition<AccountingApi.BudgetRule>() {
+        }).haveExactly(1, new Condition<>() {
             @Override
             public boolean matches(AccountingApi.BudgetRule rule) {
                 return rule.name().equals("Заработная плата 2");
@@ -84,18 +86,18 @@ public class BudgetControllerTest extends AbstractControllerTest {
                 new BudgetRuleId("003").value() //.ruleIdOf("Гипермаркет")
         );
 
-        assertThat(exchange.getBody().rules()).isNotEmpty();
+        assertThat(Objects.requireNonNull(exchange.getBody()).rules()).isNotEmpty();
 
-        assertThat(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
+        assertThat(Objects.requireNonNull(this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/budget/{budgetId}",
                 HttpMethod.GET, new HttpEntity<>(null),
                 AccountingApi.Budget.class, budgetId
-        ).getBody().rules()).doNotHave(new Condition<AccountingApi.BudgetRule>() {
+        ).getBody()).rules()).doNotHave(new Condition<>() {
             @Override
             public boolean matches(AccountingApi.BudgetRule rule) {
                 return rule.name().equals("Гипермаркет");
             }
-        }).haveExactly(1, new Condition<AccountingApi.BudgetRule>() {
+        }).haveExactly(1, new Condition<>() {
             @Override
             public boolean matches(AccountingApi.BudgetRule rule) {
                 return rule.name().equals("Аванс");

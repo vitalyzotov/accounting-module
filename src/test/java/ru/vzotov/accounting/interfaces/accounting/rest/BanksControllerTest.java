@@ -24,7 +24,7 @@ public class BanksControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/banks",
                         HttpMethod.GET, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<List<AccountingApi.Bank>>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         assertThat(exchange.getBody()).isNotEmpty();

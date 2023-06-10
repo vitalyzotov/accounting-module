@@ -1,8 +1,5 @@
 package ru.vzotov.cashreceipt.application.nalogru2;
 
-import ru.vzotov.cashreceipt.domain.model.QRCodeData;
-import ru.vzotov.cashreceipt.application.events.PreAuthEvent;
-import ru.vzotov.cashreceipt.application.impl.LoggingRequestInterceptor;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +10,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import ru.vzotov.cashreceipt.application.events.PreAuthEvent;
+import ru.vzotov.cashreceipt.application.impl.LoggingRequestInterceptor;
+import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -33,11 +32,11 @@ public class ReceiptRepositoryNalogru2 {
     private static final Logger log = LoggerFactory.getLogger(ReceiptRepositoryNalogru2.class);
 
     private static final int MAX_RETRIES = 2;
-    public static final String HEADER_CLIENT_VERSION = "ClientVersion";
-    public static final String HEADER_DEVICE_ID = "Device-Id";
-    public static final String HEADER_DEVICE_OS = "Device-OS";
-    public static final String HEADER_USER_AGENT = "User-Agent";
-    public static final String HEADER_SESSION_ID = "sessionId";
+    private static final String HEADER_CLIENT_VERSION = "ClientVersion";
+    private static final String HEADER_DEVICE_ID = "Device-Id";
+    private static final String HEADER_DEVICE_OS = "Device-OS";
+    private static final String HEADER_USER_AGENT = "User-Agent";
+    private static final String HEADER_SESSION_ID = "sessionId";
 
     @Value("${nalogru2.address:https://irkkt-mobile.nalog.ru:8888}")
     private String address;
@@ -100,7 +99,7 @@ public class ReceiptRepositoryNalogru2 {
      * Создает сессию с использованием заданных идентификаторов.
      * Нужен на случаи сбоев на стороне налоговой.
      *
-     * @param sessionId идентификатор сессии
+     * @param sessionId    идентификатор сессии
      * @param refreshToken токен для обновления сессии
      */
     public void authenticatePreemptively(String sessionId, String refreshToken) {
@@ -198,7 +197,7 @@ public class ReceiptRepositoryNalogru2 {
                     break;
                 }
             } catch (HttpClientErrorException e) {
-                if(HttpStatus.UNAUTHORIZED.equals(e.getStatusCode())) {
+                if (HttpStatus.UNAUTHORIZED.equals(e.getStatusCode())) {
                     resetSession();
                 } else {
                     throw e;

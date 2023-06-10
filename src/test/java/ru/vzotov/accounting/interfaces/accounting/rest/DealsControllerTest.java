@@ -39,7 +39,7 @@ public class DealsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/deals?from=2017-07-10&to=2017-07-10",
                         HttpMethod.GET, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<List<AccountingApi.Deal>>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -53,7 +53,7 @@ public class DealsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/deals/deal-1",
                         HttpMethod.GET, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<AccountingApi.Deal>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -69,7 +69,7 @@ public class DealsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/deals/deal-1?expand=card_operations",
                         HttpMethod.GET, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<AccountingApi.Deal>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -100,7 +100,7 @@ public class DealsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/deals/deal-for-remove",
                         HttpMethod.DELETE, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<List<AccountingApi.Deal>>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -114,7 +114,7 @@ public class DealsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/deals/deal-for-remove-3?receipt=true",
                         HttpMethod.DELETE, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<List<AccountingApi.Deal>>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         assertThat(exchange.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -124,7 +124,7 @@ public class DealsControllerTest extends AbstractControllerTest {
                 .exchange(
                         "/accounting/qr/receipt_of_deal_to_remove",
                         HttpMethod.GET, new HttpEntity<>(null),
-                        new ParameterizedTypeReference<AccountingApi.QRCode>() {
+                        new ParameterizedTypeReference<>() {
                         }
                 );
         log.info("qr {}", result.getBody());

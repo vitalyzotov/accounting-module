@@ -23,7 +23,7 @@ public class MccControllerTest extends AbstractControllerTest {
         ResponseEntity<List<AccountingApi.MccGroup>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/mcc/groups",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<List<AccountingApi.MccGroup>>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
         assertThat(exchange.getBody()).isNotEmpty().hasSize(20);
@@ -34,7 +34,7 @@ public class MccControllerTest extends AbstractControllerTest {
         ResponseEntity<AccountingApi.MccGroup> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/mcc/groups/{groupId}",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<AccountingApi.MccGroup>() {
+                new ParameterizedTypeReference<>() {
                 },
                 "c2711c3f-ba04-420f-8767-6055ffc28449"
         );
@@ -48,7 +48,7 @@ public class MccControllerTest extends AbstractControllerTest {
         ResponseEntity<List<AccountingApi.MccDetails>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/mcc/details",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<List<AccountingApi.MccDetails>>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
         assertThat(exchange.getBody()).isNotEmpty().hasSize(1021);
@@ -59,7 +59,7 @@ public class MccControllerTest extends AbstractControllerTest {
         ResponseEntity<List<AccountingApi.MccDetails>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/mcc/details?group={group}",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<List<AccountingApi.MccDetails>>() {
+                new ParameterizedTypeReference<>() {
                 },
                 "af7853df-3104-433a-86a3-5950273a7380"
         );
@@ -71,7 +71,7 @@ public class MccControllerTest extends AbstractControllerTest {
         ResponseEntity<AccountingApi.MccDetails> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/mcc/details/{code}",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<AccountingApi.MccDetails>() {
+                new ParameterizedTypeReference<>() {
                 },
                 "0780"
         );
@@ -85,7 +85,7 @@ public class MccControllerTest extends AbstractControllerTest {
         ResponseEntity<AccountingApi.MccDetails> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/mcc/details/{code}",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<AccountingApi.MccDetails>() {
+                new ParameterizedTypeReference<>() {
                 },
                 "9701"
         );

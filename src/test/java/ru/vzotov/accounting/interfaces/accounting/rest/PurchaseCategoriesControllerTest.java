@@ -29,18 +29,18 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
         ResponseEntity<List<AccountingApi.PurchaseCategory>> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories",
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<List<AccountingApi.PurchaseCategory>>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
         Assertions.assertThat(exchange.getBody())
                 .isNotEmpty()
-                .have(new Condition<AccountingApi.PurchaseCategory>() {
+                .have(new Condition<>() {
                     @Override
                     public boolean matches(AccountingApi.PurchaseCategory value) {
                         return value.categoryId() != null && !value.categoryId().isEmpty();
                     }
                 })
-                .haveExactly(1, new Condition<AccountingApi.PurchaseCategory>() {
+                .haveExactly(1, new Condition<>() {
                     @Override
                     public boolean matches(AccountingApi.PurchaseCategory value) {
                         return value.name().equals("Табак");
@@ -55,7 +55,7 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
         ResponseEntity<AccountingApi.PurchaseCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories/" + catId,
                 HttpMethod.GET, new HttpEntity<>(null),
-                new ParameterizedTypeReference<AccountingApi.PurchaseCategory>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
         assertThat(exchange.getBody())
@@ -70,7 +70,7 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
         ResponseEntity<AccountingApi.PurchaseCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories",
                 HttpMethod.POST, new HttpEntity<>(new AccountingApi.PurchaseCategory(null, PERSON_ID, newCategoryName)),
-                new ParameterizedTypeReference<AccountingApi.PurchaseCategory>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
         assertThat(exchange.getBody())
@@ -93,10 +93,12 @@ public class PurchaseCategoriesControllerTest extends AbstractControllerTest {
                 }
         ).getBody();
 
+        assertThat(mycat).isNotNull();
+
         ResponseEntity<AccountingApi.PurchaseCategory> exchange = this.restTemplate.withBasicAuth(USER, PASSWORD).exchange(
                 "/accounting/purchase-categories/" + mycat.categoryId(),
                 HttpMethod.PATCH, new HttpEntity<>(new AccountingApi.PurchaseCategory(null, PERSON_ID, newCategoryName2)),
-                new ParameterizedTypeReference<AccountingApi.PurchaseCategory>() {
+                new ParameterizedTypeReference<>() {
                 }
         );
 

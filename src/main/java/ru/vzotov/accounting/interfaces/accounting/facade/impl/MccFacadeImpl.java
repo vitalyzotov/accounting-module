@@ -1,15 +1,14 @@
 package ru.vzotov.accounting.interfaces.accounting.facade.impl;
 
+import org.apache.commons.lang3.Validate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.domain.model.MccDetailsRepository;
 import ru.vzotov.accounting.domain.model.MccGroupRepository;
 import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.accounting.interfaces.accounting.facade.MccFacade;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccDetailsAssembler;
 import ru.vzotov.accounting.interfaces.accounting.facade.impl.assemblers.MccGroupAssembler;
-import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.banking.domain.model.MccCode;
 import ru.vzotov.banking.domain.model.MccGroupId;
 
@@ -21,11 +20,15 @@ public class MccFacadeImpl implements MccFacade {
 
     private static final String MCC_DATASOURCE = "accounting-tx";
 
-    @Autowired
-    private MccDetailsRepository mccDetailsRepository;
+    private final MccDetailsRepository mccDetailsRepository;
 
-    @Autowired
-    private MccGroupRepository mccGroupRepository;
+    private final MccGroupRepository mccGroupRepository;
+
+    public MccFacadeImpl(MccDetailsRepository mccDetailsRepository,
+                         MccGroupRepository mccGroupRepository) {
+        this.mccDetailsRepository = mccDetailsRepository;
+        this.mccGroupRepository = mccGroupRepository;
+    }
 
     @Override
     @Transactional(value = MCC_DATASOURCE, readOnly = true)

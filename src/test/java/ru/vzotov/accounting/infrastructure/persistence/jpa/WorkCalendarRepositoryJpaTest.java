@@ -1,5 +1,6 @@
 package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import ru.vzotov.accounting.domain.model.WorkCalendarRepository;
 import ru.vzotov.calendar.domain.model.WorkCalendar;
 import ru.vzotov.calendar.domain.model.WorkCalendars;
 
-import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -33,7 +33,7 @@ public class WorkCalendarRepositoryJpaTest {
         workCalendarRepository.store(WorkCalendars.CALENDAR_2019);
         WorkCalendar calendar = workCalendarRepository.find(WorkCalendars.RUSSIA, LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.DECEMBER, 31));
         assertThat(calendar.specialDays())
-                .usingElementComparatorIgnoringFields("id")
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
                 .containsAll(WorkCalendars.CALENDAR_2019.specialDays());
     }
 
@@ -41,7 +41,7 @@ public class WorkCalendarRepositoryJpaTest {
     public void testFind() {
         WorkCalendar calendar = workCalendarRepository.find(WorkCalendars.RUSSIA, LocalDate.of(2020, Month.JANUARY, 1), LocalDate.of(2020, Month.DECEMBER, 31));
         assertThat(calendar.specialDays())
-                .usingElementComparatorIgnoringFields("id")
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
                 .containsAll(WorkCalendars.CALENDAR_2020.specialDays());
     }
 

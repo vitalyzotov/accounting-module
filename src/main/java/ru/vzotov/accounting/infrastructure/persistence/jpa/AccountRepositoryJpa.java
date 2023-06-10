@@ -32,7 +32,7 @@ public class AccountRepositoryJpa extends JpaRepository implements AccountReposi
                             """
                                     select a from Account a where a.accountNumber.number in (
                                         select acc.accountNumber.number from Card c
-                                        join c.accounts acc 
+                                        join c.accounts acc
                                         where c.cardNumber.value=:cardNumber and acc.from<=:date and acc.to>=:date
                                     )
                                     """, Account.class)

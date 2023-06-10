@@ -9,5 +9,45 @@
       "name": "accounting.liquibase.enabled",
       "type": "java.lang.String",
       "description": "Description for accounting.liquibase.enabled."
+    },
+    {
+      "name": "nalogru.address",
+      "type": "java.lang.String",
+      "description": "Address of nalog.ru service v1 for downloading receipt data."
+    },
+    {
+      "name": "nalogru.username",
+      "type": "java.lang.String",
+      "description": "Username to authenticate nalog.ru service v1."
+    },
+    {
+      "name": "nalogru.password",
+      "type": "java.lang.String",
+      "description": "Password to authenticate nalog.ru service v1."
+    },
+    {
+      "name": "nalogru2.address",
+      "type": "java.lang.String",
+      "description": "Address of nalog.ru service v2 for downloading receipt data."
+    },
+    {
+      "name": "nalogru2.username",
+      "type": "java.lang.String",
+      "description": "Username to authenticate nalog.ru service v2."
+    },
+    {
+      "name": "nalogru2.password",
+      "type": "java.lang.String",
+      "description": "Password to authenticate nalog.ru service v2."
+    },
+    {
+      "name": "nalogru2.deviceId",
+      "type": "java.lang.String",
+      "description": "DeviceID to use when communicating with nalog.ru service v2."
+    },
+    {
+      "name": "nalogru2.clientSecret",
+      "type": "java.lang.String",
+      "description": "Client secret to authenticate nalog.ru service v2."
     }
   ] }

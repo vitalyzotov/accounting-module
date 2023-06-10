@@ -134,6 +134,7 @@ public class DealServiceImpl implements DealService {
         final Money amount = switch (operation.type()) {
             case WITHDRAW -> operation.amount().negate();
             case DEPOSIT -> operation.amount();
+            //noinspection UnnecessaryDefault
             default -> throw new IllegalArgumentException();
         };
         final Account account = accountRepository.find(operation.account());
@@ -176,6 +177,7 @@ public class DealServiceImpl implements DealService {
         final Money amount = switch (qrCode.code().operationType()) {
             case INCOME, EXPENSE_RETURN -> qrCode.code().totalSum().negate();
             case EXPENSE, INCOME_RETURN -> qrCode.code().totalSum();
+            //noinspection UnnecessaryDefault
             default -> throw new IllegalArgumentException();
         };
         final Deal deal = new Deal(

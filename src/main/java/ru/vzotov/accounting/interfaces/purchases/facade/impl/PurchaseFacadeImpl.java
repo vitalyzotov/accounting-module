@@ -151,7 +151,7 @@ public class PurchaseFacadeImpl implements PurchasesFacade {
                     }
                     return p;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         final List<PurchaseId> result = entities.stream().peek(p -> {
                     purchaseRepository.store(p);

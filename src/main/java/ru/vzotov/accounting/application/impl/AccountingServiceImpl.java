@@ -3,7 +3,6 @@ package ru.vzotov.accounting.application.impl;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,20 +39,27 @@ public class AccountingServiceImpl implements AccountingService {
 
     private static final Logger log = LoggerFactory.getLogger(AccountingServiceImpl.class);
 
-    @Autowired
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-    @Autowired
-    private OperationRepository operationRepository;
+    private final OperationRepository operationRepository;
 
-    @Autowired
-    private CardOperationRepository cardOperationRepository;
+    private final CardOperationRepository cardOperationRepository;
 
-    @Autowired
-    private HoldOperationRepository holdOperationRepository;
+    private final HoldOperationRepository holdOperationRepository;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
+
+    public AccountingServiceImpl(AccountRepository accountRepository,
+                                 OperationRepository operationRepository,
+                                 CardOperationRepository cardOperationRepository,
+                                 HoldOperationRepository holdOperationRepository,
+                                 ApplicationEventPublisher eventPublisher) {
+        this.accountRepository = accountRepository;
+        this.operationRepository = operationRepository;
+        this.cardOperationRepository = cardOperationRepository;
+        this.holdOperationRepository = holdOperationRepository;
+        this.eventPublisher = eventPublisher;
+    }
 
     @Override
     @Transactional("accounting-tx")

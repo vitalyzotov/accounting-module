@@ -2,7 +2,6 @@ package ru.vzotov.accounting.application.impl;
 
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.InstanceOf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.WithMockPersonUser;
-import ru.vzotov.accounting.interfaces.accounting.AccountingApi;
 import ru.vzotov.cashreceipt.application.ReceiptNotFoundException;
 import ru.vzotov.cashreceipt.application.ReceiptRegistrationService;
-import ru.vzotov.cashreceipt.application.nalogru2.NalogRu2Api;
 import ru.vzotov.cashreceipt.application.nalogru2.ReceiptRepositoryNalogru2;
 import ru.vzotov.cashreceipt.domain.model.QRCode;
 import ru.vzotov.cashreceipt.domain.model.QRCodeData;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
-import ru.vzotov.cashreceipt.domain.model.Receipt;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
 import ru.vzotov.cashreceipt.domain.model.ReceiptSource;
@@ -32,7 +28,6 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 @SpringBootTest

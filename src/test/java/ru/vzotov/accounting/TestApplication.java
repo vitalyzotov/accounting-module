@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
                 "ru.vzotov.accounting.interfaces",
                 "ru.vzotov.accounting.application",
                 "ru.vzotov.accounting.application.impl",
-                "ru.vzotov.cashreceipt.interfaces",
                 "ru.vzotov.cashreceipt.application",
                 "ru.vzotov.cashreceipt.application.impl"
         }

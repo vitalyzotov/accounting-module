@@ -96,7 +96,7 @@ public class BudgetRepositoryJpaTest {
         assertThat(budget).isNotNull();
         assertThat(budget.rules())
                 .hasSize(4)
-                .are(new Condition<BudgetRule>() {
+                .are(new Condition<>() {
                     @Override
                     public boolean matches(BudgetRule value) {
                         return value.sourceAccount() != null || value.targetAccount() != null;
