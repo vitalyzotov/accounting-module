@@ -36,7 +36,7 @@ public class RandomSelectionStrategy implements ReceiptSelectionStrategy {
             Random random = new Random();
             for (int i = 0; i < count; i++) {
                 double v = random.nextGaussian();
-                int index = Math.max(0, Math.min((int) (Math.abs(v) * source.size()), source.size()));
+                int index = Math.max(0, Math.min((int) (Math.abs(v) * source.size()), source.size() - 1));
                 result.add(source.remove(index));
             }
         }
