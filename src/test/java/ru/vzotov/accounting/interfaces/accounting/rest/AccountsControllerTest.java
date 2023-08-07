@@ -75,7 +75,13 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 .withBasicAuth(USER, PASSWORD)
                 .exchange(
                         "/accounting/accounts/40817810000016123456",
-                        HttpMethod.PUT, new HttpEntity<>(new AccountingApi.Account.Modify("Tinkoff", "044525974", "USD", Collections.singletonList("tinkoff_40817810000016123456"))),
+                        HttpMethod.PUT,
+                        new HttpEntity<>(new AccountingApi.Account.Modify(
+                                "Tinkoff",
+                                "044525974",
+                                "USD",
+                                Collections.singletonList("tinkoff_40817810000016123456")
+                        )),
                         AccountingApi.Account.Ref.class
                 );
         assertThat(exchange.getBody()).usingRecursiveComparison().isEqualTo(
@@ -92,6 +98,25 @@ public class AccountsControllerTest extends AbstractControllerTest {
         ).usingRecursiveComparison().isEqualTo(
                 new AccountingApi.Account("40817810000016123456", "Tinkoff", "044525974", "USD", PERSON_ID, Collections.singletonList("tinkoff_40817810000016123456"))
         );
+
+        assertThat(this.restTemplate
+                .withBasicAuth(USER, PASSWORD)
+                .exchange(
+                        "/accounting/accounts/00000000000000000001",
+                        HttpMethod.PUT,
+                        new HttpEntity<>(new AccountingApi.Account.Modify(
+                                "Наличные 2",
+                                null,
+                                "RUR",
+                                null
+                        )),
+                        AccountingApi.Account.Ref.class
+                ).getBody()
+        )
+                .as("Allow null for bankId and aliases when modifying an account")
+                .usingRecursiveComparison().isEqualTo(
+                        new AccountingApi.Account.Ref("00000000000000000001")
+                );
     }
 
     @Test
@@ -135,18 +160,18 @@ public class AccountsControllerTest extends AbstractControllerTest {
                 .usingRecursiveComparison()
                 .comparingOnlyFields("account", "date", "authorizationDate", "operationId", "operationType", "currency", "description")
                 .isEqualTo(new AccountingApi.AccountOperation(
-                "40817810108290123456",
-                LocalDate.of(2018, 8, 1),
-                null,
-                null,
-                "tx-operation-1",
-                "-",
-                3000d,
-                "RUR",
-                "перевод на ГПБ",
-                null,
-                null
-        ));
+                        "40817810108290123456",
+                        LocalDate.of(2018, 8, 1),
+                        null,
+                        null,
+                        "tx-operation-1",
+                        "-",
+                        3000d,
+                        "RUR",
+                        "перевод на ГПБ",
+                        null,
+                        null
+                ));
     }
 
     @Test

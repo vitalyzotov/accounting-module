@@ -62,7 +62,6 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class AccountingFacadeImpl implements AccountingFacade {
@@ -155,7 +154,7 @@ public class AccountingFacadeImpl implements AccountingFacade {
     public void modifyAccount(String number, String name, String bankId, String currency, List<String> aliases) {
         Account account = ownedGuard.accessing(accountRepository.find(new AccountNumber(number)));
         account.rename(name);
-        account.setBankId(new BankId(bankId));
+        account.setBankId(bankId == null ? null : new BankId(bankId));
         account.setCurrency(currency == null ? null : Currency.getInstance(currency));
         account.setAliases(aliases == null ? null : new AccountAliases(aliases));
         accountRepository.update(account);
