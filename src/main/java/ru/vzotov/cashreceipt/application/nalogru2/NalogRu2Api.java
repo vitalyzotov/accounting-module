@@ -14,7 +14,12 @@ public interface NalogRu2Api {
     record AuthResponse(String sessionId, String refresh_token) {
     }
 
-    record Document(Receipt receipt) {
+    /**
+     *
+     * @param receipt
+     * @param bso Бланк строгой отчетности
+     */
+    record Document(Receipt receipt, Receipt bso) {
     }
 
     record Item(Long sum, Double quantity, Long price, Object modifiers, Object properties, String name, Long nds,

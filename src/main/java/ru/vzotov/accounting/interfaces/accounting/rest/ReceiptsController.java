@@ -1,5 +1,7 @@
 package ru.vzotov.accounting.interfaces.accounting.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +43,8 @@ public class ReceiptsController {
         this.receiptsFacade = receiptsFacade;
     }
 
+    @Operation(summary = "Регистрирует чек в системе",
+            description = "Возвращает ИД зарегистрированного чека. Если такой чек уже зарегистрирован, то просто вернет его ИД.")
     @PostMapping("/accounting/receipts/")
     public Receipt.Ref registerReceipt(@RequestBody Receipt.Register request)
             throws ReceiptNotFoundException, IOException {
@@ -48,12 +52,16 @@ public class ReceiptsController {
         return new Receipt.Ref(qrId.value());
     }
 
+    @Operation(summary = "Получает список чеков за указанный период",
+            description = "Возвращает список всех чеков, зарегистрированных в системе за указанный период. Даты 'from' и 'to' должны быть указаны в формате ISO.")
     @GetMapping("/accounting/receipts/")
     public Receipt.Many getReceipts(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         return new Receipt.Many(receiptsFacade.listAllReceipts(from, to));
     }
 
+    @Operation(summary = "Получает список QR кодов за указанный период",
+            description = "Возвращает список всех QR кодов, зарегистрированных в системе за указанный период. Даты 'from' и 'to' должны быть указаны в формате ISO.")
     @GetMapping(value = "/accounting/qr/")
     public List<QRCode> getCodes(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {

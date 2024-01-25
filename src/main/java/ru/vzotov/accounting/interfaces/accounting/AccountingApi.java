@@ -3,6 +3,7 @@ package ru.vzotov.accounting.interfaces.accounting;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import ru.vzotov.accounting.interfaces.common.CommonApi;
 import ru.vzotov.accounting.interfaces.purchases.PurchasesApi;
 
@@ -259,10 +260,14 @@ public interface AccountingApi {
         public record Many(List<Receipt> receipts) {
         }
 
-        public record Register(String qrcode) {
+        public record Register(
+                @Schema(description = "Данные QR-кода чека")
+                String qrcode) {
         }
 
-        public record Ref(String id) {
+        public record Ref(
+                @Schema(description = "Идентификатор чека")
+                String id) {
         }
     }
 
