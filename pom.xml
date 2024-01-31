@@ -18,13 +18,14 @@
         <spring.boot.version>3.1.0</spring.boot.version>
         <liquibase.version>4.20.0</liquibase.version>
 
+        <hibernate.version>6.2.2.Final</hibernate.version>
         <!-- own modules -->
         <ddd.version>1.4</ddd.version>
         <money.model.version>2.0</money.model.version>
         <banking.model.version>2.0</banking.model.version>
         <cashreceipt.model.version>2.0</cashreceipt.model.version>
-        <purchases.model.version>2.0</purchases.model.version>
-        <accounting.model.version>2.0</accounting.model.version>
+        <purchases.model.version>2.1-SNAPSHOT</purchases.model.version>
+        <accounting.model.version>2.1-SNAPSHOT</accounting.model.version>
         <person.model.version>2.0</person.model.version>
     </properties>
 
@@ -93,7 +94,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
 
         <!--
         Spring framework

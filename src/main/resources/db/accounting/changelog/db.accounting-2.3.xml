@@ -1,0 +1,58 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.12.xsd">
+
+
+    <changeSet id="acc-87" author="vzotov">
+        <addColumn tableName="PURCHASE_">
+            <column name="CREATED_ON" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="UPDATED_ON" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="acc-88" author="vzotov">
+        <update tableName="PURCHASE_">
+            <column name="CREATED_ON" valueComputed="DATE_TIME"/>
+            <column name="UPDATED_ON" valueComputed="DATE_TIME"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="acc-89" author="vzotov">
+        <addNotNullConstraint tableName="PURCHASE_" columnName="CREATED_ON" columnDataType="TIMESTAMP"/>
+    </changeSet>
+
+    <changeSet id="acc-90" author="vzotov">
+        <createTable tableName="PROPERTY_">
+            <column name="ID" type="BIGINT(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="PROP_ID" type="VARCHAR(64)" remarks="Business key">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="KEY" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="JSON">
+                <constraints nullable="true"/>
+            </column>
+            <column name="OWNER" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="CREATED_ON" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="UPDATED_ON" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="PROPERTY_" baseColumnNames="OWNER"
+                                 constraintName="FK_PROP_OWNER"
+                                 referencedTableName="PERSON_" referencedColumnNames="PERSON_UID"/>
+        <addUniqueConstraint tableName="PROPERTY_" columnNames="KEY,OWNER" constraintName="UNQ_PROP_KEY"/>
+    </changeSet>
+</databaseChangeLog>

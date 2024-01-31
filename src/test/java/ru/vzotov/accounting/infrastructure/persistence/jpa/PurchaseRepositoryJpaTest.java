@@ -10,11 +10,17 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vzotov.accounting.config.DatasourceConfig;
 import ru.vzotov.cashreceipt.domain.model.ReceiptId;
+import ru.vzotov.domain.model.Money;
+import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
 import ru.vzotov.purchases.domain.model.PurchaseRepository;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.vzotov.accounting.TestData.USER1_ID;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -26,6 +32,31 @@ public class PurchaseRepositoryJpaTest {
 
     @Autowired
     private PurchaseRepository purchaseRepository;
+
+    @Test
+    public void testCreateAndUpdate() {
+        PersonId ownerId = new PersonId(USER1_ID);
+        String name = "Test Purchase";
+        LocalDateTime dateTime = LocalDateTime.now();
+        Money price = Money.kopecks(100);
+        BigDecimal quantity = new BigDecimal(1);
+
+        Purchase newPurchase = new Purchase(PurchaseId.nextId(), ownerId, name, dateTime, price, quantity);
+        purchaseRepository.store(newPurchase);
+
+        Purchase foundPurchase = purchaseRepository.find(newPurchase.purchaseId());
+        assertThat(foundPurchase).isNotNull();
+        assertThat(foundPurchase.createdOn()).isNotNull();
+        assertThat(foundPurchase.updatedOn()).isNotNull().isEqualTo(foundPurchase.createdOn());
+
+        foundPurchase.setName("Modified purchase");
+        purchaseRepository.store(foundPurchase);
+
+        Purchase modifiedPurchase = purchaseRepository.find(newPurchase.purchaseId());
+        assertThat(modifiedPurchase).isNotNull();
+        assertThat(modifiedPurchase.createdOn()).isNotNull();
+        assertThat(modifiedPurchase.updatedOn()).isNotNull().isAfter(modifiedPurchase.createdOn());
+    }
 
     @Test
     public void testFind() {

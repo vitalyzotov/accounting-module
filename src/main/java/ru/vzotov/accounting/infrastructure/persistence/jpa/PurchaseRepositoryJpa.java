@@ -2,8 +2,14 @@ package ru.vzotov.accounting.infrastructure.persistence.jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.domain.Specification;
 import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
@@ -19,6 +25,20 @@ public class PurchaseRepositoryJpa extends JpaRepository implements PurchaseRepo
 
     PurchaseRepositoryJpa(EntityManager em) {
         super(em);
+    }
+
+    @Override
+    public List<Purchase> findAll(Specification<Purchase> specification) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Purchase> cq = cb.createQuery(Purchase.class);
+
+        Root<Purchase> purchaseRoot = cq.from(Purchase.class);
+        Predicate predicate = specification.toPredicate(purchaseRoot, cq, cb);
+
+        cq.where(predicate);
+
+        TypedQuery<Purchase> query = em.createQuery(cq);
+        return query.getResultList();
     }
 
     @Override

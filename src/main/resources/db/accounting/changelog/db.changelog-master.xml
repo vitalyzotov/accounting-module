@@ -45,5 +45,6 @@
     <include file="db.accounting-1.71.xml" relativeToChangelogFile="true"/>
     <include file="db.accounting-1.72.xml" relativeToChangelogFile="true"/>
     <include file="db.accounting-2.0.xml" relativeToChangelogFile="true"/>
+    <include file="db.accounting-2.3.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

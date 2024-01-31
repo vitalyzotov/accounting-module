@@ -4,7 +4,9 @@
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm
           https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd">
-
+    <persistence-unit-metadata>
+        <xml-mapping-metadata-complete/>
+    </persistence-unit-metadata>
     <named-native-query name="operations-without-deals" result-set-mapping="OperationMapping"
                         result-class="ru.vzotov.banking.domain.model.Operation">
         <query>SELECT op.* FROM OPERATION_ op WHERE NOT EXISTS (SELECT 1 FROM DEAL_OPERATIONS dop WHERE
@@ -56,6 +58,41 @@
     <sql-result-set-mapping name="ReceiptQRCodeMapping">
         <entity-result entity-class="ru.vzotov.cashreceipt.domain.model.QRCode"/>
     </sql-result-set-mapping>
+
+    <entity class="ru.vzotov.accounting.domain.model.PersistentProperty" access="FIELD">
+        <table name="PROPERTY_"/>
+        <pre-persist method-name="onCreate"/>
+        <pre-update method-name="onUpdate"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" nullable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="key">
+                <column name="KEY" nullable="false"/>
+            </basic>
+            <basic name="value">
+                <column name="VALUE" nullable="true"/>
+            </basic>
+            <basic name="createdOn">
+                <column name="CREATED_ON"/>
+            </basic>
+
+            <basic name="updatedOn">
+                <column name="UPDATED_ON"/>
+            </basic>
+            <embedded name="propertyId">
+                <attribute-override name="value">
+                    <column name="PROP_ID" nullable="false" unique="true"/>
+                </attribute-override>
+            </embedded>
+            <embedded name="owner">
+                <attribute-override name="value">
+                    <column name="OWNER"/>
+                </attribute-override>
+            </embedded>
+        </attributes>
+    </entity>
 
     <entity name="Deal" class="ru.vzotov.accounting.domain.model.Deal" access="FIELD">
         <table name="DEAL_"/>
@@ -590,6 +627,8 @@
 
     <entity class="ru.vzotov.purchase.domain.model.Purchase" access="FIELD">
         <table name="PURCHASE_"/>
+        <pre-persist method-name="onCreate"/>
+        <pre-update method-name="onUpdate"/>
         <attributes>
             <id name="id">
                 <column name="ID" nullable="false"/>
@@ -606,6 +645,14 @@
 
             <basic name="quantity">
                 <column name="QUANTITY"/>
+            </basic>
+
+            <basic name="createdOn">
+                <column name="CREATED_ON"/>
+            </basic>
+
+            <basic name="updatedOn">
+                <column name="UPDATED_ON"/>
             </basic>
 
             <many-to-one name="category" optional="true">
@@ -1282,6 +1329,14 @@
         <attributes>
             <basic name="value">
                 <column name="SOURCE_UID" nullable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="ru.vzotov.accounting.domain.model.PersistentPropertyId" access="FIELD">
+        <attributes>
+            <basic name="value">
+                <column name="PROP_ID" nullable="false" unique="true"/>
             </basic>
         </attributes>
     </embeddable>

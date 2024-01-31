@@ -1,5 +1,6 @@
 package ru.vzotov.purchases.domain.model;
 
+import org.springframework.data.jpa.domain.Specification;
 import ru.vzotov.person.domain.model.PersonId;
 import ru.vzotov.purchase.domain.model.Purchase;
 import ru.vzotov.purchase.domain.model.PurchaseId;
@@ -12,6 +13,9 @@ import java.util.List;
  * Interface representing a repository for managing purchases.
  */
 public interface PurchaseRepository {
+
+    List<Purchase> findAll(Specification<Purchase> specification);
+
     /**
      * Finds a purchase by its ID.
      *

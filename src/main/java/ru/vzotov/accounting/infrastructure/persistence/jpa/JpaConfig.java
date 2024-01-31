@@ -9,22 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import ru.vzotov.accounting.domain.model.AccountRepository;
-import ru.vzotov.accounting.domain.model.BankRepository;
-import ru.vzotov.accounting.domain.model.BudgetCategoryRepository;
-import ru.vzotov.accounting.domain.model.BudgetPlanRepository;
-import ru.vzotov.accounting.domain.model.BudgetRepository;
-import ru.vzotov.accounting.domain.model.CardOperationRepository;
-import ru.vzotov.accounting.domain.model.CardRepository;
-import ru.vzotov.accounting.domain.model.ContactRepository;
-import ru.vzotov.accounting.domain.model.DealRepository;
-import ru.vzotov.accounting.domain.model.HoldOperationRepository;
-import ru.vzotov.accounting.domain.model.MccDetailsRepository;
-import ru.vzotov.accounting.domain.model.MccGroupRepository;
-import ru.vzotov.accounting.domain.model.OperationRepository;
-import ru.vzotov.accounting.domain.model.RemainRepository;
-import ru.vzotov.accounting.domain.model.TransactionRepository;
-import ru.vzotov.accounting.domain.model.WorkCalendarRepository;
+import ru.vzotov.accounting.domain.model.*;
 import ru.vzotov.cashreceipt.domain.model.PurchaseCategoryRepository;
 import ru.vzotov.cashreceipt.domain.model.QRCodeRepository;
 import ru.vzotov.cashreceipt.domain.model.ReceiptRepository;
@@ -175,6 +160,12 @@ public class JpaConfig {
     @ConditionalOnMissingBean
     public ContactRepository contactRepository(@Qualifier("accounting-emf") EntityManager em) {
         return new ContactRepositoryJpa(em);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public PersistentPropertyRepository persistentPropertyRepository(@Qualifier("accounting-emf") EntityManager em) {
+        return new PersistentPropertyRepositoryJpa(em);
     }
 
     @Bean("accounting-emf")
