@@ -23,6 +23,14 @@ public class PersistentProperty implements Entity<PersistentProperty>, Owned {
 
     private Instant updatedOn;
 
+    public PersistentProperty(PersistentPropertyId propertyId, String key) {
+        this(propertyId, key, (String) null);
+    }
+
+    public PersistentProperty(PersistentPropertyId propertyId, String key, PersonId owner) {
+        this(propertyId, key, null, owner);
+    }
+
     /**
      * Create system property
      */
@@ -50,6 +58,10 @@ public class PersistentProperty implements Entity<PersistentProperty>, Owned {
 
     public String value() {
         return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public Instant createdOn() {
