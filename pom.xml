@@ -24,8 +24,8 @@
         <money.model.version>2.0</money.model.version>
         <banking.model.version>2.0</banking.model.version>
         <cashreceipt.model.version>2.0</cashreceipt.model.version>
-        <purchases.model.version>2.1-SNAPSHOT</purchases.model.version>
-        <accounting.model.version>2.1-SNAPSHOT</accounting.model.version>
+        <purchases.model.version>2.1</purchases.model.version>
+        <accounting.model.version>2.1</accounting.model.version>
         <person.model.version>2.0</person.model.version>
     </properties>
 
